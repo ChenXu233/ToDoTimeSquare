@@ -1,0 +1,22 @@
+{
+  "appTitle": "Todo Time Square",
+  "welcomeMessage": "Welcome to Todo Time Square",
+  "addTask": "Add Task",
+  "taskName": "Task Name",
+  "taskDescription": "Task Description",
+  "taskDueDate": "Due Date",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "completed": "Completed",
+  "allTasks": "All Tasks",
+  "todayTasks": "Today's Tasks",
+  "upcomingTasks": "Upcoming Tasks",
+  "settings": "Settings",
+  "darkMode": "Dark Mode",
+  "language": "Language",
+  "notification": "Notification",
+  "about": "About",
+  "help": "Help"
+}

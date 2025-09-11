@@ -1,0 +1,22 @@
+{
+  "appTitle": "待办事项时间广场",
+  "welcomeMessage": "欢迎使用待办事项时间广场",
+  "addTask": "添加任务",
+  "taskName": "任务名称",
+  "taskDescription": "任务描述",
+  "taskDueDate": "截止日期",
+  "save": "保存",
+  "cancel": "取消",
+  "delete": "删除",
+  "edit": "编辑",
+  "completed": "已完成",
+  "allTasks": "所有任务",
+  "todayTasks": "今日任务",
+  "upcomingTasks": "即将到来",
+  "settings": "设置",
+  "darkMode": "暗黑模式",
+  "language": "语言",
+  "notification": "通知",
+  "about": "关于",
+  "help": "帮助"
+}

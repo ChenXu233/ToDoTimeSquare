@@ -1,0 +1,5 @@
+arb-dir: lib/i18n
+template-arb-file: app_en.arb
+output-localization-file: i18n.dart
+output-class: APPi18n
+default-namespace: app
