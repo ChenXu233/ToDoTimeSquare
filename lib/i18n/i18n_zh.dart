@@ -9,10 +9,10 @@ class APPi18nZh extends APPi18n {
   APPi18nZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => '待办事项时间广场';
+  String get appTitle => 'Time ToDo Square';
 
   @override
-  String get welcomeMessage => '欢迎使用待办事项时间广场';
+  String get welcomeMessage => '欢迎使用Time ToDo Square';
 
   @override
   String get addTask => '添加任务';
@@ -66,5 +66,75 @@ class APPi18nZh extends APPi18n {
   String get about => '关于';
 
   @override
+  String get pomodoroTitle => '番茄钟';
+
+  @override
+  String get start => '开始';
+
+  @override
+  String get pause => '暂停';
+
+  @override
+  String get resume => '继续';
+
+  @override
+  String get reset => '重置';
+
+  @override
+  String get focusTime => '专注时间';
+
+  @override
+  String get shortBreak => '短休息';
+
+  @override
+  String get longBreak => '长休息';
+
+  @override
+  String get pomodoroStatusFocus => '专注中';
+
+  @override
+  String get pomodoroStatusShortBreak => '短休息中';
+
+  @override
+  String get pomodoroStatusLongBreak => '长休息中';
+
+  @override
   String get help => '帮助';
+
+  @override
+  String get importance => '重要性';
+
+  @override
+  String get duration => '时长';
+
+  @override
+  String get startTime => '开始时间';
+
+  @override
+  String get notSet => '未设置';
+
+  @override
+  String get low => '低';
+
+  @override
+  String get medium => '中';
+
+  @override
+  String get high => '高';
+
+  @override
+  String get pleaseEnterTitle => '请输入标题';
+
+  @override
+  String get pomodoroSettings => '番茄钟设置';
+
+  @override
+  String get pomodoroInfo => '番茄工作法';
+
+  @override
+  String get pomodoroInfoContent =>
+      '番茄工作法使用定时器将工作分解为间隔，通常为25分钟，中间有短暂的休息。本应用将其简化为专注和短休息的循环。';
+
+  @override
+  String get homeMessage => '专注. 组织. 实现.';
 }

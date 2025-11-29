@@ -97,125 +97,263 @@ abstract class APPi18n {
     Locale('zh'),
   ];
 
-  /// No description provided for @appTitle.
+  /// The title of the application
   ///
   /// In en, this message translates to:
   /// **'Todo Time Square'**
   String get appTitle;
 
-  /// No description provided for @welcomeMessage.
+  /// The welcome message displayed on the application launch
   ///
   /// In en, this message translates to:
   /// **'Welcome to Todo Time Square'**
   String get welcomeMessage;
 
-  /// No description provided for @addTask.
+  /// The label for the add task button
   ///
   /// In en, this message translates to:
   /// **'Add Task'**
   String get addTask;
 
-  /// No description provided for @taskName.
+  /// The label for the task name input field
   ///
   /// In en, this message translates to:
   /// **'Task Name'**
   String get taskName;
 
-  /// No description provided for @taskDescription.
+  /// The label for the task description input field
   ///
   /// In en, this message translates to:
   /// **'Task Description'**
   String get taskDescription;
 
-  /// No description provided for @taskDueDate.
+  /// The label for the task due date input field
   ///
   /// In en, this message translates to:
   /// **'Due Date'**
   String get taskDueDate;
 
-  /// No description provided for @save.
+  /// The label for the save button
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
 
-  /// No description provided for @cancel.
+  /// The label for the cancel button
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @delete.
+  /// The label for the delete button
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @edit.
+  /// The label for the edit button
   ///
   /// In en, this message translates to:
   /// **'Edit'**
   String get edit;
 
-  /// No description provided for @completed.
+  /// The label for the completed tasks filter
   ///
   /// In en, this message translates to:
   /// **'Completed'**
   String get completed;
 
-  /// No description provided for @allTasks.
+  /// The label for the all tasks filter
   ///
   /// In en, this message translates to:
   /// **'All Tasks'**
   String get allTasks;
 
-  /// No description provided for @todayTasks.
+  /// The label for the today tasks filter
   ///
   /// In en, this message translates to:
   /// **'Today\'s Tasks'**
   String get todayTasks;
 
-  /// No description provided for @upcomingTasks.
+  /// The label for the upcoming tasks filter
   ///
   /// In en, this message translates to:
   /// **'Upcoming Tasks'**
   String get upcomingTasks;
 
-  /// No description provided for @settings.
+  /// The label for the settings menu item
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @darkMode.
+  /// The label for the dark mode toggle
   ///
   /// In en, this message translates to:
   /// **'Dark Mode'**
   String get darkMode;
 
-  /// No description provided for @language.
+  /// The label for the language selection
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
 
-  /// No description provided for @notification.
+  /// The label for the notification settings
   ///
   /// In en, this message translates to:
   /// **'Notification'**
   String get notification;
 
-  /// No description provided for @about.
+  /// The label for the about section
   ///
   /// In en, this message translates to:
   /// **'About'**
   String get about;
 
-  /// No description provided for @help.
+  /// The title for the pomodoro timer feature
+  ///
+  /// In en, this message translates to:
+  /// **'Pomodoro Timer'**
+  String get pomodoroTitle;
+
+  /// The label for the start button
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// The label for the pause button
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// The label for the resume button
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get resume;
+
+  /// The label for the reset button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// The label for the focus time duration
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Time'**
+  String get focusTime;
+
+  /// The label for the short break duration
+  ///
+  /// In en, this message translates to:
+  /// **'Short Break'**
+  String get shortBreak;
+
+  /// The label for the long break duration
+  ///
+  /// In en, this message translates to:
+  /// **'Long Break'**
+  String get longBreak;
+
+  /// The status text for focus mode
+  ///
+  /// In en, this message translates to:
+  /// **'Focus'**
+  String get pomodoroStatusFocus;
+
+  /// The status text for short break mode
+  ///
+  /// In en, this message translates to:
+  /// **'Short Break'**
+  String get pomodoroStatusShortBreak;
+
+  /// The status text for long break mode
+  ///
+  /// In en, this message translates to:
+  /// **'Long Break'**
+  String get pomodoroStatusLongBreak;
+
+  /// The label for the help section
   ///
   /// In en, this message translates to:
   /// **'Help'**
   String get help;
+
+  /// The label for the importance level
+  ///
+  /// In en, this message translates to:
+  /// **'Importance'**
+  String get importance;
+
+  /// The label for the duration field
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// The label for the start time field
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get startTime;
+
+  /// The text displayed when a value is not set
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get notSet;
+
+  /// The text for low importance level
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get low;
+
+  /// The text for medium importance level
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// The text for high importance level
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get high;
+
+  /// The validation message for empty title
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title'**
+  String get pleaseEnterTitle;
+
+  /// The title for pomodoro settings
+  ///
+  /// In en, this message translates to:
+  /// **'Pomodoro Settings'**
+  String get pomodoroSettings;
+
+  /// The title for pomodoro technique information
+  ///
+  /// In en, this message translates to:
+  /// **'Pomodoro Technique'**
+  String get pomodoroInfo;
+
+  /// The description content explaining the pomodoro technique
+  ///
+  /// In en, this message translates to:
+  /// **'The Pomodoro Technique uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks. This app simplifies it to just Focus and Short Break cycles.'**
+  String get pomodoroInfoContent;
+
+  /// The meesgae of the home
+  ///
+  /// In en, this message translates to:
+  /// **'Focus. Organize. Achieve.'**
+  String get homeMessage;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

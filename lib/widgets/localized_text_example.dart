@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../i18n/i18n.dart';
-import '../main.dart';
+import '../providers/theme_provider.dart';
 
 class LocalizedTextExample extends StatelessWidget {
   const LocalizedTextExample({super.key});
@@ -10,7 +10,7 @@ class LocalizedTextExample extends StatelessWidget {
   Widget build(BuildContext context) {
     // 获取本地化文本
     final i18n = APPi18n.of(context);
-    final appState = Provider.of<MyAppState>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -18,11 +18,11 @@ class LocalizedTextExample extends StatelessWidget {
         actions: [
           // 语言切换按钮
           DropdownButton<Locale>(
-            value: appState.currentLocale,
+            value: themeProvider.currentLocale,
             icon: const Icon(Icons.language),
             onChanged: (Locale? newValue) {
               if (newValue != null) {
-                appState.changeLanguage(newValue);
+                themeProvider.changeLanguage(newValue);
               }
             },
             items: const [
@@ -32,9 +32,9 @@ class LocalizedTextExample extends StatelessWidget {
           ),
           // 暗黑模式切换
           Switch(
-            value: appState.darkMode,
+            value: themeProvider.darkMode,
             onChanged: (value) {
-              appState.toggleDarkMode();
+              themeProvider.toggleDarkMode();
             },
           ),
         ],

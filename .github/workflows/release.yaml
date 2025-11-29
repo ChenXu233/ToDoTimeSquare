@@ -1,0 +1,370 @@
+name: Flutter Multi-Platform Release
+
+on:
+  push:
+    tags: 
+      - "v*" # 仅在标签推送时触发
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: "3.29.2" # 更新至最新稳定版
+  BUILD_DIR: "build"
+  ANDROID_KEYSTORE_PATH: "android/app/keystore.jks"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  # bump-version:
+  #   name: Auto-Generate Version Tag
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write # 允许删除/推送标签
+  #   outputs:
+  #     new_tag: ${{ steps.tag-generation.outputs.NEW_TAG }}
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0 # 需要完整历史记录检查标签
+
+  #     - name: 获取 Flutter 项目版本号
+  #       id: get-version
+  #       run: |
+  #         cd frontend  # 进入包含 pubspec.yaml 的目录
+  #         VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | tr -d '\n')
+  #         echo "PROJECT_VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+  #     - name: 生成并推送 Git 标签
+  #       id: tag-generation
+  #       run: |
+  #         # 组合标签名称 (例如 v1.2.3)
+  #         NEW_TAG="v${{ steps.get-version.outputs.PROJECT_VERSION }}"
+  #         echo "生成标签: $NEW_TAG"
+
+  #         # 清理旧标签（如果存在）
+  #         if git rev-parse "$NEW_TAG" >/dev/null 2>&1 || \
+  #            git ls-remote --tags origin "$NEW_TAG" | grep -q "$NEW_TAG"; then
+  #           echo "发现已存在标签 $NEW_TAG，执行清理..."
+  #           git tag -d "$NEW_TAG" || true
+  #           git push origin ":refs/tags/$NEW_TAG" || true
+  #         fi
+
+  #         # 创建新标签
+  #         git tag $NEW_TAG
+  #         git push origin $NEW_TAG
+  #         echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-android-with-impeller:
+    name: Build Android (With Impeller)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      JAVA_VERSION: "17"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y ninja-build libgtk-3-dev clang cmake libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+
+      - name: Configure Android Signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASS: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          # 解码并写入 keystore
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+          chmod 600 android/app/keystore.jks
+
+          # 生成 keystore.properties 放在 android/
+          cat > android/keystore.properties <<EOF
+          storePassword=$STORE_PASS
+          keyPassword=$KEY_PASS
+          keyAlias=$KEY_ALIAS
+          storeFile=app/keystore.jks
+          EOF
+
+      - name: Build APK with Impeller
+        run: |
+          cd .
+          flutter pub get
+          flutter build apk --release --flavor with_impeller
+
+      - name: Upload Impeller Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-with-impeller
+          path: build/app/outputs/flutter-apk/app-with_impeller-release.apk
+
+  build-android-without-impeller:
+    name: Build Android (Without Impeller)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      JAVA_VERSION: "17"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y ninja-build libgtk-3-dev clang cmake libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+
+      - name: Configure Android Signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASS: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          # 解码并写入 keystore
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+          chmod 600 android/app/keystore.jks
+
+          # 生成 keystore.properties 放在 android/
+          cat > android/keystore.properties <<EOF
+          storePassword=$STORE_PASS
+          keyPassword=$KEY_PASS
+          keyAlias=$KEY_ALIAS
+          storeFile=app/keystore.jks
+          EOF
+
+      - name: Build APK without Impeller
+        run: |
+          cd .
+          flutter pub get
+          flutter build apk --release --flavor without_impeller
+
+      - name: Upload Non-Impeller Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-without-impeller
+          path: build/app/outputs/flutter-apk/app-without_impeller-release.apk
+
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Build Web
+        run: |
+          cd .
+          flutter pub get
+          flutter build web --release
+
+      - name: Upload Web Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-artifacts
+          path: build/web/**
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y ninja-build libgtk-3-dev clang cmake libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio  # 跨平台编译依赖
+
+      - name: Build Linux
+        run: |
+          cd .
+          flutter pub get
+          flutter build linux --release
+          chmod +x build/linux/x64/release/bundle/*
+      - name: Package Linux bundle (zip & tar.gz & AppImage)
+        run: |
+          set -e
+          cd build/linux/x64/release
+
+          # zip
+          zip -r linux-x64-release.zip bundle
+
+          # tar.gz
+          tar -czf linux-x64-release.tar.gz bundle
+
+          # Create a minimal AppDir and AppImage
+          APPDIR=AppDir
+          rm -rf "$APPDIR"
+          mkdir -p "$APPDIR/usr/bin"
+          cp -r bundle/* "$APPDIR/usr/bin/"
+
+          # find an executable binary inside AppDir (first match)
+          EXE=$(find "$APPDIR/usr/bin" -maxdepth 1 -type f -executable | head -n 1 || true)
+          if [ -z "$EXE" ]; then
+            # try to find any ELF file
+            EXE=$(find "$APPDIR/usr/bin" -maxdepth 1 -type f -exec file --brief --mime-type {} \; | awk -F: '/application\/x-executable|application\/x-mach-binary|application\/x-pie-executable/{print NR}' | head -n1 || true)
+          fi
+
+          # Create AppRun wrapper
+          cat > "$APPDIR/AppRun" <<'EOF'
+#!/bin/sh
+HERE="$(dirname "$(readlink -f "$0")")"
+exec "$HERE/usr/bin/"* "$@"
+EOF
+          chmod +x "$APPDIR/AppRun"
+
+          # Minimal .desktop
+          cat > "$APPDIR/ToDoTimeSquare.desktop" <<EOF
+[Desktop Entry]
+Name=ToDoTimeSquare
+Exec=AppRun
+Type=Application
+Categories=Utility;
+EOF
+
+          # Download appimagetool and build AppImage
+          APPIMAGE_TOOL=appimagetool-x86_64.AppImage
+          wget -q -O "$APPIMAGE_TOOL" "https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage"
+          chmod +x "$APPIMAGE_TOOL"
+          ./"$APPIMAGE_TOOL" "$APPDIR" ToDoTimeSquare.AppImage || true
+        shell: bash
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-artifacts
+          path: |
+            build/linux/x64/release/linux-x64-release.zip
+            build/linux/x64/release/linux-x64-release.tar.gz
+            build/linux/x64/release/ToDoTimeSquare.AppImage
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: Build Windows
+        run: |
+          cd .
+          flutter pub get
+          flutter build windows --release
+
+      - name: Zip Windows bundle
+        run: |
+          pwsh -Command "Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath 'build/windows/x64/runner/Release/windows-release.zip' -Force"
+        shell: pwsh
+
+      - name: Upload Windows ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-artifacts
+          path: frontend/build/windows/x64/runner/Release/windows-release.zip
+
+  release:
+    name: Create GitHub Release
+    needs:
+      [
+        build-android-with-impeller,
+        build-android-without-impeller,
+        build-web,
+        build-linux,
+        build-windows,
+      ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Android Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-with-impeller
+          path: release-artifacts/android/with_impeller
+
+      - name: Download Android Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-without-impeller
+          path: release-artifacts/android/without_impeller
+
+      - name: Download Web Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: web-artifacts
+          path: release-artifacts/web
+
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-artifacts
+          path: release-artifacts/linux
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-artifacts
+          path: release-artifacts/windows
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags')
+        with:
+          files: |
+            release-artifacts/**/*.apk
+            release-artifacts/**/*.zip
+            release-artifacts/**/*.AppImage
+            release-artifacts/**/*.exe

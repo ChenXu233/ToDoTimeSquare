@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../screens/home.dart' as home_screen; // 假设您有这个文件
+import '../../screens/home.dart' as home_screen;
+import '../../screens/pomodoro/pomodoro_screen.dart';
+import '../../screens/settings/settings_screen.dart';
+import '../../screens/todo/todo_list_screen.dart';
 
 // 创建路由配置
 final GoRouter appRouter = GoRouter(
@@ -8,9 +11,28 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return home_screen.HomeScreen(); // 或者您的主页组件
+        return const home_screen.HomeScreen();
       },
-      // 可以添加更多路由
+      routes: [
+        GoRoute(
+          path: 'pomodoro',
+          builder: (BuildContext context, GoRouterState state) {
+            return const PomodoroScreen();
+          },
+        ),
+        GoRoute(
+          path: 'settings',
+          builder: (BuildContext context, GoRouterState state) {
+            return const SettingsScreen();
+          },
+        ),
+        GoRoute(
+          path: 'todo',
+          builder: (BuildContext context, GoRouterState state) {
+            return const TodoListScreen();
+          },
+        ),
+      ],
     ),
   ],
 );

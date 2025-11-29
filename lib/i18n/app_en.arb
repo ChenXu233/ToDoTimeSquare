@@ -1,22 +1,175 @@
 {
+  "@@locale": "en",
   "appTitle": "Todo Time Square",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
   "welcomeMessage": "Welcome to Todo Time Square",
+  "@welcomeMessage": {
+    "description": "The welcome message displayed on the application launch"
+  },
   "addTask": "Add Task",
+  "@addTask": {
+    "description": "The label for the add task button"
+  },
   "taskName": "Task Name",
+  "@taskName": {
+    "description": "The label for the task name input field"
+  },
   "taskDescription": "Task Description",
+  "@taskDescription": {
+    "description": "The label for the task description input field"
+  },
   "taskDueDate": "Due Date",
+  "@taskDueDate": {
+    "description": "The label for the task due date input field"
+  },
   "save": "Save",
+  "@save": {
+    "description": "The label for the save button"
+  },
   "cancel": "Cancel",
+  "@cancel": {
+    "description": "The label for the cancel button"
+  },
   "delete": "Delete",
+  "@delete": {
+    "description": "The label for the delete button"
+  },
   "edit": "Edit",
+  "@edit": {
+    "description": "The label for the edit button"
+  },
   "completed": "Completed",
+  "@completed": {
+    "description": "The label for the completed tasks filter"
+  },
   "allTasks": "All Tasks",
+  "@allTasks": {
+    "description": "The label for the all tasks filter"
+  },
   "todayTasks": "Today's Tasks",
+  "@todayTasks": {
+    "description": "The label for the today tasks filter"
+  },
   "upcomingTasks": "Upcoming Tasks",
+  "@upcomingTasks": {
+    "description": "The label for the upcoming tasks filter"
+  },
   "settings": "Settings",
+  "@settings": {
+    "description": "The label for the settings menu item"
+  },
   "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "The label for the dark mode toggle"
+  },
   "language": "Language",
+  "@language": {
+    "description": "The label for the language selection"
+  },
   "notification": "Notification",
+  "@notification": {
+    "description": "The label for the notification settings"
+  },
   "about": "About",
-  "help": "Help"
+  "@about": {
+    "description": "The label for the about section"
+  },
+  "pomodoroTitle": "Pomodoro Timer",
+  "@pomodoroTitle": {
+    "description": "The title for the pomodoro timer feature"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "The label for the start button"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "The label for the pause button"
+  },
+  "resume": "Resume",
+  "@resume": {
+    "description": "The label for the resume button"
+  },
+  "reset": "Reset",
+  "@reset": {
+    "description": "The label for the reset button"
+  },
+  "focusTime": "Focus Time",
+  "@focusTime": {
+    "description": "The label for the focus time duration"
+  },
+  "shortBreak": "Short Break",
+  "@shortBreak": {
+    "description": "The label for the short break duration"
+  },
+  "longBreak": "Long Break",
+  "@longBreak": {
+    "description": "The label for the long break duration"
+  },
+  "pomodoroStatusFocus": "Focus",
+  "@pomodoroStatusFocus": {
+    "description": "The status text for focus mode"
+  },
+  "pomodoroStatusShortBreak": "Short Break",
+  "@pomodoroStatusShortBreak": {
+    "description": "The status text for short break mode"
+  },
+  "pomodoroStatusLongBreak": "Long Break",
+  "@pomodoroStatusLongBreak": {
+    "description": "The status text for long break mode"
+  },
+  "help": "Help",
+  "@help": {
+    "description": "The label for the help section"
+  },
+  "importance": "Importance",
+  "@importance": {
+    "description": "The label for the importance level"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "The label for the duration field"
+  },
+  "startTime": "Start Time",
+  "@startTime": {
+    "description": "The label for the start time field"
+  },
+  "notSet": "Not set",
+  "@notSet": {
+    "description": "The text displayed when a value is not set"
+  },
+  "low": "Low",
+  "@low": {
+    "description": "The text for low importance level"
+  },
+  "medium": "Medium",
+  "@medium": {
+    "description": "The text for medium importance level"
+  },
+  "high": "High",
+  "@high": {
+    "description": "The text for high importance level"
+  },
+  "pleaseEnterTitle": "Please enter a title",
+  "@pleaseEnterTitle": {
+    "description": "The validation message for empty title"
+  },
+  "pomodoroSettings": "Pomodoro Settings",
+  "@pomodoroSettings": {
+    "description": "The title for pomodoro settings"
+  },
+  "pomodoroInfo": "Pomodoro Technique",
+  "@pomodoroInfo": {
+    "description": "The title for pomodoro technique information"
+  },
+  "pomodoroInfoContent": "The Pomodoro Technique uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks. This app simplifies it to just Focus and Short Break cycles.",
+  "@pomodoroInfoContent": {
+    "description": "The description content explaining the pomodoro technique"
+  },
+  "homeMessage":"Focus. Organize. Achieve.",
+  "@homeMessage": {
+    "description": "The meesgae of the home"
+  }
 }

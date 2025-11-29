@@ -66,5 +66,75 @@ class APPi18nEn extends APPi18n {
   String get about => 'About';
 
   @override
+  String get pomodoroTitle => 'Pomodoro Timer';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get resume => 'Resume';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get focusTime => 'Focus Time';
+
+  @override
+  String get shortBreak => 'Short Break';
+
+  @override
+  String get longBreak => 'Long Break';
+
+  @override
+  String get pomodoroStatusFocus => 'Focus';
+
+  @override
+  String get pomodoroStatusShortBreak => 'Short Break';
+
+  @override
+  String get pomodoroStatusLongBreak => 'Long Break';
+
+  @override
   String get help => 'Help';
+
+  @override
+  String get importance => 'Importance';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get startTime => 'Start Time';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String get low => 'Low';
+
+  @override
+  String get medium => 'Medium';
+
+  @override
+  String get high => 'High';
+
+  @override
+  String get pleaseEnterTitle => 'Please enter a title';
+
+  @override
+  String get pomodoroSettings => 'Pomodoro Settings';
+
+  @override
+  String get pomodoroInfo => 'Pomodoro Technique';
+
+  @override
+  String get pomodoroInfoContent =>
+      'The Pomodoro Technique uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks. This app simplifies it to just Focus and Short Break cycles.';
+
+  @override
+  String get homeMessage => 'Focus. Organize. Achieve.';
 }
