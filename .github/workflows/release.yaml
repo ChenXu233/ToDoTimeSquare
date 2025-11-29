@@ -2,8 +2,8 @@ name: Flutter Multi-Platform Release
 
 on:
   push:
-    tags: 
-      - "v*" # 仅在标签推送时触发
+    branches:
+      - main # 在 main 分支推送时触发
   workflow_dispatch:
 
 env:
@@ -13,47 +13,54 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  # bump-version:
-  #   name: Auto-Generate Version Tag
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write # 允许删除/推送标签
-  #   outputs:
-  #     new_tag: ${{ steps.tag-generation.outputs.NEW_TAG }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0 # 需要完整历史记录检查标签
+  bump-version:
+    name: Auto-Generate Version Tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 允许删除/推送标签
+    outputs:
+      new_tag: ${{ steps.tag-generation.outputs.NEW_TAG }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 需要完整历史记录检查标签
+          persist-credentials: true
 
-  #     - name: 获取 Flutter 项目版本号
-  #       id: get-version
-  #       run: |
-  #         cd frontend  # 进入包含 pubspec.yaml 的目录
-  #         VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | tr -d '\n')
-  #         echo "PROJECT_VERSION=$VERSION" >> $GITHUB_OUTPUT
+      - name: Setup Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-  #     - name: 生成并推送 Git 标签
-  #       id: tag-generation
-  #       run: |
-  #         # 组合标签名称 (例如 v1.2.3)
-  #         NEW_TAG="v${{ steps.get-version.outputs.PROJECT_VERSION }}"
-  #         echo "生成标签: $NEW_TAG"
+      - name: Get Flutter project version
+        id: get-version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | tr -d '\n')
+          echo "PROJECT_VERSION=$VERSION" >> $GITHUB_OUTPUT
 
-  #         # 清理旧标签（如果存在）
-  #         if git rev-parse "$NEW_TAG" >/dev/null 2>&1 || \
-  #            git ls-remote --tags origin "$NEW_TAG" | grep -q "$NEW_TAG"; then
-  #           echo "发现已存在标签 $NEW_TAG，执行清理..."
-  #           git tag -d "$NEW_TAG" || true
-  #           git push origin ":refs/tags/$NEW_TAG" || true
-  #         fi
+      - name: Generate and push Git tag
+        id: tag-generation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          NEW_TAG="v${{ steps.get-version.outputs.PROJECT_VERSION }}"
+          echo "Generating tag: $NEW_TAG"
 
-  #         # 创建新标签
-  #         git tag $NEW_TAG
-  #         git push origin $NEW_TAG
-  #         echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Delete local tag if exists
+          if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+            git tag -d "$NEW_TAG" || true
+          fi
+
+          # Delete remote tag if exists
+          if git ls-remote --tags origin "$NEW_TAG" | grep -q "$NEW_TAG"; then
+            git push origin --delete "refs/tags/$NEW_TAG" || true
+          fi
+
+          # Create and push new tag
+          git tag "$NEW_TAG"
+          git push origin "$NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
 
   build-android-with-impeller:
     name: Build Android (With Impeller)
@@ -250,22 +257,12 @@ jobs:
             EXE=$(find "$APPDIR/usr/bin" -maxdepth 1 -type f -exec file --brief --mime-type {} \; | awk -F: '/application\/x-executable|application\/x-mach-binary|application\/x-pie-executable/{print NR}' | head -n1 || true)
           fi
 
-          # Create AppRun wrapper
-          cat > "$APPDIR/AppRun" <<'EOF'
-#!/bin/sh
-HERE="$(dirname "$(readlink -f "$0")")"
-exec "$HERE/usr/bin/"* "$@"
-EOF
+          # Create AppRun wrapper (use printf to avoid YAML parsing issues)
+          printf '%s\n' '#!/bin/sh' 'HERE="$(dirname "$(readlink -f "$0")")"' 'exec "$HERE/usr/bin/"* "$@"' > "$APPDIR/AppRun"
           chmod +x "$APPDIR/AppRun"
 
-          # Minimal .desktop
-          cat > "$APPDIR/ToDoTimeSquare.desktop" <<EOF
-[Desktop Entry]
-Name=ToDoTimeSquare
-Exec=AppRun
-Type=Application
-Categories=Utility;
-EOF
+          # Minimal .desktop (use printf to avoid YAML/heredoc issues)
+          printf '%s\n' '[Desktop Entry]' 'Name=ToDoTimeSquare' 'Exec=AppRun' 'Type=Application' 'Categories=Utility;' > "$APPDIR/ToDoTimeSquare.desktop"
 
           # Download appimagetool and build AppImage
           APPIMAGE_TOOL=appimagetool-x86_64.AppImage
@@ -313,7 +310,7 @@ EOF
         uses: actions/upload-artifact@v4
         with:
           name: windows-artifacts
-          path: frontend/build/windows/x64/runner/Release/windows-release.zip
+          path: build/windows/x64/runner/Release/windows-release.zip
 
   release:
     name: Create GitHub Release
