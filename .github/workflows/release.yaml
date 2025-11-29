@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: "latest" # use latest stable to match required Dart SDK
+  FLUTTER_VERSION: "3.38.3" # use latest stable to match required Dart SDK
   BUILD_DIR: "build"
   ANDROID_KEYSTORE_PATH: "android/app/keystore.jks"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
