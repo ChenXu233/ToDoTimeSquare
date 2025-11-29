@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: "3.29.2" # 更新至最新稳定版
+  FLUTTER_VERSION: "stable" # use latest stable to match required Dart SDK
   BUILD_DIR: "build"
   ANDROID_KEYSTORE_PATH: "android/app/keystore.jks"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -84,6 +84,10 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
 
       - name: Install Dependencies
         run: |
@@ -143,6 +147,10 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
 
       - name: Install Dependencies
         run: |
@@ -194,6 +202,10 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
 
       - name: Build Web
         run: |
@@ -221,6 +233,10 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
 
       - name: Install Dependencies
         run: |
@@ -294,6 +310,10 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
 
       - name: Build Windows
         run: |

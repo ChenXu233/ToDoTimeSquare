@@ -34,7 +34,28 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true  // 开启代码混淆
+            isShrinkResources = true // 开启资源压缩
+            signingConfig = signingConfigs.getByName("release") // 关联签名配置
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+        }
+    }
+
+    // Flavor dimension for Impeller toggle
+    flavorDimensions += "impeller"
+
+    productFlavors {
+        create("with_impeller") {
+            dimension = "impeller_mode"
+            manifestPlaceholders["enableImpeller"] = "true"
+        }
+        create("without_impeller") {
+            dimension = "impeller_mode"
+            manifestPlaceholders["enableImpeller"] = "false"
         }
     }
 }
