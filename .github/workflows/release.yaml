@@ -178,7 +178,7 @@ jobs:
             echo "storePassword=$STORE_PASS"
             echo "keyPassword=$KEY_PASS"
             echo "keyAlias=$KEY_ALIAS"
-            echo "storeFile=app/keystore.jks"
+            echo "storeFile=keystore.jks"
           } > android/keystore.properties
           chmod 600 android/keystore.properties
           echo "keystore.properties generated."
@@ -249,7 +249,7 @@ jobs:
             echo "storePassword=$STORE_PASS"
             echo "keyPassword=$KEY_PASS"
             echo "keyAlias=$KEY_ALIAS"
-            echo "storeFile=app/keystore.jks"
+            echo "storeFile=keystore.jks"
           } > android/keystore.properties
           chmod 600 android/keystore.properties
           echo "keystore.properties generated."
