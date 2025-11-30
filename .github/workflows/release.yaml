@@ -452,6 +452,7 @@ jobs:
         with:
           tag_name: ${{ needs.bump-version.outputs.new_tag }}
           name: 🔖${{ needs.bump-version.outputs.new_tag }}
+          body: ${{ github.event.head_commit.message }}
           files: |
             release-artifacts/**/*.apk
             release-artifacts/**/*.zip
