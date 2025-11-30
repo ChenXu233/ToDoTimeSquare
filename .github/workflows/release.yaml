@@ -439,54 +439,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Download Android Artifacts
+      - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: android-with-impeller
-          path: release-artifacts/android/with_impeller
-        continue-on-error: true
+          path: release-artifacts
 
-      - name: Download Android Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-without-impeller
-          path: release-artifacts/android/without_impeller
-        continue-on-error: true
-
-      - name: Download Web Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: web-artifacts
-          path: release-artifacts/web
-        continue-on-error: true
-
-      - name: Download Linux Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-artifacts
-          path: release-artifacts/linux
-        continue-on-error: true
-
-      - name: Download Windows Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: windows-artifacts
-          path: release-artifacts/windows
-        continue-on-error: true
-
-      - name: Download iOS Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: ios-artifacts
-          path: release-artifacts/ios
-        continue-on-error: true
-
-      - name: Download macOS Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: macos-artifacts
-          path: release-artifacts/macos
-        continue-on-error: true
+      - name: List files for debugging
+        run: ls -R release-artifacts
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
@@ -496,6 +455,5 @@ jobs:
           files: |
             release-artifacts/**/*.apk
             release-artifacts/**/*.zip
+            release-artifacts/**/*.tar.gz
             release-artifacts/**/*.AppImage
-            release-artifacts/**/*.exe
-            release-artifacts/**/*.app
