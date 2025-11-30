@@ -46,6 +46,7 @@ dependencies:
   audioplayers: ^6.5.1
   shared_preferences: ^2.5.3
   flutter_displaymode: ^0.7.0
+  bitsdojo_window: ^0.1.6
 
 dev_dependencies:
   flutter_test:

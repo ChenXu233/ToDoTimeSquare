@@ -3,14 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'routes/app_router.dart'; // 导入路由配置
 import 'i18n/i18n.dart'; // 导入生成的国际化文件
 import 'providers/theme_provider.dart';
 import 'providers/pomodoro_provider.dart';
 import 'providers/todo_provider.dart';
+import 'widgets/window_title_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    doWhenWindowReady(() {
+      final win = appWindow;
+      const initialSize = Size(1280, 720);
+      win.minSize = const Size(600, 450);
+      win.size = initialSize;
+      win.alignment = Alignment.center;
+      win.title = "Todo Time Square";
+      win.show();
+    });
+  }
+
   if (Platform.isAndroid) {
     try {
       await FlutterDisplayMode.setHighRefreshRate();
@@ -67,6 +82,25 @@ class MyApp extends StatelessWidget {
                 ? ThemeMode.dark
                 : ThemeMode.light,
             routerConfig: appRouter, // 使用路由配置
+            builder: (context, child) {
+              if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+                return Scaffold(
+                  body: WindowBorder(
+                    color: themeProvider.darkMode
+                        ? Colors.black
+                        : Colors.grey[300]!,
+                    width: 1,
+                    child: Column(
+                      children: [
+                        WindowTitleBar(isDark: themeProvider.darkMode),
+                        Expanded(child: child!),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return child!;
+            },
           );
         },
       ),
