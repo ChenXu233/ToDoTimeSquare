@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import '../providers/todo_provider.dart';
 import '../models/todo.dart';
 import 'add_todo_modal.dart';
@@ -88,18 +90,25 @@ class TodoListWidget extends StatelessWidget {
                   ),
                 ),
               )
-            : ListView.separated(
-                padding: const EdgeInsets.only(bottom: 80), // Space for FAB
-                itemCount: todoProvider.todos.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final todo = todoProvider.todos[index];
-                  return TodoItem(
-                    todo: todo,
-                    onToggle: () => todoProvider.toggleTodo(todo.id),
-                    onDelete: () => todoProvider.removeTodo(todo.id),
-                    onShowMenu: (position) =>
-                        _showEditDeleteMenu(context, todo, position),
+            : ImplicitlyAnimatedList<Todo>(
+                padding: const EdgeInsets.only(bottom: 80),
+                items: todoProvider.todos,
+                areItemsTheSame: (a, b) => a.id == b.id,
+                itemBuilder: (context, animation, todo, index) {
+                  return SizeFadeTransition(
+                    sizeFraction: 0.7,
+                    curve: Curves.easeInOut,
+                    animation: animation,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: TodoItem(
+                        todo: todo,
+                        onToggle: () => todoProvider.toggleTodo(todo.id),
+                        onDelete: () => todoProvider.removeTodo(todo.id),
+                        onShowMenu: (position) =>
+                            _showEditDeleteMenu(context, todo, position),
+                      ),
+                    ),
                   );
                 },
               ),

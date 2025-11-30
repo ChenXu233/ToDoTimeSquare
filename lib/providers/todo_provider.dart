@@ -60,12 +60,15 @@ class TodoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleTodo(String id) {
+  void toggleTodo(String id) async {
     final index = _todos.indexWhere((todo) => todo.id == id);
     if (index != -1) {
       _todos[index].isCompleted = !_todos[index].isCompleted;
-      _sortTodos();
       _saveTodos();
+      notifyListeners();
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      _sortTodos();
       notifyListeners();
     }
   }
