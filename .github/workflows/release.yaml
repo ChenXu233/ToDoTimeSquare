@@ -63,35 +63,35 @@ jobs:
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
 
   build-ios:
-  name: Build iOS
-  runs-on: macos-latest
-  timeout-minutes: 30
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    name: Build iOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        channel: stable
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-        cache: true
-    - name: Verify Flutter & Dart
-      run: |
-        flutter --version
-        dart --version
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
 
-    - name: Build iOS
-      run: |
-        cd .
-        flutter pub get
-        flutter build ios --release --no-codesign
+      - name: Build iOS
+        run: |
+          cd .
+          flutter pub get
+          flutter build ios --release --no-codesign
 
-    - name: Upload iOS Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ios-artifacts
-        path: build/ios/iphoneos/**
+      - name: Upload iOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-artifacts
+          path: build/ios/iphoneos/**
 
   build-macos:
     name: Build macOS
