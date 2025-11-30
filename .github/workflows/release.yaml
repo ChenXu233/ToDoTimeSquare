@@ -364,7 +364,7 @@ jobs:
 
           # Download appimagetool and build AppImage
           APPIMAGE_TOOL=appimagetool-x86_64.AppImage
-          wget -q -O "$APPIMAGE_TOOL" "https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage"
+          wget -q -O "$APPIMAGE_TOOL" "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod +x "$APPIMAGE_TOOL"
           ./"$APPIMAGE_TOOL" "$APPDIR" ToDoTimeSquare.AppImage || true
 
