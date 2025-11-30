@@ -13,67 +13,6 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-    build-ios:
-      name: Build iOS
-      runs-on: macos-latest
-      timeout-minutes: 30
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Setup Flutter
-          uses: subosito/flutter-action@v2
-          with:
-            channel: stable
-            flutter-version: ${{ env.FLUTTER_VERSION }}
-            cache: true
-        - name: Verify Flutter & Dart
-          run: |
-            flutter --version
-            dart --version
-
-        - name: Build iOS
-          run: |
-            cd .
-            flutter pub get
-            flutter build ios --release --no-codesign
-
-        - name: Upload iOS Artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: ios-artifacts
-            path: build/ios/iphoneos/**
-
-    build-macos:
-      name: Build macOS
-      runs-on: macos-latest
-      timeout-minutes: 30
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        - name: Setup Flutter
-          uses: subosito/flutter-action@v2
-          with:
-            channel: stable
-            flutter-version: ${{ env.FLUTTER_VERSION }}
-            cache: true
-        - name: Verify Flutter & Dart
-          run: |
-            flutter --version
-            dart --version
-
-        - name: Build macOS
-          run: |
-            cd .
-            flutter pub get
-            flutter build macos --release
-
-        - name: Upload macOS Artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: macos-artifacts
-            path: build/macos/Build/Products/Release/**
   bump-version:
     name: Auto-Generate Version Tag
     runs-on: ubuntu-latest
@@ -122,6 +61,68 @@ jobs:
           git tag "$NEW_TAG"
           git push origin "$NEW_TAG"
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+
+  build-ios:
+  name: Build iOS
+  runs-on: macos-latest
+  timeout-minutes: 30
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        cache: true
+    - name: Verify Flutter & Dart
+      run: |
+        flutter --version
+        dart --version
+
+    - name: Build iOS
+      run: |
+        cd .
+        flutter pub get
+        flutter build ios --release --no-codesign
+
+    - name: Upload iOS Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-artifacts
+        path: build/ios/iphoneos/**
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Verify Flutter & Dart
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Build macOS
+        run: |
+          cd .
+          flutter pub get
+          flutter build macos --release
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-artifacts
+          path: build/macos/Build/Products/Release/**
 
   build-android-with-impeller:
     name: Build Android (With Impeller)
@@ -446,22 +447,24 @@ jobs:
         continue-on-error: true
 
       - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-artifacts
+          path: release-artifacts/linux
+        continue-on-error: true
 
-        - name: Download iOS Artifacts
-          uses: actions/download-artifact@v4
-          with:
-            name: ios-artifacts
-            path: release-artifacts/ios
-          continue-on-error: true
+      - name: Download iOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-artifacts
+          path: release-artifacts/ios
+        continue-on-error: true
 
-
-
-        - name: Download macOS Artifacts
-          uses: actions/download-artifact@v4
-          with:
-            name: macos-artifacts
-            path: release-artifacts/macos
-          continue-on-error: true
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-artifacts
+          path: release-artifacts/macos
         continue-on-error: true
 
       - name: Publish Release
