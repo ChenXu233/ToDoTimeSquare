@@ -331,17 +331,14 @@ jobs:
         run: |
           cd build/linux/x64/release
 
-          # zip (allow non-fatal warnings — zip can return non-zero for non-critical issues)
           set +e
           echo "Creating zip archive..."
           zip -r linux-x64-release.zip bundle
           set -e
 
-          # tar.gz
           echo "Creating tar.gz archive..."
           tar -czf linux-x64-release.tar.gz bundle
 
-          # show archive sizes for diagnostics
           echo "Archive sizes:" 
           ls -lh linux-x64-release.* || true
 
@@ -370,6 +367,9 @@ jobs:
           wget -q -O "$APPIMAGE_TOOL" "https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage"
           chmod +x "$APPIMAGE_TOOL"
           ./"$APPIMAGE_TOOL" "$APPDIR" ToDoTimeSquare.AppImage || true
+
+          # 确保总是成功退出
+          exit 0
         shell: bash
 
       - name: Upload Linux Artifacts
@@ -419,8 +419,15 @@ jobs:
 
   release:
     name: Create GitHub Release
-    # 不再强制依赖所有 build job 成功
-    if: always()
+    needs:
+      - build-android-with-impeller
+      - build-android-without-impeller
+      - build-web
+      - build-linux
+      - build-windows
+      - build-ios
+      - build-macos
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
