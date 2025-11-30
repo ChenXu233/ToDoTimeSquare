@@ -18,4 +18,32 @@ class Todo {
     this.plannedStartTime,
     this.isCompleted = false,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'estimatedDuration': estimatedDuration?.inMicroseconds,
+      'importance': importance.index,
+      'plannedStartTime': plannedStartTime?.toIso8601String(),
+      'isCompleted': isCompleted,
+    };
+  }
+
+  factory Todo.fromJson(Map<String, dynamic> json) {
+    return Todo(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      estimatedDuration: json['estimatedDuration'] != null
+          ? Duration(microseconds: json['estimatedDuration'])
+          : null,
+      importance: TodoImportance.values[json['importance'] ?? 1],
+      plannedStartTime: json['plannedStartTime'] != null
+          ? DateTime.parse(json['plannedStartTime'])
+          : null,
+      isCompleted: json['isCompleted'] ?? false,
+    );
+  }
 }
