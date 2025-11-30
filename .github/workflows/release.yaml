@@ -101,17 +101,25 @@ jobs:
           KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          # 解码并写入 keystore
-          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
-          chmod 600 android/app/keystore.jks
+          set -e
+          echo "Decoding keystore..."
+          if [ ! -f android/app/keystore.jks ] || ! cmp -s <(echo "$KEYSTORE_BASE64") <(base64 -w0 android/app/keystore.jks 2>/dev/null); then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+            chmod 600 android/app/keystore.jks
+            echo "Keystore decoded and permissions set."
+          else
+            echo "Keystore already exists and matches secret."
+          fi
 
-          # 生成 keystore.properties 放在 android/
-          cat > android/keystore.properties <<EOF
-          storePassword=$STORE_PASS
-          keyPassword=$KEY_PASS
-          keyAlias=$KEY_ALIAS
-          storeFile=app/keystore.jks
-          EOF
+          echo "Generating keystore.properties..."
+          {
+            echo "storePassword=$STORE_PASS"
+            echo "keyPassword=$KEY_PASS"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storeFile=app/keystore.jks"
+          } > android/keystore.properties
+          chmod 600 android/keystore.properties
+          echo "keystore.properties generated."
 
       - name: Build APK with Impeller
         run: |
@@ -164,17 +172,25 @@ jobs:
           KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          # 解码并写入 keystore
-          echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
-          chmod 600 android/app/keystore.jks
+          set -e
+          echo "Decoding keystore..."
+          if [ ! -f android/app/keystore.jks ] || ! cmp -s <(echo "$KEYSTORE_BASE64") <(base64 -w0 android/app/keystore.jks 2>/dev/null); then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/keystore.jks
+            chmod 600 android/app/keystore.jks
+            echo "Keystore decoded and permissions set."
+          else
+            echo "Keystore already exists and matches secret."
+          fi
 
-          # 生成 keystore.properties 放在 android/
-          cat > android/keystore.properties <<EOF
-          storePassword=$STORE_PASS
-          keyPassword=$KEY_PASS
-          keyAlias=$KEY_ALIAS
-          storeFile=app/keystore.jks
-          EOF
+          echo "Generating keystore.properties..."
+          {
+            echo "storePassword=$STORE_PASS"
+            echo "keyPassword=$KEY_PASS"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storeFile=app/keystore.jks"
+          } > android/keystore.properties
+          chmod 600 android/keystore.properties
+          echo "keystore.properties generated."
 
       - name: Build APK without Impeller
         run: |
@@ -254,11 +270,19 @@ jobs:
           set -e
           cd build/linux/x64/release
 
-          # zip
-          zip -r linux-x64-release.zip bundle
+          # zip (allow non-fatal warnings — zip can return non-zero for non-critical issues)
+          echo "Creating zip archive..."
+          zip -r linux-x64-release.zip bundle || {
+            echo "zip returned non-zero exit code; continuing but check logs for warnings." >&2
+          }
 
           # tar.gz
+          echo "Creating tar.gz archive..."
           tar -czf linux-x64-release.tar.gz bundle
+
+          # show archive sizes for diagnostics
+          echo "Archive sizes:" 
+          ls -lh linux-x64-release.* || true
 
           # Create a minimal AppDir and AppImage
           APPDIR=AppDir

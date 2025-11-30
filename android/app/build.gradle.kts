@@ -5,6 +5,9 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.util.Properties
+import java.io.File
+
 android {
     namespace = "com.example.todo_time_square"
     compileSdk = flutter.compileSdkVersion
@@ -30,6 +33,22 @@ android {
         versionName = flutter.versionName
     }
 
+    // Load signing config from android/keystore.properties if present
+    signingConfigs {
+        create("release") {
+            // 从 keystore.properties 加载敏感信息
+            val keystoreProperties = rootProject.file("keystore.properties").let {
+                Properties().apply { load(it.inputStream()) }
+            }
+
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            enableV3Signing = true  // 启用 V3 签名（可选）
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -50,11 +69,11 @@ android {
 
     productFlavors {
         create("with_impeller") {
-            dimension = "impeller_mode"
+            dimension = "impeller"
             manifestPlaceholders["enableImpeller"] = "true"
         }
         create("without_impeller") {
-            dimension = "impeller_mode"
+            dimension = "impeller"
             manifestPlaceholders["enableImpeller"] = "false"
         }
     }

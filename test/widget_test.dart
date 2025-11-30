@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:todo_time_square/main.dart';
+import 'package:ToDoTimeSquare/main.dart';
 
 void main() {
   testWidgets('99：', (WidgetTester tester) async {
