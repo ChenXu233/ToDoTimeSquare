@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: "3.38.3" # use latest stable to match required Dart SDK
+  FLUTTER_VERSION: "3.38.3"
   BUILD_DIR: "build"
   ANDROID_KEYSTORE_PATH: "android/app/keystore.jks"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,12 +86,14 @@ jobs:
           cd .
           flutter pub get
           flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          zip -r ios-release.zip Runner.app
 
       - name: Upload iOS Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ios-artifacts
-          path: build/ios/iphoneos/**
+          path: build/ios/iphoneos/ios-release.zip
 
   build-macos:
     name: Build macOS
@@ -117,12 +119,14 @@ jobs:
           cd .
           flutter pub get
           flutter build macos --release
+          cd build/macos/Build/Products/Release
+          zip -r macos-release.zip *.app
 
       - name: Upload macOS Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-artifacts
-          path: build/macos/Build/Products/Release/**
+          path: build/macos/Build/Products/Release/macos-release.zip
 
   build-android-with-impeller:
     name: Build Android (With Impeller)
@@ -290,12 +294,14 @@ jobs:
           cd .
           flutter pub get
           flutter build web --release
+          cd build/web
+          zip -r web-release.zip .
 
       - name: Upload Web Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-artifacts
-          path: build/web/**
+          path: build/web/web-release.zip
 
   build-linux:
     name: Build Linux
@@ -461,6 +467,13 @@ jobs:
           path: release-artifacts/linux
         continue-on-error: true
 
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-artifacts
+          path: release-artifacts/windows
+        continue-on-error: true
+
       - name: Download iOS Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -485,3 +498,4 @@ jobs:
             release-artifacts/**/*.zip
             release-artifacts/**/*.AppImage
             release-artifacts/**/*.exe
+            release-artifacts/**/*.app

@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'routes/app_router.dart'; // 导入路由配置
@@ -7,7 +9,15 @@ import 'providers/theme_provider.dart';
 import 'providers/pomodoro_provider.dart';
 import 'providers/todo_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid) {
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+    } catch (e) {
+      debugPrint('Error setting high refresh rate: $e');
+    }
+  }
   runApp(const MyApp());
 }
 
@@ -26,7 +36,8 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp.router(
             title: 'Todo Time Square',
-            onGenerateTitle: (context) => APPi18n.of(context)?.appTitle ?? 'Todo Time Square',
+            onGenerateTitle: (context) =>
+                APPi18n.of(context)?.appTitle ?? 'Todo Time Square',
             locale: themeProvider.currentLocale,
             supportedLocales: const [
               Locale('zh', ''), // Chinese
@@ -52,7 +63,9 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.dark,
               ),
             ),
-            themeMode: themeProvider.darkMode ? ThemeMode.dark : ThemeMode.light,
+            themeMode: themeProvider.darkMode
+                ? ThemeMode.dark
+                : ThemeMode.light,
             routerConfig: appRouter, // 使用路由配置
           );
         },
@@ -60,4 +73,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

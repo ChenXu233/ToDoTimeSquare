@@ -45,6 +45,7 @@ dependencies:
   intl_utils: ^2.8.12
   audioplayers: ^6.5.1
   shared_preferences: ^2.5.3
+  flutter_displaymode: ^0.7.0
 
 dev_dependencies:
   flutter_test:

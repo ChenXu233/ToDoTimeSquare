@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum PomodoroStatus {
-  focus,
-  shortBreak,
-}
+enum PomodoroStatus { focus, shortBreak }
 
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
@@ -23,7 +20,7 @@ class PomodoroProvider extends ChangeNotifier {
   PomodoroStatus get status => _status;
   bool get isRunning => _isRunning;
   bool get isRinging => _isRinging;
-  
+
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
 
@@ -94,8 +91,38 @@ class PomodoroProvider extends ChangeNotifier {
   }
 
   void resetTimer() {
+    _timer?.cancel();
+    _timer = null;
+    _isRunning = false;
+
+    if (_isRinging) {
+      _isRinging = false;
+      _audioPlayer.stop();
+    }
+
+    // Always reset to focus as per requirement
+    _status = PomodoroStatus.focus;
+    _remainingSeconds = _focusDuration;
+
+    notifyListeners();
+  }
+
+  void skipPhase() {
+    pauseTimer();
+    if (_isRinging) {
+      stopAlarm();
+    } else {
+      _switchNextStatus();
+      startTimer();
+    }
+  }
+
+  void setStatus(PomodoroStatus status) {
     pauseTimer();
     stopAlarm();
+    _status = status;
+    // When manually setting status, we just set the time for that status
+    // We don't use resetTimer() because that forces focus
     switch (_status) {
       case PomodoroStatus.focus:
         _remainingSeconds = _focusDuration;
@@ -107,13 +134,6 @@ class PomodoroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setStatus(PomodoroStatus status) {
-    pauseTimer();
-    stopAlarm();
-    _status = status;
-    resetTimer();
-  }
-
   Future<void> _startAlarm() async {
     _isRinging = true;
     notifyListeners();
@@ -122,8 +142,12 @@ class PomodoroProvider extends ChangeNotifier {
     // For this demo, we'll try to play a network sound or just simulate it if offline.
     // Ideally, user should provide 'assets/sounds/alarm.mp3'.
     try {
-       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-       await _audioPlayer.play(UrlSource('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg'));
+      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
+      await _audioPlayer.play(
+        UrlSource(
+          'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
+        ),
+      );
     } catch (e) {
       debugPrint("Error playing audio: $e");
     }
@@ -134,6 +158,7 @@ class PomodoroProvider extends ChangeNotifier {
       _isRinging = false;
       _audioPlayer.stop();
       _switchNextStatus();
+      startTimer(); // Auto start next phase
       notifyListeners();
     }
   }
@@ -146,8 +171,8 @@ class PomodoroProvider extends ChangeNotifier {
       _status = PomodoroStatus.focus;
       _remainingSeconds = _focusDuration;
     }
-    // Auto-start next timer? The user said "automatically enter rest", 
-    // but usually that means state switch. 
+    // Auto-start next timer? The user said "automatically enter rest",
+    // but usually that means state switch.
     // If they want it to run, we'd call startTimer().
     // Let's just switch state for now, as auto-starting can be annoying.
   }
