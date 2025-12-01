@@ -137,4 +137,7 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get homeMessage => 'Focus. Organize. Achieve.';
+
+  @override
+  String get alarmSound => 'Alarm Sound';
 }

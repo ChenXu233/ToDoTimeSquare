@@ -8,6 +8,8 @@ enum PomodoroStatus { focus, shortBreak }
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
   int _shortBreakDuration = 5 * 60;
+  String _alarmSoundPath =
+      'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
 
   Timer? _timer;
   int _remainingSeconds = 25 * 60;
@@ -24,6 +26,7 @@ class PomodoroProvider extends ChangeNotifier {
 
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
+  String get alarmSoundPath => _alarmSoundPath;
 
   PomodoroProvider() {
     _loadSettings();
@@ -33,8 +36,18 @@ class PomodoroProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _focusDuration = prefs.getInt('focusDuration') ?? 25 * 60;
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
+    _alarmSoundPath =
+        prefs.getString('alarmSoundPath') ??
+        'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
 
     await _restoreState(prefs);
+  }
+
+  Future<void> setAlarmSound(String path) async {
+    _alarmSoundPath = path;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('alarmSoundPath', path);
+    notifyListeners();
   }
 
   Future<void> _restoreState(SharedPreferences prefs) async {
@@ -210,11 +223,13 @@ class PomodoroProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      await _audioPlayer.play(
-        UrlSource(
-          'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
-        ),
-      );
+      Source source;
+      if (_alarmSoundPath.startsWith('http')) {
+        source = UrlSource(_alarmSoundPath);
+      } else {
+        source = DeviceFileSource(_alarmSoundPath);
+      }
+      await _audioPlayer.play(source);
     } catch (e) {
       debugPrint("Error playing audio: $e");
     }

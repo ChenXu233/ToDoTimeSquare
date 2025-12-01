@@ -354,6 +354,12 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Focus. Organize. Achieve.'**
   String get homeMessage;
+
+  /// The label for the alarm sound setting
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Sound'**
+  String get alarmSound;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

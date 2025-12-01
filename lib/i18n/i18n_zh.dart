@@ -137,4 +137,7 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get homeMessage => '专注. 组织. 实现.';
+
+  @override
+  String get alarmSound => '提示音';
 }

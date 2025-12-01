@@ -171,5 +171,9 @@
   "homeMessage":"Focus. Organize. Achieve.",
   "@homeMessage": {
     "description": "The meesgae of the home"
+  },
+  "alarmSound": "Alarm Sound",
+  "@alarmSound": {
+    "description": "The label for the alarm sound setting"
   }
 }

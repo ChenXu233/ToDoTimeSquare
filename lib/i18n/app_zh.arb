@@ -43,5 +43,6 @@
   "pomodoroSettings": "番茄钟设置",
   "pomodoroInfo": "番茄工作法",
   "pomodoroInfoContent": "番茄工作法使用定时器将工作分解为间隔，通常为25分钟，中间有短暂的休息。本应用将其简化为专注和短休息的循环。",
-  "homeMessage":"专注. 组织. 实现."
+  "homeMessage":"专注. 组织. 实现.",
+  "alarmSound": "提示音"
 }
