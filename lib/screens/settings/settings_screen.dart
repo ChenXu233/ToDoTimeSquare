@@ -8,6 +8,7 @@ import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/glass/gradient_background.dart';
+import '../../widgets/settings/duration_setting.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -127,30 +128,21 @@ class SettingsScreen extends StatelessWidget {
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
-                        ListTile(
-                          title: Text(i18n.focusTime),
-                          trailing: DropdownButton<int>(
+                        // 专注时间
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: DurationSetting(
+                            title: i18n.focusTime,
                             value: pomodoroProvider.focusDuration ~/ 60,
-                            underline: const SizedBox(),
-                            dropdownColor: isDark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                pomodoroProvider.updateSettings(
-                                  focus: newValue * 60,
-                                );
-                              }
+                            onChanged: (newValue) {
+                              pomodoroProvider.updateSettings(
+                                focus: newValue * 60,
+                              );
                             },
-                            items: [5, 10, 15, 20, 25, 30, 45, 60]
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text('$e min'),
-                                  ),
-                                )
-                                .toList(),
+                            isDark: isDark,
                           ),
                         ),
                         Divider(
@@ -158,30 +150,35 @@ class SettingsScreen extends StatelessWidget {
                             context,
                           ).dividerColor.withAlpha(((0.1) * 255).round()),
                         ),
-                        ListTile(
-                          title: Text(i18n.shortBreak),
-                          trailing: DropdownButton<int>(
+                        // 短休息时间
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: DurationSetting(
+                            title: i18n.shortBreak,
                             value: pomodoroProvider.shortBreakDuration ~/ 60,
-                            underline: const SizedBox(),
-                            dropdownColor: isDark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                pomodoroProvider.updateSettings(
-                                  shortBreak: newValue * 60,
-                                );
-                              }
+                            items: const [
+                              1,
+                              2,
+                              3,
+                              4,
+                              5,
+                              10,
+                              15,
+                              20,
+                              25,
+                              30,
+                              45,
+                              60,
+                            ],
+                            onChanged: (newValue) {
+                              pomodoroProvider.updateSettings(
+                                shortBreak: newValue * 60,
+                              );
                             },
-                            items: [5, 10, 15, 20, 25, 30, 45, 60]
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text('$e min'),
-                                  ),
-                                )
-                                .toList(),
+                            isDark: isDark,
                           ),
                         ),
                         Divider(
@@ -232,6 +229,47 @@ class SettingsScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
+                          ),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text(i18n.reminderMode),
+                          trailing: DropdownButton<PomodoroReminderMode>(
+                            value: pomodoroProvider.reminderMode,
+                            underline: const SizedBox(),
+                            dropdownColor: isDark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: (PomodoroReminderMode? newValue) {
+                              if (newValue != null) {
+                                pomodoroProvider.updateSettings(
+                                  reminderMode: newValue,
+                                );
+                              }
+                            },
+                            items: [
+                              DropdownMenuItem(
+                                value: PomodoroReminderMode.none,
+                                child: Text(i18n.reminderNone),
+                              ),
+                              DropdownMenuItem(
+                                value: PomodoroReminderMode.notification,
+                                child: Text(i18n.reminderNotification),
+                              ),
+                              DropdownMenuItem(
+                                value: PomodoroReminderMode.alarm,
+                                child: Text(i18n.reminderAlarm),
+                              ),
+                              DropdownMenuItem(
+                                value: PomodoroReminderMode.all,
+                                child: Text(i18n.reminderAll),
+                              ),
+                            ],
                           ),
                         ),
                       ],

@@ -4,7 +4,6 @@ import '../i18n/i18n.dart';
 import '../widgets/glass/glass_container.dart';
 import '../widgets/glass/gradient_background.dart';
 import '../widgets/todo/todo_list_widget.dart';
-import 'statistics/statistics.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

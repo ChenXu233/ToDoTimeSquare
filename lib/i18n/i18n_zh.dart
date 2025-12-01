@@ -172,4 +172,19 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get statistics => '统计';
+
+  @override
+  String get reminderMode => '提醒模式';
+
+  @override
+  String get reminderNone => '无';
+
+  @override
+  String get reminderNotification => '仅通知';
+
+  @override
+  String get reminderAlarm => '仅闹铃';
+
+  @override
+  String get reminderAll => '全都有';
 }

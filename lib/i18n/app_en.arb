@@ -215,5 +215,25 @@
   "statistics": "Statistics",
   "@statistics": {
     "description": "The label for the statistics section"
+  },
+  "reminderMode": "Reminder Mode",
+  "@reminderMode": {
+    "description": "Label for reminder mode setting"
+  },
+  "reminderNone": "None",
+  "@reminderNone": {
+    "description": "Label for no reminder"
+  },
+  "reminderNotification": "Notification Only",
+  "@reminderNotification": {
+    "description": "Label for notification only reminder"
+  },
+  "reminderAlarm": "Alarm Only",
+  "@reminderAlarm": {
+    "description": "Label for alarm only reminder"
+  },
+  "reminderAll": "All",
+  "@reminderAll": {
+    "description": "Label for all reminders"
   }
 }

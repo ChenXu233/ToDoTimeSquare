@@ -4,15 +4,20 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'routes/app_router.dart'; // 导入路由配置
 import 'i18n/i18n.dart'; // 导入生成的国际化文件
 import 'providers/theme_provider.dart';
 import 'providers/pomodoro_provider.dart';
 import 'providers/todo_provider.dart';
 import 'widgets/window/window_title_bar.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  JustAudioMediaKit.ensureInitialized();
+  await NotificationService().init();
+  await NotificationService().requestPermissions();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     doWhenWindowReady(() {
