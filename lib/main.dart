@@ -9,7 +9,7 @@ import 'i18n/i18n.dart'; // 导入生成的国际化文件
 import 'providers/theme_provider.dart';
 import 'providers/pomodoro_provider.dart';
 import 'providers/todo_provider.dart';
-import 'widgets/window_title_bar.dart';
+import 'widgets/window/window_title_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

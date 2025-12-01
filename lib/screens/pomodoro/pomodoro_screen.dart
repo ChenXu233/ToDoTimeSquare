@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
-import '../../widgets/glass_container.dart';
+import '../../widgets/glass/glass_container.dart';
 
 class PomodoroScreen extends StatefulWidget {
   const PomodoroScreen({super.key});

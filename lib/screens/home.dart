@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../i18n/i18n.dart';
-import '../widgets/glass_container.dart';
-import '../widgets/gradient_background.dart';
-import '../widgets/todo_list_widget.dart';
+import '../widgets/glass/glass_container.dart';
+import '../widgets/glass/gradient_background.dart';
+import '../widgets/todo/todo_list_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -32,16 +32,22 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               i18n.appTitle,
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                              style: Theme.of(context).textTheme.displayMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: isDark ? Colors.white : Colors.black87,
+                                    color: isDark
+                                        ? Colors.white
+                                        : Colors.black87,
                                   ),
                             ),
                             const SizedBox(height: 16),
                             Text(
                               i18n.homeMessage,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    color: isDark ? Colors.white70 : Colors.black54,
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.black54,
                                   ),
                             ),
                             const SizedBox(height: 60),
@@ -84,7 +90,9 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               Text(
                                 i18n.allTasks,
-                                style: Theme.of(context).textTheme.headlineSmall,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineSmall,
                               ),
                               const SizedBox(height: 20),
                               const Expanded(child: TodoListWidget()),
@@ -105,7 +113,8 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       Text(
                         i18n.appTitle,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : Colors.black87,
                             ),
@@ -113,7 +122,8 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         "Focus. Organize. Achieve.",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
                               color: isDark ? Colors.white70 : Colors.black54,
                             ),
                       ),

@@ -6,8 +6,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
-import '../../widgets/glass_container.dart';
-import '../../widgets/gradient_background.dart';
+import '../../widgets/glass/glass_container.dart';
+import '../../widgets/glass/gradient_background.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -23,6 +23,8 @@ class SettingsScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(i18n.settings),
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
