@@ -1,16 +1,198 @@
-# todo_time_square
+# Todo Time Square ⏰✅
 
-A new Flutter project.
+[![Flutter](https://img.shields.io/badge/Flutter-3.9.2+-02569B?logo=flutter)](https://flutter.dev)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](pubspec.yaml)
 
-## Getting Started
+> **专注. 组织. 实现.** | Focus. Organize. Achieve.
 
-This project is a starting point for a Flutter application.
+一个现代化UI的待办事项管理应用，结合了番茄工作法（Pomodoro）计时功能，帮助你更高效地完成任务。支持Windows、macOS、Linux、Android和iOS平台。
 
-A few resources to get you started if this is your first Flutter project:
+## ✨ 功能特性
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 📝 待办事项管理
+- ✅ 创建、编辑和删除任务
+- 🎯 设置任务重要性（低、中、高）
+- ⏱️ 预估任务时长
+- 📅 计划任务开始时间
+- 📋 任务描述支持
+- 🔄 自动排序（未完成任务优先）
+- 💾 本地数据持久化
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🍅 番茄钟计时器
+- ⏰ 专注时间和短休息循环
+- ⏯️ 开始/暂停/重置功能
+- 🔔 计时结束提醒（带音效）
+- 📊 可视化进度条
+- ⚙️ 自定义专注和休息时长
+- 🎵 响铃提醒
+
+### 🎨 界面与体验
+- 🌓 深色/浅色主题切换
+- 🌍 多语言支持（中文/English）
+- 💎 现代化玻璃态（Glassmorphism）设计
+- 📱 响应式布局（适配手机和桌面）
+- 🖥️ 桌面端自定义窗口标题栏
+- 🎯 Material Design 3
+- 📐 高刷新率支持（Android）
+
+## 🛠️ 技术栈
+
+- **框架**: Flutter 3.9.2+
+- **状态管理**: Provider
+- **路由**: GoRouter
+- **国际化**: flutter_localizations, intl
+- **本地存储**: SharedPreferences
+- **音频播放**: AudioPlayers
+- **桌面窗口**: bitsdojo_window
+- **动画**: animated_list_plus
+
+## 📱 支持平台
+
+- ✅ Windows
+- ✅ macOS
+- ✅ Linux
+- ✅ Android
+- ✅ iOS
+- ✅ Web
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Flutter SDK 3.9.2 或更高版本
+- Dart SDK 3.9.2 或更高版本
+
+### 安装步骤
+
+1. **克隆项目**
+```bash
+git clone https://github.com/ChenXu233/ToDoTimeSquare.git
+cd ToDoTimeSquare
+```
+
+2. **安装依赖**
+```bash
+flutter pub get
+```
+
+3. **生成国际化文件**
+```bash
+flutter gen-l10n
+```
+
+4. **运行应用**
+```bash
+# 开发模式
+flutter run
+
+# 指定设备运行
+flutter run -d windows
+flutter run -d chrome
+flutter run -d android
+```
+
+### 构建发布版本
+
+```bash
+# Windows
+flutter build windows
+
+# macOS
+flutter build macos
+
+# Linux
+flutter build linux
+
+# Android APK
+flutter build apk
+
+# iOS
+flutter build ios
+```
+
+## 📂 项目结构
+
+```
+lib/
+├── main.dart                 # 应用入口
+├── constants/                # 常量定义
+├── i18n/                     # 国际化文件
+│   ├── app_en.arb           # 英文翻译
+│   └── app_zh.arb           # 中文翻译
+├── models/                   # 数据模型
+│   └── todo.dart            # 待办事项模型
+├── providers/                # 状态管理
+│   ├── pomodoro_provider.dart
+│   ├── theme_provider.dart
+│   └── todo_provider.dart
+├── routes/                   # 路由配置
+│   └── app_router.dart
+├── screens/                  # 页面
+│   ├── home.dart            # 主页
+│   ├── pomodoro/            # 番茄钟页面
+│   ├── settings/            # 设置页面
+│   └── todo/                # 待办事项页面
+├── services/                 # 服务层
+├── utils/                    # 工具函数
+└── widgets/                  # 可复用组件
+    ├── glass_container.dart  # 玻璃态容器
+    ├── gradient_background.dart
+    ├── todo_list_widget.dart
+    └── window_title_bar.dart
+```
+
+## 🎯 使用指南
+
+### 添加任务
+1. 点击主页的"待办事项"或导航到待办列表页面
+2. 点击"+"按钮添加新任务
+3. 填写任务标题、描述、预估时长等信息
+4. 设置任务重要性和开始时间
+5. 保存任务
+
+### 使用番茄钟
+1. 导航到"番茄钟"页面
+2. 点击"开始"按钮启动计时
+3. 专注工作直到计时结束
+4. 休息时间会自动开始
+5. 可在设置中自定义时长
+
+### 切换主题和语言
+1. 进入"设置"页面
+2. 切换深色/浅色主题
+3. 选择中文或英文界面
+
+## 🔧 配置说明
+
+### 番茄钟默认设置
+- 专注时间: 25分钟
+- 短休息: 5分钟
+
+可在应用设置中自定义修改。
+
+### 窗口设置（桌面端）
+- 默认窗口大小: 1280x720
+- 最小窗口大小: 600x450
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
+
+MIT License. 详见 LICENSE 文件。
+
+## 👨‍💻 作者
+
+**ChenXu233**
+
+## 📮 联系方式
+
+如有问题或建议，欢迎通过 GitHub Issues 联系。
+
+---
+
+<div align="center">
+Made with ❤️ using Flutter
+</div>

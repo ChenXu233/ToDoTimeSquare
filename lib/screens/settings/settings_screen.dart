@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
-import '../../widgets/glass_container.dart';
-import '../../widgets/gradient_background.dart';
+import '../../widgets/glass/glass_container.dart';
+import '../../widgets/glass/gradient_background.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -20,6 +23,8 @@ class SettingsScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(i18n.settings),
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -32,111 +37,267 @@ class SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: [
                   GlassContainer(
-                color: isDark ? Colors.black : Colors.white,
-                opacity: 0.1,
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.language),
-                      title: Text(i18n.language),
-                      trailing: DropdownButton<Locale>(
-                        value: themeProvider.currentLocale,
-                        underline: const SizedBox(),
-                        dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        onChanged: (Locale? newValue) {
-                          if (newValue != null) {
-                            themeProvider.changeLanguage(newValue);
-                          }
-                        },
-                        items: const [
-                          DropdownMenuItem(value: Locale('en', ''), child: Text('English')),
-                          DropdownMenuItem(value: Locale('zh', ''), child: Text('中文')),
-                        ],
-                      ),
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.language),
+                          title: Text(i18n.language),
+                          trailing: DropdownButton<Locale>(
+                            value: themeProvider.currentLocale,
+                            underline: const SizedBox(),
+                            dropdownColor: isDark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: (Locale? newValue) {
+                              if (newValue != null) {
+                                themeProvider.changeLanguage(newValue);
+                              }
+                            },
+                            items: const [
+                              DropdownMenuItem(
+                                value: Locale('en', ''),
+                                child: Text('English'),
+                              ),
+                              DropdownMenuItem(
+                                value: Locale('zh', ''),
+                                child: Text('中文'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          leading: Icon(
+                            themeProvider.themeMode == ThemeMode.dark
+                                ? Icons.dark_mode
+                                : (themeProvider.themeMode == ThemeMode.light
+                                      ? Icons.light_mode
+                                      : Icons.brightness_auto),
+                          ),
+                          title: Text(i18n.themeMode),
+                          trailing: DropdownButton<ThemeMode>(
+                            value: themeProvider.themeMode,
+                            underline: const SizedBox(),
+                            dropdownColor: isDark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: (ThemeMode? newValue) {
+                              if (newValue != null) {
+                                themeProvider.setThemeMode(newValue);
+                              }
+                            },
+                            items: [
+                              DropdownMenuItem(
+                                value: ThemeMode.system,
+                                child: Text(i18n.themeSystem),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.light,
+                                child: Text(i18n.themeLight),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.dark,
+                                child: Text(i18n.themeDark),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    Divider(color: Theme.of(context).dividerColor.withAlpha(((0.1)*255).round())),
-                    ListTile(
-                      leading: Icon(themeProvider.darkMode ? Icons.dark_mode : Icons.light_mode),
-                      title: Text(i18n.darkMode),
-                      trailing: Switch(
-                        value: themeProvider.darkMode,
-                        onChanged: (value) {
-                          themeProvider.toggleDarkMode();
-                        },
-                      ),
+                  ),
+                  const SizedBox(height: 20),
+                  GlassContainer(
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            i18n.pomodoroSettings,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        ListTile(
+                          title: Text(i18n.focusTime),
+                          trailing: DropdownButton<int>(
+                            value: pomodoroProvider.focusDuration ~/ 60,
+                            underline: const SizedBox(),
+                            dropdownColor: isDark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                pomodoroProvider.updateSettings(
+                                  focus: newValue * 60,
+                                );
+                              }
+                            },
+                            items: [5, 10, 15, 20, 25, 30, 45, 60]
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text('$e min'),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text(i18n.shortBreak),
+                          trailing: DropdownButton<int>(
+                            value: pomodoroProvider.shortBreakDuration ~/ 60,
+                            underline: const SizedBox(),
+                            dropdownColor: isDark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                pomodoroProvider.updateSettings(
+                                  shortBreak: newValue * 60,
+                                );
+                              }
+                            },
+                            items: [5, 10, 15, 20, 25, 30, 45, 60]
+                                .map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text('$e min'),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text(i18n.alarmSound),
+                          trailing: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 150),
+                            child: InkWell(
+                              onTap: () async {
+                                FilePickerResult? result = await FilePicker
+                                    .platform
+                                    .pickFiles(type: FileType.audio);
+
+                                if (result != null &&
+                                    result.files.single.path != null) {
+                                  pomodoroProvider.setAlarmSound(
+                                    result.files.single.path!,
+                                  );
+                                }
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      pomodoroProvider.alarmSoundPath
+                                              .startsWith('http')
+                                          ? 'Default'
+                                          : pomodoroProvider.alarmSoundPath
+                                                .split(Platform.pathSeparator)
+                                                .last,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.chevron_right),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 20),
+                  GlassContainer(
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            i18n.about,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        FutureBuilder<PackageInfo>(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (context, snapshot) {
+                            final version = snapshot.data?.version ?? '...';
+                            return ListTile(
+                              title: Text(i18n.version),
+                              subtitle: Text('Todo Time Square v$version'),
+                            );
+                          },
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text('Todo Time Square'),
+                          subtitle: Text('© 2024 ChenXu233'),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          subtitle: Text(
+                            'Email: Woyerpa@outlook.com\nQQ: 1964324406\nGitHub: https://github.com/ChenXu233\n\n${i18n.somethingIWantToSay}',
+                          ),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text(i18n.details),
+                          subtitle: Text(i18n.appdetails),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              GlassContainer(
-                color: isDark ? Colors.black : Colors.white,
-                opacity: 0.1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        i18n.pomodoroSettings,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                    ListTile(
-                      title: Text(i18n.focusTime),
-                      trailing: DropdownButton<int>(
-                        value: pomodoroProvider.focusDuration ~/ 60,
-                        underline: const SizedBox(),
-                        dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        onChanged: (int? newValue) {
-                          if (newValue != null) {
-                            pomodoroProvider.updateSettings(focus: newValue * 60);
-                          }
-                        },
-                        items: [5, 10, 15, 20, 25, 30, 45, 60].map((e) => DropdownMenuItem(value: e, child: Text('$e min'))).toList(),
-                      ),
-                    ),
-                    Divider(color: Theme.of(context).dividerColor.withAlpha(((0.1)*255).round())),
-                    ListTile(
-                      title: Text(i18n.shortBreak),
-                      trailing: DropdownButton<int>(
-                        value: pomodoroProvider.shortBreakDuration ~/ 60,
-                        underline: const SizedBox(),
-                        dropdownColor: isDark ? Colors.grey[900] : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        onChanged: (int? newValue) {
-                          if (newValue != null) {
-                            pomodoroProvider.updateSettings(shortBreak: newValue * 60);
-                          }
-                        },
-                        items: [5, 10, 15, 20, 25, 30, 45, 60].map((e) => DropdownMenuItem(value: e, child: Text('$e min'))).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              GlassContainer(
-                color: isDark ? Colors.black : Colors.white,
-                opacity: 0.1,
-                child: ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: Text(i18n.about),
-                  subtitle: const Text('Todo Time Square v0.0.1'),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
         ),
       ),
     );
   }
 }
-
-
-
-

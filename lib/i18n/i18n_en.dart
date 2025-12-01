@@ -57,6 +57,18 @@ class APPi18nEn extends APPi18n {
   String get darkMode => 'Dark Mode';
 
   @override
+  String get themeMode => 'Theme Mode';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
   String get language => 'Language';
 
   @override
@@ -137,4 +149,27 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get homeMessage => 'Focus. Organize. Achieve.';
+
+  @override
+  String get alarmSound => 'Alarm Sound';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get somethingIWantToSay =>
+      'This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get appdetails =>
+      'ToDoTimeSquare is a productivity app designed specifically for those who prefer a flexible and open cognitive style (P type personality in MBTI). Its core innovation lies in deeply integrating an unstructured dynamic task pool with the standard Pomodoro Technique, forming a \'free choice, focused execution\' cycle system: The app provides an open to-do list as a \'task reserve pool\' without mandatory ordering, allowing users to add or delete tasks at any time. Users do not need to plan their entire day\'s schedule in advance; instead, they can instantly select a single task from the pool based on their current state and interests, then start a customized Pomodoro timer (e.g., 25 minutes of focus + 5 minutes of break) to enter a protected flow sprint phase. After each Pomodoro session, the system provides immediate visual feedback and data statistics, automatically marking the task as completed. Users can either continue with the same task for the next sprint or freely choose a new goal from the list without any burden. This design effectively reduces decision-making barriers and procrastination tendencies by breaking down macro planning pressure into micro autonomous action units, transforming a flexible and scattered thinking style into sustainable focused productivity. Time management is no longer a framework that restricts exploration but a tool that supports spontaneous creation.';
+
+  @override
+  String get statistics => 'Statistics';
 }

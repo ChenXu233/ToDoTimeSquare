@@ -193,6 +193,30 @@ abstract class APPi18n {
   /// **'Dark Mode'**
   String get darkMode;
 
+  /// The label for the theme mode selection
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get themeMode;
+
+  /// The label for light theme
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// The label for dark theme
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// The label for system theme
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
   /// The label for the language selection
   ///
   /// In en, this message translates to:
@@ -354,6 +378,48 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Focus. Organize. Achieve.'**
   String get homeMessage;
+
+  /// The label for the alarm sound setting
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Sound'**
+  String get alarmSound;
+
+  /// The version of the app
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// A message from the developer about the app
+  ///
+  /// In en, this message translates to:
+  /// **'This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!'**
+  String get somethingIWantToSay;
+
+  /// The label for details button
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// The label for share button
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Detailed description of the app and its unique features
+  ///
+  /// In en, this message translates to:
+  /// **'ToDoTimeSquare is a productivity app designed specifically for those who prefer a flexible and open cognitive style (P type personality in MBTI). Its core innovation lies in deeply integrating an unstructured dynamic task pool with the standard Pomodoro Technique, forming a \'free choice, focused execution\' cycle system: The app provides an open to-do list as a \'task reserve pool\' without mandatory ordering, allowing users to add or delete tasks at any time. Users do not need to plan their entire day\'s schedule in advance; instead, they can instantly select a single task from the pool based on their current state and interests, then start a customized Pomodoro timer (e.g., 25 minutes of focus + 5 minutes of break) to enter a protected flow sprint phase. After each Pomodoro session, the system provides immediate visual feedback and data statistics, automatically marking the task as completed. Users can either continue with the same task for the next sprint or freely choose a new goal from the list without any burden. This design effectively reduces decision-making barriers and procrastination tendencies by breaking down macro planning pressure into micro autonomous action units, transforming a flexible and scattered thinking style into sustainable focused productivity. Time management is no longer a framework that restricts exploration but a tool that supports spontaneous creation.'**
+  String get appdetails;
+
+  /// The label for the statistics section
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

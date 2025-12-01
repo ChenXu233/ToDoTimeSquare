@@ -3,7 +3,7 @@ name: Flutter Multi-Platform Release
 on:
   push:
     branches:
-      - main # 在 main 分支推送时触发
+      - main
   workflow_dispatch:
 
 env:

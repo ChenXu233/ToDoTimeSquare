@@ -8,12 +8,15 @@ enum PomodoroStatus { focus, shortBreak }
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
   int _shortBreakDuration = 5 * 60;
+  String _alarmSoundPath =
+      'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
 
   Timer? _timer;
   int _remainingSeconds = 25 * 60;
   PomodoroStatus _status = PomodoroStatus.focus;
   bool _isRunning = false;
   bool _isRinging = false;
+  DateTime? _targetTime;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   int get remainingSeconds => _remainingSeconds;
@@ -23,6 +26,7 @@ class PomodoroProvider extends ChangeNotifier {
 
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
+  String get alarmSoundPath => _alarmSoundPath;
 
   PomodoroProvider() {
     _loadSettings();
@@ -32,7 +36,71 @@ class PomodoroProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _focusDuration = prefs.getInt('focusDuration') ?? 25 * 60;
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
-    resetTimer();
+    _alarmSoundPath =
+        prefs.getString('alarmSoundPath') ??
+        'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
+
+    await _restoreState(prefs);
+  }
+
+  Future<void> setAlarmSound(String path) async {
+    _alarmSoundPath = path;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('alarmSoundPath', path);
+    notifyListeners();
+  }
+
+  Future<void> _restoreState(SharedPreferences prefs) async {
+    _isRunning = prefs.getBool('pomodoro_isRunning') ?? false;
+    int? statusIndex = prefs.getInt('pomodoro_status');
+    if (statusIndex != null &&
+        statusIndex >= 0 &&
+        statusIndex < PomodoroStatus.values.length) {
+      _status = PomodoroStatus.values[statusIndex];
+    }
+
+    int? targetTimeMillis = prefs.getInt('pomodoro_targetTime');
+    int? savedRemaining = prefs.getInt('pomodoro_savedRemaining');
+
+    if (_isRunning && targetTimeMillis != null) {
+      final target = DateTime.fromMillisecondsSinceEpoch(targetTimeMillis);
+      final now = DateTime.now();
+      if (now.isBefore(target)) {
+        _targetTime = target;
+        _remainingSeconds = target.difference(now).inSeconds;
+        _startTimerInternal();
+      } else {
+        _remainingSeconds = 0;
+        _isRunning = false;
+        _targetTime = null;
+        _saveState();
+        _startAlarm();
+      }
+    } else {
+      if (savedRemaining != null) {
+        _remainingSeconds = savedRemaining;
+      } else {
+        _remainingSeconds = _status == PomodoroStatus.focus
+            ? _focusDuration
+            : _shortBreakDuration;
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> _saveState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('pomodoro_isRunning', _isRunning);
+    await prefs.setInt('pomodoro_status', _status.index);
+    if (_targetTime != null) {
+      await prefs.setInt(
+        'pomodoro_targetTime',
+        _targetTime!.millisecondsSinceEpoch,
+      );
+    } else {
+      await prefs.remove('pomodoro_targetTime');
+    }
+    await prefs.setInt('pomodoro_savedRemaining', _remainingSeconds);
   }
 
   Future<void> updateSettings({int? focus, int? shortBreak}) async {
@@ -69,24 +137,40 @@ class PomodoroProvider extends ChangeNotifier {
       return;
     }
     _isRunning = true;
+    _targetTime = DateTime.now().add(Duration(seconds: _remainingSeconds));
+    _saveState();
+    _startTimerInternal();
+    notifyListeners();
+  }
+
+  void _startTimerInternal() {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0) {
-        _remainingSeconds--;
-        notifyListeners();
+      final now = DateTime.now();
+      if (_targetTime != null && now.isBefore(_targetTime!)) {
+        final newRemaining = _targetTime!.difference(now).inSeconds;
+        if (newRemaining != _remainingSeconds) {
+          _remainingSeconds = newRemaining;
+          notifyListeners();
+        }
       } else {
         _timer?.cancel();
         _timer = null;
         _isRunning = false;
+        _remainingSeconds = 0;
+        _targetTime = null;
+        _saveState();
         _startAlarm();
       }
     });
-    notifyListeners();
   }
 
   void pauseTimer() {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
+    _targetTime = null;
+    _saveState();
     notifyListeners();
   }
 
@@ -94,16 +178,17 @@ class PomodoroProvider extends ChangeNotifier {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
+    _targetTime = null;
 
     if (_isRinging) {
       _isRinging = false;
       _audioPlayer.stop();
     }
 
-    // Always reset to focus as per requirement
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
 
+    _saveState();
     notifyListeners();
   }
 
@@ -121,8 +206,6 @@ class PomodoroProvider extends ChangeNotifier {
     pauseTimer();
     stopAlarm();
     _status = status;
-    // When manually setting status, we just set the time for that status
-    // We don't use resetTimer() because that forces focus
     switch (_status) {
       case PomodoroStatus.focus:
         _remainingSeconds = _focusDuration;
@@ -131,23 +214,22 @@ class PomodoroProvider extends ChangeNotifier {
         _remainingSeconds = _shortBreakDuration;
         break;
     }
+    _saveState();
     notifyListeners();
   }
 
   Future<void> _startAlarm() async {
     _isRinging = true;
     notifyListeners();
-    // Play a sound. Using a default source for now.
-    // In a real app, you'd bundle an asset.
-    // For this demo, we'll try to play a network sound or just simulate it if offline.
-    // Ideally, user should provide 'assets/sounds/alarm.mp3'.
     try {
       await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      await _audioPlayer.play(
-        UrlSource(
-          'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg',
-        ),
-      );
+      Source source;
+      if (_alarmSoundPath.startsWith('http')) {
+        source = UrlSource(_alarmSoundPath);
+      } else {
+        source = DeviceFileSource(_alarmSoundPath);
+      }
+      await _audioPlayer.play(source);
     } catch (e) {
       debugPrint("Error playing audio: $e");
     }
@@ -171,10 +253,6 @@ class PomodoroProvider extends ChangeNotifier {
       _status = PomodoroStatus.focus;
       _remainingSeconds = _focusDuration;
     }
-    // Auto-start next timer? The user said "automatically enter rest",
-    // but usually that means state switch.
-    // If they want it to run, we'd call startTimer().
-    // Let's just switch state for now, as auto-starting can be annoying.
   }
 
   @override

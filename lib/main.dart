@@ -9,7 +9,7 @@ import 'i18n/i18n.dart'; // 导入生成的国际化文件
 import 'providers/theme_provider.dart';
 import 'providers/pomodoro_provider.dart';
 import 'providers/todo_provider.dart';
-import 'widgets/window_title_bar.dart';
+import 'widgets/window/window_title_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,21 +78,18 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.dark,
               ),
             ),
-            themeMode: themeProvider.darkMode
-                ? ThemeMode.dark
-                : ThemeMode.light,
+            themeMode: themeProvider.themeMode,
             routerConfig: appRouter, // 使用路由配置
             builder: (context, child) {
               if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
                 return Scaffold(
                   body: WindowBorder(
-                    color: themeProvider.darkMode
-                        ? Colors.black
-                        : Colors.grey[300]!,
+                    color: isDark ? Colors.black : Colors.grey[300]!,
                     width: 1,
                     child: Column(
                       children: [
-                        WindowTitleBar(isDark: themeProvider.darkMode),
+                        WindowTitleBar(isDark: isDark),
                         Expanded(child: child!),
                       ],
                     ),

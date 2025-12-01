@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
-import '../../widgets/glass_container.dart';
+import '../../widgets/glass/glass_container.dart';
 
 class PomodoroScreen extends StatefulWidget {
   const PomodoroScreen({super.key});
@@ -123,6 +125,72 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     short,
                     (val) => setState(() => short = val),
                     isDark,
+                  ),
+                  const SizedBox(height: 24),
+                  Text(i18n.alarmSound, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 8),
+                  Consumer<PomodoroProvider>(
+                    builder: (context, provider, _) {
+                      final path = provider.alarmSoundPath;
+                      final name = path.startsWith('http')
+                          ? 'Default'
+                          : path.split(Platform.pathSeparator).last;
+                      return InkWell(
+                        onTap: () async {
+                          FilePickerResult? result = await FilePicker.platform
+                              .pickFiles(type: FileType.audio);
+
+                          if (result != null &&
+                              result.files.single.path != null) {
+                            provider.setAlarmSound(result.files.single.path!);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withAlpha(((0.1) * 255).round())
+                                : Colors.black.withAlpha(
+                                    ((0.05) * 255).round(),
+                                  ),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withAlpha(
+                                      ((0.2) * 255).round(),
+                                    )
+                                  : Colors.black.withAlpha(
+                                      ((0.1) * 255).round(),
+                                    ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.music_note,
+                                size: 20,
+                                color: isDark ? Colors.white70 : Colors.black87,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                              ),
+                              const Icon(Icons.chevron_right),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
                   Row(

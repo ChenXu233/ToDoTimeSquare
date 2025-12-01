@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
-import '../providers/todo_provider.dart';
-import '../models/todo.dart';
-import 'add_todo_modal.dart';
+import '../../providers/todo_provider.dart';
+import '../../models/todo.dart';
+import '../modal/add_todo_modal.dart';
 import 'todo_item.dart';
-import 'glass_popup_menu.dart';
+import '../glass/glass_popup_menu.dart';
 
 class TodoListWidget extends StatelessWidget {
   final bool isCompact;
