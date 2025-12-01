@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  bool _darkMode = false;
+  ThemeMode _themeMode = ThemeMode.system;
   Locale _currentLocale = const Locale('zh', '');
 
-  bool get darkMode => _darkMode;
+  ThemeMode get themeMode => _themeMode;
   Locale get currentLocale => _currentLocale;
 
   ThemeProvider() {
@@ -14,7 +14,22 @@ class ThemeProvider extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    _darkMode = prefs.getBool('darkMode') ?? false;
+
+    // Migrate old setting if exists
+    if (prefs.containsKey('darkMode')) {
+      final isDark = prefs.getBool('darkMode') ?? false;
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+      await prefs.remove('darkMode');
+      await prefs.setInt('themeMode', _themeMode.index);
+    } else {
+      final int? themeIndex = prefs.getInt('themeMode');
+      if (themeIndex != null &&
+          themeIndex >= 0 &&
+          themeIndex < ThemeMode.values.length) {
+        _themeMode = ThemeMode.values[themeIndex];
+      }
+    }
+
     final String? languageCode = prefs.getString('languageCode');
     if (languageCode != null) {
       _currentLocale = Locale(languageCode, '');
@@ -22,10 +37,10 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleDarkMode() async {
-    _darkMode = !_darkMode;
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', _darkMode);
+    await prefs.setInt('themeMode', mode.index);
     notifyListeners();
   }
 

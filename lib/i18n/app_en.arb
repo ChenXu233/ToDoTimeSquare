@@ -64,6 +64,22 @@
   "@darkMode": {
     "description": "The label for the dark mode toggle"
   },
+  "themeMode": "Theme Mode",
+  "@themeMode": {
+    "description": "The label for the theme mode selection"
+  },
+  "themeLight": "Light",
+  "@themeLight": {
+    "description": "The label for light theme"
+  },
+  "themeDark": "Dark",
+  "@themeDark": {
+    "description": "The label for dark theme"
+  },
+  "themeSystem": "System",
+  "@themeSystem": {
+    "description": "The label for system theme"
+  },
   "language": "Language",
   "@language": {
     "description": "The label for the language selection"

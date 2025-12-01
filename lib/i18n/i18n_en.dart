@@ -57,6 +57,18 @@ class APPi18nEn extends APPi18n {
   String get darkMode => 'Dark Mode';
 
   @override
+  String get themeMode => 'Theme Mode';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
   String get language => 'Language';
 
   @override

@@ -57,6 +57,18 @@ class APPi18nZh extends APPi18n {
   String get darkMode => '暗黑模式';
 
   @override
+  String get themeMode => '主题模式';
+
+  @override
+  String get themeLight => '亮色';
+
+  @override
+  String get themeDark => '暗色';
+
+  @override
+  String get themeSystem => '跟随系统';
+
+  @override
   String get language => '语言';
 
   @override

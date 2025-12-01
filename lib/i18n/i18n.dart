@@ -193,6 +193,30 @@ abstract class APPi18n {
   /// **'Dark Mode'**
   String get darkMode;
 
+  /// The label for the theme mode selection
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get themeMode;
+
+  /// The label for light theme
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// The label for dark theme
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// The label for system theme
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
   /// The label for the language selection
   ///
   /// In en, this message translates to:

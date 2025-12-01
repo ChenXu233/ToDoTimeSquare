@@ -72,16 +72,39 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         ListTile(
                           leading: Icon(
-                            themeProvider.darkMode
+                            themeProvider.themeMode == ThemeMode.dark
                                 ? Icons.dark_mode
-                                : Icons.light_mode,
+                                : (themeProvider.themeMode == ThemeMode.light
+                                      ? Icons.light_mode
+                                      : Icons.brightness_auto),
                           ),
-                          title: Text(i18n.darkMode),
-                          trailing: Switch(
-                            value: themeProvider.darkMode,
-                            onChanged: (value) {
-                              themeProvider.toggleDarkMode();
+                          title: Text(i18n.themeMode),
+                          trailing: DropdownButton<ThemeMode>(
+                            value: themeProvider.themeMode,
+                            underline: const SizedBox(),
+                            dropdownColor: isDark
+                                ? Colors.grey[900]
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            onChanged: (ThemeMode? newValue) {
+                              if (newValue != null) {
+                                themeProvider.setThemeMode(newValue);
+                              }
                             },
+                            items: [
+                              DropdownMenuItem(
+                                value: ThemeMode.system,
+                                child: Text(i18n.themeSystem),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.light,
+                                child: Text(i18n.themeLight),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.dark,
+                                child: Text(i18n.themeDark),
+                              ),
+                            ],
                           ),
                         ),
                       ],

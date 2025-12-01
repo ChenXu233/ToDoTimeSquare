@@ -78,21 +78,18 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.dark,
               ),
             ),
-            themeMode: themeProvider.darkMode
-                ? ThemeMode.dark
-                : ThemeMode.light,
+            themeMode: themeProvider.themeMode,
             routerConfig: appRouter, // 使用路由配置
             builder: (context, child) {
               if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+                final isDark = Theme.of(context).brightness == Brightness.dark;
                 return Scaffold(
                   body: WindowBorder(
-                    color: themeProvider.darkMode
-                        ? Colors.black
-                        : Colors.grey[300]!,
+                    color: isDark ? Colors.black : Colors.grey[300]!,
                     width: 1,
                     child: Column(
                       children: [
-                        WindowTitleBar(isDark: themeProvider.darkMode),
+                        WindowTitleBar(isDark: isDark),
                         Expanded(child: child!),
                       ],
                     ),
