@@ -278,6 +278,15 @@ class SettingsScreen extends StatelessWidget {
                             'Email: Woyerpa@outlook.com\nQQ: 1964324406\nGitHub: https://github.com/ChenXu233\n\n${i18n.somethingIWantToSay}',
                           ),
                         ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text(i18n.details),
+                          subtitle: Text(i18n.appdetails),
+                        ),
                       ],
                     ),
                   ),
