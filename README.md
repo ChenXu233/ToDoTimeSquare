@@ -1,7 +1,7 @@
 # Todo Time Square ⏰✅
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.9.2+-02569B?logo=flutter)](https://flutter.dev)
-[![License](https://img.shields.io/badge/License-Private-red.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](pubspec.yaml)
 
 > **专注. 组织. 实现.** | Focus. Organize. Achieve.
