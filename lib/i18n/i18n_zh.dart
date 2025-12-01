@@ -152,4 +152,11 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get alarmSound => '提示音';
+
+  @override
+  String get version => '版本';
+
+  @override
+  String get somethingIWantToSay =>
+      '这个应用是我突发奇想的一个项目，希望能帮助大家更好地管理时间和任务。如果你有任何建议或反馈，欢迎随时联系我！';
 }

@@ -384,6 +384,18 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Alarm Sound'**
   String get alarmSound;
+
+  /// The version of the app
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// A message from the developer about the app
+  ///
+  /// In en, this message translates to:
+  /// **'This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!'**
+  String get somethingIWantToSay;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

@@ -191,5 +191,13 @@
   "alarmSound": "Alarm Sound",
   "@alarmSound": {
     "description": "The label for the alarm sound setting"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "The version of the app"
+  },
+  "somethingIWantToSay": "This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!",
+  "@somethingIWantToSay": {
+    "description": "A message from the developer about the app"
   }
 }

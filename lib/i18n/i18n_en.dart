@@ -152,4 +152,11 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get alarmSound => 'Alarm Sound';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get somethingIWantToSay =>
+      'This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!';
 }

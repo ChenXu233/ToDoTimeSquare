@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
@@ -238,10 +239,46 @@ class SettingsScreen extends StatelessWidget {
                   GlassContainer(
                     color: isDark ? Colors.black : Colors.white,
                     opacity: 0.1,
-                    child: ListTile(
-                      leading: const Icon(Icons.info_outline),
-                      title: Text(i18n.about),
-                      subtitle: const Text('Todo Time Square v0.0.1'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            i18n.about,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        FutureBuilder<PackageInfo>(
+                          future: PackageInfo.fromPlatform(),
+                          builder: (context, snapshot) {
+                            final version = snapshot.data?.version ?? '...';
+                            return ListTile(
+                              title: Text(i18n.version),
+                              subtitle: Text('Todo Time Square v$version'),
+                            );
+                          },
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text('Todo Time Square'),
+                          subtitle: Text('© 2024 ChenXu233'),
+                        ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          subtitle: Text(
+                            'Email: Woyerpa@outlook.com\nQQ: 1964324406\nGitHub: https://github.com/ChenXu233\n\n${i18n.somethingIWantToSay}',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
