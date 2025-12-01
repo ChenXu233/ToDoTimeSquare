@@ -4,6 +4,7 @@ import '../i18n/i18n.dart';
 import '../widgets/glass/glass_container.dart';
 import '../widgets/glass/gradient_background.dart';
 import '../widgets/todo/todo_list_widget.dart';
+import 'statistics/statistics.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -62,6 +63,12 @@ class HomeScreen extends StatelessWidget {
                                     icon: Icons.timer_outlined,
                                     color: Colors.orangeAccent,
                                     onTap: () => context.go('/pomodoro'),
+                                  ),
+                                  _DashboardCard(
+                                    title: i18n.statistics,
+                                    icon: Icons.bar_chart_outlined,
+                                    color: Colors.green,
+                                    onTap: () => context.go('/statistics'),
                                   ),
                                   _DashboardCard(
                                     title: i18n.settings,
@@ -145,6 +152,12 @@ class HomeScreen extends StatelessWidget {
                               icon: Icons.check_circle_outline,
                               color: Colors.blueAccent,
                               onTap: () => context.go('/todo'),
+                            ),
+                            _DashboardCard(
+                              title: i18n.statistics,
+                              icon: Icons.bar_chart_outlined,
+                              color: Colors.green,
+                              onTap: () => context.go('/statistics'),
                             ),
                             _DashboardCard(
                               title: i18n.settings,

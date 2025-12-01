@@ -13,8 +13,9 @@ class TodoListScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(i18n.allTasks),
+        title: Text("${i18n.allTasks}（待实现）"),
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
       body: GradientBackground(
