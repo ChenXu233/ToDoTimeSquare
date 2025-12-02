@@ -18,10 +18,7 @@ class GradientBackground extends StatelessWidget {
                   const Color(0xFF203A43),
                   const Color(0xFF2C5364),
                 ]
-              : [
-                  const Color(0xFFa8edea),
-                  const Color(0xFFfed6e3),
-                ],
+              : [const Color(0xFFe3ffe7), const Color(0xFFd9e7ff)],
         ),
       ),
       child: child,

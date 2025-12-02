@@ -187,4 +187,10 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get reminderAll => '全都有';
+
+  @override
+  String get parentTask => '父任务';
+
+  @override
+  String get noparent => '无父任务';
 }

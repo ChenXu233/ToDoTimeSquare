@@ -59,5 +59,7 @@
   "reminderNone": "无",
   "reminderNotification": "仅通知",
   "reminderAlarm": "仅闹铃",
-  "reminderAll": "全都有"
+  "reminderAll": "全都有",
+  "parentTask": "父任务",
+  "noparent": "无父任务"
 }

@@ -235,5 +235,13 @@
   "reminderAll": "All",
   "@reminderAll": {
     "description": "Label for all reminders"
+  },
+  "parentTask": "Parent Task",
+  "@parentTask": {
+    "description": "The label for the parent task dropdown"
+  },
+  "noparent": "No Parent Task",
+  "@noparent": {
+    "description": "The label for no parent task option"
   }
 }

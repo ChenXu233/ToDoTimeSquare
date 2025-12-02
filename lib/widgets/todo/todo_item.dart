@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../models/todo.dart';
-import '../../providers/todo_provider.dart';
 import '../glass/glass_container.dart';
 
 class TodoItem extends StatelessWidget {
