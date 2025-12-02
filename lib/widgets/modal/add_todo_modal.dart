@@ -21,6 +21,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
   TodoImportance _importance = TodoImportance.medium;
   Duration? _estimatedDuration;
   DateTime? _plannedStartTime;
+  String? _parentId;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
       _importance = widget.todo!.importance;
       _estimatedDuration = widget.todo!.estimatedDuration;
       _plannedStartTime = widget.todo!.plannedStartTime;
+      _parentId = widget.todo!.parentId;
     }
   }
 
@@ -92,6 +94,8 @@ class _AddTodoModalState extends State<AddTodoModal> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      final provider = Provider.of<TodoProvider>(context, listen: false);
+
       if (widget.todo != null) {
         final updatedTodo = Todo(
           id: widget.todo!.id,
@@ -103,13 +107,11 @@ class _AddTodoModalState extends State<AddTodoModal> {
           importance: _importance,
           plannedStartTime: _plannedStartTime,
           isCompleted: widget.todo!.isCompleted,
+          parentId: _parentId,
         );
-        Provider.of<TodoProvider>(
-          context,
-          listen: false,
-        ).updateTodo(updatedTodo);
+        provider.updateTodo(updatedTodo);
       } else {
-        Provider.of<TodoProvider>(context, listen: false).addTodo(
+        provider.addTodo(
           _titleController.text,
           description: _descriptionController.text.isEmpty
               ? null
@@ -117,6 +119,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
           estimatedDuration: _estimatedDuration,
           importance: _importance,
           plannedStartTime: _plannedStartTime,
+          parentId: _parentId,
         );
       }
       Navigator.pop(context);
@@ -372,6 +375,75 @@ class _AddTodoModalState extends State<AddTodoModal> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Parent Task
+                  Text(
+                    "Main Task",
+                    style: TextStyle(
+                      color: textColor.withAlpha(((0.7) * 255).round()),
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Consumer<TodoProvider>(
+                    builder: (context, provider, child) {
+                      // Filter out current task and its children (to avoid cycles)
+                      // For simplicity, just filter out current task for now
+                      final potentialParents = provider.todos.where((t) {
+                        return t.id != widget.todo?.id &&
+                            t.parentId ==
+                                null; // Only allow top-level tasks as parents for now
+                      }).toList();
+
+                      return DropdownButtonFormField<String>(
+                        value: _parentId,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: textColor.withAlpha(((0.3) * 255).round()),
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: colorScheme.primary),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerHighest
+                              .withAlpha(((0.3) * 255).round()),
+                        ),
+                        items: [
+                          const DropdownMenuItem<String>(
+                            value: null,
+                            child: Text("None (Main Task)"),
+                          ),
+                          ...potentialParents.map((t) {
+                            return DropdownMenuItem<String>(
+                              value: t.id,
+                              child: Text(
+                                t.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _parentId = value;
+                          });
+                        },
+                        dropdownColor: glassColor,
+                        style: TextStyle(color: textColor),
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
 

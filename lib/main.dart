@@ -24,7 +24,7 @@ void main() async {
     doWhenWindowReady(() {
       final win = appWindow;
       const initialSize = Size(1280, 720);
-      win.minSize = const Size(600, 450);
+      win.minSize = const Size(480, 800);
       win.size = initialSize;
       win.alignment = Alignment.center;
       win.title = "Todo Time Square";
