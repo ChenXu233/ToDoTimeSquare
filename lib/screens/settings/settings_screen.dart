@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -212,9 +213,17 @@ class SettingsScreen extends StatelessWidget {
                                       pomodoroProvider.alarmSoundPath
                                               .startsWith('http')
                                           ? 'Default'
-                                          : pomodoroProvider.alarmSoundPath
-                                                .split(Platform.pathSeparator)
-                                                .last,
+                                          : (kIsWeb
+                                                ? pomodoroProvider
+                                                      .alarmSoundPath
+                                                      .split('/')
+                                                      .last
+                                                : pomodoroProvider
+                                                      .alarmSoundPath
+                                                      .split(
+                                                        Platform.pathSeparator,
+                                                      )
+                                                      .last),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(

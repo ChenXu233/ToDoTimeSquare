@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -136,7 +137,9 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                       final path = provider.alarmSoundPath;
                       final name = path.startsWith('http')
                           ? 'Default'
-                          : path.split(Platform.pathSeparator).last;
+                          : (kIsWeb
+                                ? path.split('/').last
+                                : path.split(Platform.pathSeparator).last);
                       return InkWell(
                         onTap: () async {
                           FilePickerResult? result = await FilePicker.platform

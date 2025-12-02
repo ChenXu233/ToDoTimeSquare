@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -19,7 +20,7 @@ void main() async {
   await NotificationService().init();
   await NotificationService().requestPermissions();
 
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     doWhenWindowReady(() {
       final win = appWindow;
       const initialSize = Size(1280, 720);
@@ -31,7 +32,7 @@ void main() async {
     });
   }
 
-  if (Platform.isAndroid) {
+  if (!kIsWeb && Platform.isAndroid) {
     try {
       await FlutterDisplayMode.setHighRefreshRate();
     } catch (e) {
@@ -86,7 +87,10 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             routerConfig: appRouter, // 使用路由配置
             builder: (context, child) {
-              if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+              if (!kIsWeb &&
+                  (Platform.isWindows ||
+                      Platform.isLinux ||
+                      Platform.isMacOS)) {
                 final isDark = Theme.of(context).brightness == Brightness.dark;
                 return Scaffold(
                   body: WindowBorder(
