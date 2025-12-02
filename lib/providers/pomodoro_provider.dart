@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/notification_service.dart';
 
 enum PomodoroStatus { focus, shortBreak }
+
+enum PomodoroReminderMode { none, notification, alarm, all }
 
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
   int _shortBreakDuration = 5 * 60;
-  String _alarmSoundPath =
-      'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
+  String _alarmSoundPath = 'audio/alarm_sound.ogg'; // 默认内置铃声
 
   Timer? _timer;
   int _remainingSeconds = 25 * 60;
@@ -18,11 +20,13 @@ class PomodoroProvider extends ChangeNotifier {
   bool _isRinging = false;
   DateTime? _targetTime;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  PomodoroReminderMode _reminderMode = PomodoroReminderMode.notification;
 
   int get remainingSeconds => _remainingSeconds;
   PomodoroStatus get status => _status;
   bool get isRunning => _isRunning;
   bool get isRinging => _isRinging;
+  PomodoroReminderMode get reminderMode => _reminderMode;
 
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
@@ -37,8 +41,14 @@ class PomodoroProvider extends ChangeNotifier {
     _focusDuration = prefs.getInt('focusDuration') ?? 25 * 60;
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
     _alarmSoundPath =
-        prefs.getString('alarmSoundPath') ??
-        'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
+        prefs.getString('alarmSoundPath') ?? 'audio/alarm_sound.ogg';
+
+    int? reminderModeIndex = prefs.getInt('reminderMode');
+    if (reminderModeIndex != null &&
+        reminderModeIndex >= 0 &&
+        reminderModeIndex < PomodoroReminderMode.values.length) {
+      _reminderMode = PomodoroReminderMode.values[reminderModeIndex];
+    }
 
     await _restoreState(prefs);
   }
@@ -103,7 +113,11 @@ class PomodoroProvider extends ChangeNotifier {
     await prefs.setInt('pomodoro_savedRemaining', _remainingSeconds);
   }
 
-  Future<void> updateSettings({int? focus, int? shortBreak}) async {
+  Future<void> updateSettings({
+    int? focus,
+    int? shortBreak,
+    PomodoroReminderMode? reminderMode,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     if (focus != null) {
       _focusDuration = focus;
@@ -112,6 +126,10 @@ class PomodoroProvider extends ChangeNotifier {
     if (shortBreak != null) {
       _shortBreakDuration = shortBreak;
       await prefs.setInt('shortBreakDuration', shortBreak);
+    }
+    if (reminderMode != null) {
+      _reminderMode = reminderMode;
+      await prefs.setInt('reminderMode', reminderMode.index);
     }
     resetTimer();
   }
@@ -140,6 +158,7 @@ class PomodoroProvider extends ChangeNotifier {
     _targetTime = DateTime.now().add(Duration(seconds: _remainingSeconds));
     _saveState();
     _startTimerInternal();
+    _scheduleNotification();
     notifyListeners();
   }
 
@@ -171,6 +190,7 @@ class PomodoroProvider extends ChangeNotifier {
     _isRunning = false;
     _targetTime = null;
     _saveState();
+    _cancelNotification();
     notifyListeners();
   }
 
@@ -189,6 +209,7 @@ class PomodoroProvider extends ChangeNotifier {
     _remainingSeconds = _focusDuration;
 
     _saveState();
+    _cancelNotification();
     notifyListeners();
   }
 
@@ -222,14 +243,20 @@ class PomodoroProvider extends ChangeNotifier {
     _isRinging = true;
     notifyListeners();
     try {
-      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      Source source;
+      await _audioPlayer.setLoopMode(LoopMode.one);
       if (_alarmSoundPath.startsWith('http')) {
-        source = UrlSource(_alarmSoundPath);
+        await _audioPlayer.setAudioSource(
+          AudioSource.uri(Uri.parse(_alarmSoundPath)),
+        );
+      } else if (_alarmSoundPath == 'audio/alarm_sound.ogg' ||
+          _alarmSoundPath == 'assets/audio/alarm_sound.ogg') {
+        await _audioPlayer.setAudioSource(
+          AudioSource.asset('assets/audio/alarm_sound.ogg'),
+        );
       } else {
-        source = DeviceFileSource(_alarmSoundPath);
+        await _audioPlayer.setAudioSource(AudioSource.file(_alarmSoundPath));
       }
-      await _audioPlayer.play(source);
+      _audioPlayer.play();
     } catch (e) {
       debugPrint("Error playing audio: $e");
     }
@@ -239,6 +266,7 @@ class PomodoroProvider extends ChangeNotifier {
     if (_isRinging) {
       _isRinging = false;
       _audioPlayer.stop();
+      _cancelNotification();
       _switchNextStatus();
       startTimer(); // Auto start next phase
       notifyListeners();
@@ -253,6 +281,31 @@ class PomodoroProvider extends ChangeNotifier {
       _status = PomodoroStatus.focus;
       _remainingSeconds = _focusDuration;
     }
+  }
+
+  void _scheduleNotification() {
+    if (_targetTime == null) return;
+    if (_reminderMode == PomodoroReminderMode.none) return;
+
+    bool useAlarm =
+        _reminderMode == PomodoroReminderMode.alarm ||
+        _reminderMode == PomodoroReminderMode.all;
+
+    NotificationService().scheduleNotification(
+      id: 0,
+      title: _status == PomodoroStatus.focus
+          ? 'Focus Time Finished'
+          : 'Break Time Finished',
+      body: _status == PomodoroStatus.focus
+          ? 'Time to take a break!'
+          : 'Time to focus!',
+      scheduledDate: _targetTime!,
+      useAlarmChannel: useAlarm,
+    );
+  }
+
+  void _cancelNotification() {
+    NotificationService().cancel(0);
   }
 
   @override

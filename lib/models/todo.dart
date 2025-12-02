@@ -8,6 +8,7 @@ class Todo {
   final TodoImportance importance;
   final DateTime? plannedStartTime;
   bool isCompleted;
+  final String? parentId;
 
   Todo({
     required this.id,
@@ -17,6 +18,7 @@ class Todo {
     this.importance = TodoImportance.medium,
     this.plannedStartTime,
     this.isCompleted = false,
+    this.parentId,
   });
 
   Map<String, dynamic> toJson() {
@@ -28,6 +30,7 @@ class Todo {
       'importance': importance.index,
       'plannedStartTime': plannedStartTime?.toIso8601String(),
       'isCompleted': isCompleted,
+      'parentId': parentId,
     };
   }
 
@@ -44,6 +47,7 @@ class Todo {
           ? DateTime.parse(json['plannedStartTime'])
           : null,
       isCompleted: json['isCompleted'] ?? false,
+      parentId: json['parentId'],
     );
   }
 }

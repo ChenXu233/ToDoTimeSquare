@@ -172,4 +172,25 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get statistics => 'Statistics';
+
+  @override
+  String get reminderMode => 'Reminder Mode';
+
+  @override
+  String get reminderNone => 'None';
+
+  @override
+  String get reminderNotification => 'Notification Only';
+
+  @override
+  String get reminderAlarm => 'Alarm Only';
+
+  @override
+  String get reminderAll => 'All';
+
+  @override
+  String get parentTask => 'Parent Task';
+
+  @override
+  String get noparent => 'No Parent Task';
 }

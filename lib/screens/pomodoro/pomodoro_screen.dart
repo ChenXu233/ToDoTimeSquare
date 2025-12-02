@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
+import '../../widgets/settings/duration_setting.dart';
 
 class PomodoroScreen extends StatefulWidget {
   const PomodoroScreen({super.key});
@@ -113,18 +115,19 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildDurationSetting(
-                    i18n.focusTime,
-                    focus,
-                    (val) => setState(() => focus = val),
-                    isDark,
+                  DurationSetting(
+                    title: i18n.focusTime,
+                    value: focus,
+                    onChanged: (val) => setState(() => focus = val),
+                    isDark: isDark,
                   ),
                   const SizedBox(height: 16),
-                  _buildDurationSetting(
-                    i18n.shortBreak,
-                    short,
-                    (val) => setState(() => short = val),
-                    isDark,
+                  DurationSetting(
+                    title: i18n.shortBreak,
+                    value: short,
+                    items: const [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 45, 60],
+                    onChanged: (val) => setState(() => short = val),
+                    isDark: isDark,
                   ),
                   const SizedBox(height: 24),
                   Text(i18n.alarmSound, style: const TextStyle(fontSize: 16)),
@@ -134,7 +137,9 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                       final path = provider.alarmSoundPath;
                       final name = path.startsWith('http')
                           ? 'Default'
-                          : path.split(Platform.pathSeparator).last;
+                          : (kIsWeb
+                                ? path.split('/').last
+                                : path.split(Platform.pathSeparator).last);
                       return InkWell(
                         onTap: () async {
                           FilePickerResult? result = await FilePicker.platform
@@ -219,47 +224,6 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
           );
         },
       ),
-    );
-  }
-
-  Widget _buildDurationSetting(
-    String label,
-    int value,
-    Function(int) onChanged,
-    bool isDark,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 16)),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withAlpha(((0.1) * 255).round())
-                : Colors.black.withAlpha(((0.05) * 255).round()),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withAlpha(((0.2) * 255).round())
-                  : Colors.black.withAlpha(((0.1) * 255).round()),
-            ),
-          ),
-          child: DropdownButton<int>(
-            value: value,
-            underline: const SizedBox(),
-            icon: const Icon(Icons.arrow_drop_down),
-            dropdownColor: isDark ? const Color(0xFF2C2C2C) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            items: [5, 10, 15, 20, 25, 30, 45, 60]
-                .map((e) => DropdownMenuItem(value: e, child: Text('$e min')))
-                .toList(),
-            onChanged: (val) {
-              if (val != null) onChanged(val);
-            },
-          ),
-        ),
-      ],
     );
   }
 

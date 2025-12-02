@@ -4,13 +4,20 @@ import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import '../../providers/todo_provider.dart';
 import '../../models/todo.dart';
-import '../modal/add_todo_modal.dart';
+import '../modal/add_todo/add_todo_modal.dart';
 import 'todo_item.dart';
 import '../glass/glass_popup_menu.dart';
 
-class TodoListWidget extends StatelessWidget {
+class TodoListWidget extends StatefulWidget {
   final bool isCompact;
   const TodoListWidget({super.key, this.isCompact = false});
+
+  @override
+  State<TodoListWidget> createState() => _TodoListWidgetState();
+}
+
+class _TodoListWidgetState extends State<TodoListWidget> {
+  final Set<String> _dismissedTaskIds = {};
 
   void _showAddTodoModal(BuildContext context, {Todo? todo}) {
     showGeneralDialog(
@@ -92,21 +99,77 @@ class TodoListWidget extends StatelessWidget {
               )
             : ImplicitlyAnimatedList<Todo>(
                 padding: const EdgeInsets.only(bottom: 80),
-                items: todoProvider.todos,
+                items: todoProvider.todos
+                    .where((t) => t.parentId == null)
+                    .toList(),
                 areItemsTheSame: (a, b) => a.id == b.id,
                 itemBuilder: (context, animation, todo, index) {
+                  final isDismissed = _dismissedTaskIds.contains(todo.id);
+                  if (isDismissed) {
+                    // If dismissed, we return a shrunk box to allow the list to animate the space closing
+                    // but we don't render the Dismissible widget again.
+                    return SizeFadeTransition(
+                      sizeFraction: 0.7,
+                      curve: Curves.easeInOut,
+                      animation: animation,
+                      child: const SizedBox.shrink(),
+                    );
+                  }
+
                   return SizeFadeTransition(
                     sizeFraction: 0.7,
                     curve: Curves.easeInOut,
                     animation: animation,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: TodoItem(
-                        todo: todo,
-                        onToggle: () => todoProvider.toggleTodo(todo.id),
-                        onDelete: () => todoProvider.removeTodo(todo.id),
-                        onShowMenu: (position) =>
-                            _showEditDeleteMenu(context, todo, position),
+                      child: Column(
+                        children: [
+                          TodoItem(
+                            todo: todo,
+                            enableDismiss: true,
+                            onToggle: () => todoProvider.toggleTodo(todo.id),
+                            onDelete: () {
+                              setState(() {
+                                _dismissedTaskIds.add(todo.id);
+                              });
+                              todoProvider.removeTodo(todo.id);
+                            },
+                            onShowMenu: (position) =>
+                                _showEditDeleteMenu(context, todo, position),
+                          ),
+                          Consumer<TodoProvider>(
+                            builder: (context, provider, child) {
+                              final subTasks = provider.getSubTasks(todo.id);
+                              if (subTasks.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 24.0),
+                                child: Column(
+                                  children: subTasks.map((subTask) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 8),
+                                      child: TodoItem(
+                                        todo: subTask,
+                                        enableDismiss: true,
+                                        onToggle: () =>
+                                            provider.toggleTodo(subTask.id),
+                                        onDelete: () =>
+                                            provider.removeTodo(subTask.id),
+                                        onShowMenu: (position) =>
+                                            _showEditDeleteMenu(
+                                              context,
+                                              subTask,
+                                              position,
+                                            ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );

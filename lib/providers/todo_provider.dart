@@ -38,26 +38,32 @@ class TodoProvider extends ChangeNotifier {
     await prefs.setString('todos', todosString);
   }
 
-  void addTodo(
+  String addTodo(
     String title, {
     String? description,
     Duration? estimatedDuration,
     TodoImportance importance = TodoImportance.medium,
     DateTime? plannedStartTime,
+    String? parentId,
   }) {
-    _todos.add(
-      Todo(
-        id: DateTime.now().toString(),
-        title: title,
-        description: description,
-        estimatedDuration: estimatedDuration,
-        importance: importance,
-        plannedStartTime: plannedStartTime,
-      ),
+    final newTodo = Todo(
+      id: DateTime.now().toString(),
+      title: title,
+      description: description,
+      estimatedDuration: estimatedDuration,
+      importance: importance,
+      plannedStartTime: plannedStartTime,
+      parentId: parentId,
     );
+    _todos.add(newTodo);
     _sortTodos();
     _saveTodos();
     notifyListeners();
+    return newTodo.id;
+  }
+
+  List<Todo> getSubTasks(String parentId) {
+    return _todos.where((todo) => todo.parentId == parentId).toList();
   }
 
   void toggleTodo(String id) async {
@@ -74,7 +80,20 @@ class TodoProvider extends ChangeNotifier {
   }
 
   void removeTodo(String id) {
-    _todos.removeWhere((todo) => todo.id == id);
+    final idsToRemove = <String>{id};
+
+    // Find all descendants
+    void addDescendants(String parentId) {
+      final children = _todos.where((t) => t.parentId == parentId);
+      for (var child in children) {
+        idsToRemove.add(child.id);
+        addDescendants(child.id);
+      }
+    }
+
+    addDescendants(id);
+
+    _todos.removeWhere((todo) => idsToRemove.contains(todo.id));
     _saveTodos();
     notifyListeners();
   }

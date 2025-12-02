@@ -420,6 +420,48 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Statistics'**
   String get statistics;
+
+  /// Label for reminder mode setting
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Mode'**
+  String get reminderMode;
+
+  /// Label for no reminder
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get reminderNone;
+
+  /// Label for notification only reminder
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Only'**
+  String get reminderNotification;
+
+  /// Label for alarm only reminder
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Only'**
+  String get reminderAlarm;
+
+  /// Label for all reminders
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get reminderAll;
+
+  /// The label for the parent task dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Parent Task'**
+  String get parentTask;
+
+  /// The label for no parent task option
+  ///
+  /// In en, this message translates to:
+  /// **'No Parent Task'**
+  String get noparent;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

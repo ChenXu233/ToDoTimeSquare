@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../models/todo.dart';
-import '../../providers/todo_provider.dart';
-import '../../i18n/i18n.dart';
-import '../glass/glass_container.dart';
+import '../../../models/todo.dart';
+import '../../../providers/todo_provider.dart';
+import '../../../i18n/i18n.dart';
+import '../../glass/glass_container.dart';
+import './component/importance_segmented_button.dart';
+import './component/parent_task_dropdown.dart';
+import './component/duration_picker.dart';
+import './component/start_time_picker.dart';
 
 class AddTodoModal extends StatefulWidget {
   final Todo? todo;
@@ -21,6 +25,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
   TodoImportance _importance = TodoImportance.medium;
   Duration? _estimatedDuration;
   DateTime? _plannedStartTime;
+  String? _parentId;
 
   @override
   void initState() {
@@ -31,6 +36,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
       _importance = widget.todo!.importance;
       _estimatedDuration = widget.todo!.estimatedDuration;
       _plannedStartTime = widget.todo!.plannedStartTime;
+      _parentId = widget.todo!.parentId;
     }
   }
 
@@ -41,57 +47,31 @@ class _AddTodoModalState extends State<AddTodoModal> {
     super.dispose();
   }
 
-  Future<void> _pickDuration() async {
-    // Simple duration picker using dialog
-    final TimeOfDay? time = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 0, minute: 30),
-      helpText: "Select Duration (Hours : Minutes)",
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
-    );
-
-    if (time != null) {
-      setState(() {
-        _estimatedDuration = Duration(hours: time.hour, minutes: time.minute);
-      });
-    }
+  void _onDurationChanged(Duration? duration) {
+    if (!mounted) return;
+    setState(() {
+      _estimatedDuration = duration;
+    });
   }
 
-  Future<void> _pickStartTime() async {
-    final DateTime? date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
+  void _onStartTimeChanged(DateTime? startTime) {
+    if (!mounted) return;
+    setState(() {
+      _plannedStartTime = startTime;
+    });
+  }
 
-    if (date != null && mounted) {
-      final TimeOfDay? time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-
-      if (time != null) {
-        setState(() {
-          _plannedStartTime = DateTime(
-            date.year,
-            date.month,
-            date.day,
-            time.hour,
-            time.minute,
-          );
-        });
-      }
-    }
+  void _onParentChanged(String? parentId) {
+    if (!mounted) return;
+    setState(() {
+      _parentId = parentId;
+    });
   }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      final provider = Provider.of<TodoProvider>(context, listen: false);
+
       if (widget.todo != null) {
         final updatedTodo = Todo(
           id: widget.todo!.id,
@@ -103,13 +83,11 @@ class _AddTodoModalState extends State<AddTodoModal> {
           importance: _importance,
           plannedStartTime: _plannedStartTime,
           isCompleted: widget.todo!.isCompleted,
+          parentId: _parentId,
         );
-        Provider.of<TodoProvider>(
-          context,
-          listen: false,
-        ).updateTodo(updatedTodo);
+        provider.updateTodo(updatedTodo);
       } else {
-        Provider.of<TodoProvider>(context, listen: false).addTodo(
+        provider.addTodo(
           _titleController.text,
           description: _descriptionController.text.isEmpty
               ? null
@@ -117,6 +95,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
           estimatedDuration: _estimatedDuration,
           importance: _importance,
           plannedStartTime: _plannedStartTime,
+          parentId: _parentId,
         );
       }
       Navigator.pop(context);
@@ -243,45 +222,14 @@ class _AddTodoModalState extends State<AddTodoModal> {
                   const SizedBox(height: 24),
 
                   // Importance
-                  Text(
-                    i18n.importance,
-                    style: TextStyle(
-                      color: textColor.withAlpha(((0.7) * 255).round()),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SegmentedButton<TodoImportance>(
-                    segments: [
-                      ButtonSegment(
-                        value: TodoImportance.low,
-                        label: Text(i18n.low),
-                      ),
-                      ButtonSegment(
-                        value: TodoImportance.medium,
-                        label: Text(i18n.medium),
-                      ),
-                      ButtonSegment(
-                        value: TodoImportance.high,
-                        label: Text(i18n.high),
-                      ),
-                    ],
-                    selected: {_importance},
-                    onSelectionChanged: (Set<TodoImportance> newSelection) {
+                  ImportanceSegmentedButton(
+                    importance: _importance,
+                    onChanged: (newImportance) {
+                      if (!mounted) return;
                       setState(() {
-                        _importance = newSelection.first;
+                        _importance = newImportance;
                       });
                     },
-                    style: ButtonStyle(
-                      foregroundColor: WidgetStateProperty.resolveWith((
-                        states,
-                      ) {
-                        if (states.contains(WidgetState.selected)) {
-                          return colorScheme.onSecondaryContainer;
-                        }
-                        return textColor;
-                      }),
-                    ),
                   ),
                   const SizedBox(height: 24),
 
@@ -289,89 +237,90 @@ class _AddTodoModalState extends State<AddTodoModal> {
                   Row(
                     children: [
                       Expanded(
-                        child: InkWell(
-                          onTap: _pickDuration,
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: textColor.withAlpha(
-                                  ((0.3) * 255).round(),
+                        child: DurationPicker(
+                          duration: _estimatedDuration,
+                          onPick: () async {
+                            final TimeOfDay? time = await showTimePicker(
+                              context: context,
+                              initialTime: const TimeOfDay(hour: 0, minute: 30),
+                              helpText: "Select Duration (Hours : Minutes)",
+                              builder: (context, child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(
+                                    context,
+                                  ).copyWith(alwaysUse24HourFormat: true),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (!mounted) return;
+                            if (time != null) {
+                              _onDurationChanged(
+                                Duration(
+                                  hours: time.hour,
+                                  minutes: time.minute,
                                 ),
-                              ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  i18n.duration,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: textColor.withAlpha(
-                                      ((0.7) * 255).round(),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _estimatedDuration != null
-                                      ? "${_estimatedDuration!.inHours}h ${_estimatedDuration!.inMinutes % 60}m"
-                                      : i18n.notSet,
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                              );
+                            }
+                          },
+                          label: i18n.duration,
+                          notSetText: i18n.notSet,
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: InkWell(
-                          onTap: _pickStartTime,
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: textColor.withAlpha(
-                                  ((0.3) * 255).round(),
-                                ),
+                        child: StartTimePicker(
+                          startTime: _plannedStartTime,
+                          onPick: () async {
+                            final DateTime? date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime.now().add(
+                                const Duration(days: 365),
                               ),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  i18n.startTime,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: textColor.withAlpha(
-                                      ((0.7) * 255).round(),
-                                    ),
+                            );
+                            if (!mounted) return;
+                            if (date != null) {
+                              final TimeOfDay? time = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                              if (!mounted) return;
+                              if (time != null) {
+                                _onStartTimeChanged(
+                                  DateTime(
+                                    date.year,
+                                    date.month,
+                                    date.day,
+                                    time.hour,
+                                    time.minute,
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _plannedStartTime != null
-                                      ? "${_plannedStartTime!.month}/${_plannedStartTime!.day} ${_plannedStartTime!.hour}:${_plannedStartTime!.minute.toString().padLeft(2, '0')}"
-                                      : i18n.notSet,
-                                  style: TextStyle(
-                                    color: textColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                );
+                              }
+                            }
+                          },
+                          label: i18n.startTime,
+                          notSetText: i18n.notSet,
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Parent Task
+                  Text(
+                    i18n.parentTask,
+                    style: TextStyle(
+                      color: textColor.withAlpha(((0.7) * 255).round()),
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ParentTaskDropdown(
+                    parentId: _parentId,
+                    onChanged: _onParentChanged,
+                    currentTodoId: widget.todo?.id,
                   ),
                   const SizedBox(height: 32),
 
