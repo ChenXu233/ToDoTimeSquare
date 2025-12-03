@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import '../../i18n/i18n.dart';
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import '../../providers/todo_provider.dart';
@@ -39,10 +41,30 @@ class _TodoListWidgetState extends State<TodoListWidget> {
   }
 
   void _showEditDeleteMenu(BuildContext context, Todo todo, Offset position) {
+    final i18n = APPi18n.of(context)!;
     showGlassMenu(
       context: context,
       position: position - const Offset(-10, 20),
       items: [
+        if (!todo.isCompleted)
+          GlassPopupMenuItem(
+            value: 'start',
+            child: Row(
+              children: [
+                Icon(
+                  Icons.play_circle_outline,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  i18n.startTask,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
         GlassPopupMenuItem(
           value: 'edit',
           child: Row(
@@ -50,7 +72,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
               Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurface),
               const SizedBox(width: 8),
               Text(
-                'Edit',
+                i18n.edit,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -58,20 +80,22 @@ class _TodoListWidgetState extends State<TodoListWidget> {
             ],
           ),
         ),
-        const GlassPopupMenuItem(
+        GlassPopupMenuItem(
           value: 'delete',
           child: Row(
             children: [
               Icon(Icons.delete, color: Colors.red),
               SizedBox(width: 8),
-              Text('Delete', style: TextStyle(color: Colors.red)),
+              Text(i18n.delete, style: const TextStyle(color: Colors.red)),
             ],
           ),
         ),
       ],
     ).then((value) {
       if (!context.mounted) return;
-      if (value == 'edit') {
+      if (value == 'start') {
+        context.go('/pomodoro', extra: todo);
+      } else if (value == 'edit') {
         _showAddTodoModal(context, todo: todo);
       } else if (value == 'delete') {
         Provider.of<TodoProvider>(context, listen: false).removeTodo(todo.id);

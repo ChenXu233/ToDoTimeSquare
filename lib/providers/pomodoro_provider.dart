@@ -32,6 +32,12 @@ class PomodoroProvider extends ChangeNotifier {
   int get shortBreakDuration => _shortBreakDuration;
   String get alarmSoundPath => _alarmSoundPath;
 
+  String? _currentTaskId;
+  String? _currentTaskTitle;
+
+  String? get currentTaskId => _currentTaskId;
+  String? get currentTaskTitle => _currentTaskTitle;
+
   PomodoroProvider() {
     _loadSettings();
   }
@@ -42,6 +48,9 @@ class PomodoroProvider extends ChangeNotifier {
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
     _alarmSoundPath =
         prefs.getString('alarmSoundPath') ?? 'audio/alarm_sound.ogg';
+
+    _currentTaskId = prefs.getString('pomodoro_currentTaskId');
+    _currentTaskTitle = prefs.getString('pomodoro_currentTaskTitle');
 
     int? reminderModeIndex = prefs.getInt('reminderMode');
     if (reminderModeIndex != null &&
@@ -111,6 +120,17 @@ class PomodoroProvider extends ChangeNotifier {
       await prefs.remove('pomodoro_targetTime');
     }
     await prefs.setInt('pomodoro_savedRemaining', _remainingSeconds);
+
+    if (_currentTaskId != null) {
+      await prefs.setString('pomodoro_currentTaskId', _currentTaskId!);
+    } else {
+      await prefs.remove('pomodoro_currentTaskId');
+    }
+    if (_currentTaskTitle != null) {
+      await prefs.setString('pomodoro_currentTaskTitle', _currentTaskTitle!);
+    } else {
+      await prefs.remove('pomodoro_currentTaskTitle');
+    }
   }
 
   Future<void> updateSettings({
@@ -148,7 +168,11 @@ class PomodoroProvider extends ChangeNotifier {
         break;
     }
     if (totalSeconds == 0) return 0;
-    return 1.0 - (_remainingSeconds / totalSeconds);
+    final value = 1.0 - (_remainingSeconds / totalSeconds);
+    if (value.isNaN) return 0;
+    if (value < 0) return 0;
+    if (value > 1) return 1;
+    return value;
   }
 
   void startTimer() {
@@ -207,7 +231,9 @@ class PomodoroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetTimer() {
+  bool setTask({required String id, required String title}) {
+    if (_currentTaskId == id) return false;
+
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
@@ -220,6 +246,34 @@ class PomodoroProvider extends ChangeNotifier {
 
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
+    _cancelNotification();
+
+    _currentTaskId = id;
+    _currentTaskTitle = title;
+
+    _saveState();
+    notifyListeners();
+    return true;
+  }
+
+  void resetTimer({bool clearTask = false}) {
+    _timer?.cancel();
+    _timer = null;
+    _isRunning = false;
+    _targetTime = null;
+
+    if (_isRinging) {
+      _isRinging = false;
+      _audioPlayer.stop();
+    }
+
+    _status = PomodoroStatus.focus;
+    _remainingSeconds = _focusDuration;
+
+    if (clearTask) {
+      _currentTaskId = null;
+      _currentTaskTitle = null;
+    }
 
     _saveState();
     _cancelNotification();

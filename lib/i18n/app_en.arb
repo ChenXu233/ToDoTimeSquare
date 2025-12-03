@@ -100,6 +100,10 @@
   "@start": {
     "description": "The label for the start button"
   },
+  "startTask": "Start Task",
+  "@startTask": {
+    "description": "The label for the start task action"
+  },
   "pause": "Pause",
   "@pause": {
     "description": "The label for the pause button"
@@ -135,6 +139,26 @@
   "pomodoroStatusLongBreak": "Long Break",
   "@pomodoroStatusLongBreak": {
     "description": "The status text for long break mode"
+  },
+  "currentTask": "Current Task",
+  "@currentTask": {
+    "description": "Heading for the active task panel"
+  },
+  "completeTask": "Complete Task",
+  "@completeTask": {
+    "description": "Button label to mark task completed"
+  },
+  "taskCompletedDialogTitle": "Task Completed",
+  "@taskCompletedDialogTitle": {
+    "description": "Dialog title shown after finishing a task"
+  },
+  "taskCompletedDialogMessage": "Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you're ready.",
+  "@taskCompletedDialogMessage": {
+    "description": "Dialog message shown after finishing a task"
+  },
+  "taskCompletedDialogButton": "Keep Going",
+  "@taskCompletedDialogButton": {
+    "description": "Button label inside completion dialog"
   },
   "help": "Help",
   "@help": {
