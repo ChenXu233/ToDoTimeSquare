@@ -232,6 +232,16 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
     final i18n = APPi18n.of(context)!;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final fontPreloader = Text(
+      "1234567890",
+      style: TextStyle(
+        fontSize: 120,
+        fontWeight: FontWeight.w900,
+        height: 1,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+    );
+    fontPreloader; // Prevent unused variable warning
 
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {

@@ -193,4 +193,7 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get noparent => '无父任务';
+
+  @override
+  String get resetToDefault => '重置为默认值';
 }

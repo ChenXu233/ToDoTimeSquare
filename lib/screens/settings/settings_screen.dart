@@ -10,6 +10,7 @@ import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/glass/gradient_background.dart';
 import '../../widgets/settings/duration_setting.dart';
+import '../../widgets/glass/glass_dropdown.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -46,28 +47,51 @@ class SettingsScreen extends StatelessWidget {
                         ListTile(
                           leading: const Icon(Icons.language),
                           title: Text(i18n.language),
-                          trailing: DropdownButton<Locale>(
-                            value: themeProvider.currentLocale,
-                            underline: const SizedBox(),
-                            dropdownColor: isDark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            onChanged: (Locale? newValue) {
-                              if (newValue != null) {
-                                themeProvider.changeLanguage(newValue);
-                              }
-                            },
-                            items: const [
-                              DropdownMenuItem(
-                                value: Locale('en', ''),
-                                child: Text('English'),
+                          trailing: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 150),
+                            child: GlassDropdownFormField<Locale?>(
+                              items: const [
+                                DropdownMenuItem(
+                                  value:
+                                      null, // Null represents the "Auto" option
+                                  child: Text('Auto'),
+                                ),
+                                DropdownMenuItem(
+                                  value: Locale('en', ''),
+                                  child: Text('English'),
+                                ),
+                                DropdownMenuItem(
+                                  value: Locale('zh', ''),
+                                  child: Text('中文'),
+                                ),
+                              ],
+                              value: themeProvider.currentLocale,
+                              onChanged: (Locale? newValue) {
+                                themeProvider.changeLanguage(
+                                  newValue,
+                                ); // Handle null for "Auto"
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withAlpha(((0.3) * 255).round()),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
-                              DropdownMenuItem(
-                                value: Locale('zh', ''),
-                                child: Text('中文'),
-                              ),
-                            ],
+                              icon: const Icon(Icons.arrow_drop_down),
+                              dropdownColor: isDark
+                                  ? const Color(0xFF2C2C2C)
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                         Divider(
@@ -84,32 +108,50 @@ class SettingsScreen extends StatelessWidget {
                                       : Icons.brightness_auto),
                           ),
                           title: Text(i18n.themeMode),
-                          trailing: DropdownButton<ThemeMode>(
-                            value: themeProvider.themeMode,
-                            underline: const SizedBox(),
-                            dropdownColor: isDark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            onChanged: (ThemeMode? newValue) {
-                              if (newValue != null) {
-                                themeProvider.setThemeMode(newValue);
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: ThemeMode.system,
-                                child: Text(i18n.themeSystem),
+                          trailing: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 150),
+                            child: GlassDropdownFormField<ThemeMode>(
+                              items: [
+                                DropdownMenuItem(
+                                  value: ThemeMode.system,
+                                  child: Text(i18n.themeSystem),
+                                ),
+                                DropdownMenuItem(
+                                  value: ThemeMode.light,
+                                  child: Text(i18n.themeLight),
+                                ),
+                                DropdownMenuItem(
+                                  value: ThemeMode.dark,
+                                  child: Text(i18n.themeDark),
+                                ),
+                              ],
+                              value: themeProvider.themeMode,
+                              onChanged: (ThemeMode? newValue) {
+                                if (newValue != null) {
+                                  themeProvider.setThemeMode(newValue);
+                                }
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withAlpha(((0.3) * 255).round()),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
-                              DropdownMenuItem(
-                                value: ThemeMode.light,
-                                child: Text(i18n.themeLight),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.dark,
-                                child: Text(i18n.themeDark),
-                              ),
-                            ],
+                              icon: const Icon(Icons.arrow_drop_down),
+                              dropdownColor: isDark
+                                  ? const Color(0xFF2C2C2C)
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                       ],
@@ -160,20 +202,6 @@ class SettingsScreen extends StatelessWidget {
                           child: DurationSetting(
                             title: i18n.shortBreak,
                             value: pomodoroProvider.shortBreakDuration ~/ 60,
-                            items: const [
-                              1,
-                              2,
-                              3,
-                              4,
-                              5,
-                              10,
-                              15,
-                              20,
-                              25,
-                              30,
-                              45,
-                              60,
-                            ],
                             onChanged: (newValue) {
                               pomodoroProvider.updateSettings(
                                 shortBreak: newValue * 60,
@@ -187,57 +215,75 @@ class SettingsScreen extends StatelessWidget {
                             context,
                           ).dividerColor.withAlpha(((0.1) * 255).round()),
                         ),
+                        // 提示音
                         ListTile(
                           title: Text(i18n.alarmSound),
-                          trailing: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 150),
-                            child: InkWell(
-                              onTap: () async {
-                                FilePickerResult? result = await FilePicker
-                                    .platform
-                                    .pickFiles(type: FileType.audio);
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 150,
+                                ),
+                                child: InkWell(
+                                  onTap: () async {
+                                    FilePickerResult? result = await FilePicker
+                                        .platform
+                                        .pickFiles(type: FileType.audio);
 
-                                if (result != null &&
-                                    result.files.single.path != null) {
-                                  pomodoroProvider.setAlarmSound(
-                                    result.files.single.path!,
-                                  );
-                                }
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      pomodoroProvider.alarmSoundPath
-                                              .startsWith('http')
-                                          ? 'Default'
-                                          : (kIsWeb
-                                                ? pomodoroProvider
-                                                      .alarmSoundPath
-                                                      .split('/')
-                                                      .last
-                                                : pomodoroProvider
-                                                      .alarmSoundPath
-                                                      .split(
-                                                        Platform.pathSeparator,
-                                                      )
-                                                      .last),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? Colors.white70
-                                            : Colors.black87,
+                                    if (result != null &&
+                                        result.files.single.path != null) {
+                                      pomodoroProvider.setAlarmSound(
+                                        result.files.single.path!,
+                                      );
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          pomodoroProvider.alarmSoundPath
+                                                  .startsWith('http')
+                                              ? 'Default'
+                                              : (kIsWeb
+                                                    ? pomodoroProvider
+                                                          .alarmSoundPath
+                                                          .split('/')
+                                                          .last
+                                                    : pomodoroProvider
+                                                          .alarmSoundPath
+                                                          .split(
+                                                            Platform
+                                                                .pathSeparator,
+                                                          )
+                                                          .last),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? Colors.white70
+                                                : Colors.black87,
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      const SizedBox(width: 8),
+                                      const Icon(Icons.chevron_right),
+                                    ],
                                   ),
-                                  const SizedBox(width: 8),
-                                  const Icon(Icons.chevron_right),
-                                ],
+                                ),
                               ),
-                            ),
+                              IconButton(
+                                icon: const Icon(Icons.refresh),
+                                onPressed: () {
+                                  pomodoroProvider.setAlarmSound(
+                                    'default',
+                                  ); // Reset to default sound
+                                },
+                                tooltip: i18n.resetToDefault,
+                              ),
+                            ],
                           ),
                         ),
                         Divider(
@@ -247,38 +293,56 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         ListTile(
                           title: Text(i18n.reminderMode),
-                          trailing: DropdownButton<PomodoroReminderMode>(
-                            value: pomodoroProvider.reminderMode,
-                            underline: const SizedBox(),
-                            dropdownColor: isDark
-                                ? Colors.grey[900]
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            onChanged: (PomodoroReminderMode? newValue) {
-                              if (newValue != null) {
-                                pomodoroProvider.updateSettings(
-                                  reminderMode: newValue,
-                                );
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: PomodoroReminderMode.none,
-                                child: Text(i18n.reminderNone),
+                          trailing: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 200),
+                            child: GlassDropdownFormField<PomodoroReminderMode>(
+                              items: [
+                                DropdownMenuItem(
+                                  value: PomodoroReminderMode.none,
+                                  child: Text(i18n.reminderNone),
+                                ),
+                                DropdownMenuItem(
+                                  value: PomodoroReminderMode.notification,
+                                  child: Text(i18n.reminderNotification),
+                                ),
+                                DropdownMenuItem(
+                                  value: PomodoroReminderMode.alarm,
+                                  child: Text(i18n.reminderAlarm),
+                                ),
+                                DropdownMenuItem(
+                                  value: PomodoroReminderMode.all,
+                                  child: Text(i18n.reminderAll),
+                                ),
+                              ],
+                              value: pomodoroProvider.reminderMode,
+                              onChanged: (PomodoroReminderMode? newValue) {
+                                if (newValue != null) {
+                                  pomodoroProvider.updateSettings(
+                                    reminderMode: newValue,
+                                  );
+                                }
+                              },
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 12,
+                                ),
+                                isDense: true,
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withAlpha(((0.3) * 255).round()),
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
-                              DropdownMenuItem(
-                                value: PomodoroReminderMode.notification,
-                                child: Text(i18n.reminderNotification),
-                              ),
-                              DropdownMenuItem(
-                                value: PomodoroReminderMode.alarm,
-                                child: Text(i18n.reminderAlarm),
-                              ),
-                              DropdownMenuItem(
-                                value: PomodoroReminderMode.all,
-                                child: Text(i18n.reminderAll),
-                              ),
-                            ],
+                              icon: const Icon(Icons.arrow_drop_down),
+                              dropdownColor: isDark
+                                  ? const Color(0xFF2C2C2C)
+                                  : Colors.white,
+                            ),
                           ),
                         ),
                       ],

@@ -243,5 +243,9 @@
   "noparent": "No Parent Task",
   "@noparent": {
     "description": "The label for no parent task option"
+  },
+  "resetToDefault": "Reset to Default",
+  "@resetToDefault": {
+    "description": "The label for the reset to default button"
   }
 }
