@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:ui'; // Importing dart:ui for PlatformDispatcher
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
-  Locale _currentLocale = const Locale('zh', '');
+  Locale? _currentLocale;
 
   ThemeMode get themeMode => _themeMode;
-  Locale get currentLocale => _currentLocale;
+  Locale? get currentLocale => _currentLocale; // Placeholder for currentLocale
 
   ThemeProvider() {
     _loadSettings();
@@ -44,10 +45,20 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> changeLanguage(Locale locale) async {
-    _currentLocale = locale;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('languageCode', locale.languageCode);
+  // Modify the `changeLanguage` method to use `PlatformDispatcher` for system locale
+  Future<void> changeLanguage(Locale? locale) async {
+    if (locale == null) {
+      // Null represents the "Auto" option, so reset to system language
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('languageCode');
+      _currentLocale = PlatformDispatcher
+          .instance
+          .locale; // Use PlatformDispatcher for system locale
+    } else {
+      _currentLocale = locale;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('languageCode', locale.languageCode);
+    }
     notifyListeners();
   }
 }

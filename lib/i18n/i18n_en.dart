@@ -193,4 +193,7 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get noparent => 'No Parent Task';
+
+  @override
+  String get resetToDefault => 'Reset to Default';
 }

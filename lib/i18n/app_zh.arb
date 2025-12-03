@@ -61,5 +61,6 @@
   "reminderAlarm": "仅闹铃",
   "reminderAll": "全都有",
   "parentTask": "父任务",
-  "noparent": "无父任务"
+  "noparent": "无父任务",
+  "resetToDefault": "重置为默认值"
 }

@@ -462,6 +462,12 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'No Parent Task'**
   String get noparent;
+
+  /// The label for the reset to default button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Default'**
+  String get resetToDefault;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
