@@ -148,7 +148,11 @@ class PomodoroProvider extends ChangeNotifier {
         break;
     }
     if (totalSeconds == 0) return 0;
-    return 1.0 - (_remainingSeconds / totalSeconds);
+    final value = 1.0 - (_remainingSeconds / totalSeconds);
+    if (value.isNaN) return 0;
+    if (value < 0) return 0;
+    if (value > 1) return 1;
+    return value;
   }
 
   void startTimer() {

@@ -84,6 +84,9 @@ class APPi18nZh extends APPi18n {
   String get start => '开始';
 
   @override
+  String get startTask => '开始任务';
+
+  @override
   String get pause => '暂停';
 
   @override
@@ -109,6 +112,21 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get pomodoroStatusLongBreak => '长休息中';
+
+  @override
+  String get currentTask => '当前任务';
+
+  @override
+  String get completeTask => '完成任务';
+
+  @override
+  String get taskCompletedDialogTitle => '任务完成';
+
+  @override
+  String get taskCompletedDialogMessage => '太棒了！这个任务已经顺利完成，休息一下或准备迎接下一个挑战吧。';
+
+  @override
+  String get taskCompletedDialogButton => '继续冲刺';
 
   @override
   String get help => '帮助';

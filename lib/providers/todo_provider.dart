@@ -79,6 +79,20 @@ class TodoProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> markTodoCompleted(String id) async {
+    final index = _todos.indexWhere((todo) => todo.id == id);
+    if (index == -1) return;
+    if (_todos[index].isCompleted) {
+      _sortTodos();
+      notifyListeners();
+      return;
+    }
+    _todos[index].isCompleted = true;
+    await _saveTodos();
+    _sortTodos();
+    notifyListeners();
+  }
+
   void removeTodo(String id) {
     final idsToRemove = <String>{id};
 

@@ -247,6 +247,12 @@ abstract class APPi18n {
   /// **'Start'**
   String get start;
 
+  /// The label for the start task action
+  ///
+  /// In en, this message translates to:
+  /// **'Start Task'**
+  String get startTask;
+
   /// The label for the pause button
   ///
   /// In en, this message translates to:
@@ -300,6 +306,36 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Long Break'**
   String get pomodoroStatusLongBreak;
+
+  /// Heading for the active task panel
+  ///
+  /// In en, this message translates to:
+  /// **'Current Task'**
+  String get currentTask;
+
+  /// Button label to mark task completed
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Task'**
+  String get completeTask;
+
+  /// Dialog title shown after finishing a task
+  ///
+  /// In en, this message translates to:
+  /// **'Task Completed'**
+  String get taskCompletedDialogTitle;
+
+  /// Dialog message shown after finishing a task
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you\'re ready.'**
+  String get taskCompletedDialogMessage;
+
+  /// Button label inside completion dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Going'**
+  String get taskCompletedDialogButton;
 
   /// The label for the help section
   ///

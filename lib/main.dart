@@ -19,7 +19,7 @@ void main() async {
   JustAudioMediaKit.ensureInitialized();
   await NotificationService().init();
 
-  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+  if (_isDesktopPlatform() && !_isTestEnvironment()) {
     doWhenWindowReady(() {
       final win = appWindow;
       const initialSize = Size(1280, 720);
@@ -86,10 +86,9 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             routerConfig: appRouter, // 使用路由配置
             builder: (context, child) {
-              if (!kIsWeb &&
-                  (Platform.isWindows ||
-                      Platform.isLinux ||
-                      Platform.isMacOS)) {
+              final isDesktop = _isDesktopPlatform();
+              final isTestEnv = _isTestEnvironment();
+              if (isDesktop && !isTestEnv) {
                 final isDark = Theme.of(context).brightness == Brightness.dark;
                 return Scaffold(
                   body: WindowBorder(
@@ -104,7 +103,7 @@ class MyApp extends StatelessWidget {
                   ),
                 );
               }
-              return child!;
+              return child ?? const SizedBox.shrink();
             },
           );
         },
@@ -112,3 +111,25 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+bool _isDesktopPlatform() {
+  if (kIsWeb) return false;
+  return Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+}
+
+bool _isTestEnvironment() {
+  if (_kIsTestEnvironmentFlag) {
+    return true;
+  }
+  if (kIsWeb) return false;
+  try {
+    return Platform.environment['FLUTTER_TEST'] == 'true';
+  } catch (_) {
+    return false;
+  }
+}
+
+const bool _kIsTestEnvironmentFlag = bool.fromEnvironment(
+  'FLUTTER_TEST',
+  defaultValue: false,
+);

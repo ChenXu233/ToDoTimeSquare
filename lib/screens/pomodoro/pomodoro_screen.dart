@@ -4,13 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:confetti/confetti.dart';
 import '../../providers/pomodoro_provider.dart';
+import '../../providers/todo_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/settings/duration_setting.dart';
+import '../../models/todo.dart';
+import 'widgets/task_tray.dart';
 
 class PomodoroScreen extends StatefulWidget {
-  const PomodoroScreen({super.key});
+  final Todo? initialTask;
+
+  const PomodoroScreen({super.key, this.initialTask});
 
   @override
   State<PomodoroScreen> createState() => _PomodoroScreenState();
@@ -18,6 +24,27 @@ class PomodoroScreen extends StatefulWidget {
 
 class _PomodoroScreenState extends State<PomodoroScreen> {
   bool _isFullScreen = false;
+  Todo? _activeTask;
+  bool _hasAutoStartedCurrentTask = false;
+  late final ConfettiController _confettiController;
+  bool _isTaskExpanded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
+    _setActiveTask(widget.initialTask, updateState: false);
+  }
+
+  @override
+  void didUpdateWidget(covariant PomodoroScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTask?.id != oldWidget.initialTask?.id) {
+      _setActiveTask(widget.initialTask);
+    }
+  }
 
   void _toggleFullScreen() {
     setState(() {
@@ -32,14 +59,107 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
 
   @override
   void dispose() {
+    _confettiController.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
+  }
+
+  void _setActiveTask(Todo? task, {bool updateState = true}) {
+    void assign() {
+      _activeTask = task;
+      _hasAutoStartedCurrentTask = false;
+      _isTaskExpanded = false;
+    }
+
+    if (updateState) {
+      setState(assign);
+    } else {
+      assign();
+    }
+
+    if (task != null) {
+      _scheduleAutoStart();
+    }
+  }
+
+  void _scheduleAutoStart() {
+    if (_hasAutoStartedCurrentTask || _activeTask == null) return;
+    _hasAutoStartedCurrentTask = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final provider = context.read<PomodoroProvider>();
+      provider.resetTimer();
+      provider.startTimer();
+    });
   }
 
   String _formatTime(int seconds) {
     final int minutes = seconds ~/ 60;
     final int remainingSeconds = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _completeActiveTask(BuildContext context) async {
+    final task = _activeTask;
+    if (task == null) return;
+    await context.read<TodoProvider>().markTodoCompleted(task.id);
+    if (!mounted) return;
+    setState(() {
+      _activeTask = null;
+      _isTaskExpanded = false;
+    });
+    _confettiController.play();
+    await _showCompletionDialog(context);
+  }
+
+  Future<void> _showCompletionDialog(BuildContext context) {
+    final i18n = APPi18n.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.3),
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: GlassContainer(
+            color: isDark ? Colors.black : Colors.white,
+            opacity: 0.1,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.celebration, color: Colors.orangeAccent),
+                    const SizedBox(width: 12),
+                    Text(
+                      i18n.taskCompletedDialogTitle,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  i18n.taskCompletedDialogMessage,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 24),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(i18n.taskCompletedDialogButton),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _showInfoDialog(BuildContext context) {
@@ -347,35 +467,55 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                         ),
                       )
                     else
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Column(
                         children: [
-                          IconButton(
-                            onPressed: provider.resetTimer,
-                            icon: const Icon(Icons.refresh),
-                            color: fgColor.withAlpha(((0.5) * 255).round()),
-                            iconSize: 24,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: provider.resetTimer,
+                                icon: const Icon(Icons.refresh),
+                                color: fgColor.withAlpha(((0.5) * 255).round()),
+                                iconSize: 24,
+                              ),
+                              const SizedBox(width: 40),
+                              IconButton(
+                                onPressed: provider.isRunning
+                                    ? provider.pauseTimer
+                                    : provider.startTimer,
+                                icon: Icon(
+                                  provider.isRunning
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                ),
+                                color: fgColor,
+                                iconSize: 48,
+                              ),
+                              const SizedBox(width: 40),
+                              IconButton(
+                                onPressed: provider.skipPhase,
+                                icon: const Icon(Icons.skip_next),
+                                color: fgColor.withAlpha(((0.5) * 255).round()),
+                                iconSize: 24,
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 40),
-                          IconButton(
-                            onPressed: provider.isRunning
-                                ? provider.pauseTimer
-                                : provider.startTimer,
-                            icon: Icon(
-                              provider.isRunning
-                                  ? Icons.pause
-                                  : Icons.play_arrow,
+                          if (_activeTask != null) ...[
+                            const SizedBox(height: 24),
+                            FilledButton.icon(
+                              onPressed: () => _completeActiveTask(context),
+                              icon: const Icon(Icons.celebration),
+                              label: Text(i18n.completeTask),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: fgColor,
+                                foregroundColor: bgColor,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
+                              ),
                             ),
-                            color: fgColor,
-                            iconSize: 48,
-                          ),
-                          const SizedBox(width: 40),
-                          IconButton(
-                            onPressed: provider.skipPhase,
-                            icon: const Icon(Icons.skip_next),
-                            color: fgColor.withAlpha(((0.5) * 255).round()),
-                            iconSize: 24,
-                          ),
+                          ],
                         ],
                       ),
                   ],
@@ -435,6 +575,47 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                   onPressed: () => _showSettingsDialog(context),
                   icon: const Icon(Icons.settings),
                   color: fgColor.withAlpha(((0.5) * 255).round()),
+                ),
+              ),
+
+              // Task Tray (Bottom)
+              if (_activeTask != null && _isTaskExpanded)
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => setState(() => _isTaskExpanded = false),
+                  ),
+                ),
+              if (_activeTask != null)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: TaskTray(
+                    task: _activeTask!,
+                    isExpanded: _isTaskExpanded,
+                    fgColor: fgColor,
+                    bgColor: bgColor,
+                    isDark: isDark,
+                    theme: theme,
+                    i18n: i18n,
+                    onExpand: () => setState(() => _isTaskExpanded = true),
+                  ),
+                ),
+              // Confetti Widget
+              SizedBox(
+                width: 300,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConfettiWidget(
+                    confettiController: _confettiController,
+                    blastDirectionality: BlastDirectionality.explosive,
+                    numberOfParticles: 25,
+                    maxBlastForce: 30,
+                    minBlastForce: 5,
+                    gravity: 0.4,
+                    emissionFrequency: 0.02,
+                  ),
                 ),
               ),
             ],

@@ -84,6 +84,9 @@ class APPi18nEn extends APPi18n {
   String get start => 'Start';
 
   @override
+  String get startTask => 'Start Task';
+
+  @override
   String get pause => 'Pause';
 
   @override
@@ -109,6 +112,22 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get pomodoroStatusLongBreak => 'Long Break';
+
+  @override
+  String get currentTask => 'Current Task';
+
+  @override
+  String get completeTask => 'Complete Task';
+
+  @override
+  String get taskCompletedDialogTitle => 'Task Completed';
+
+  @override
+  String get taskCompletedDialogMessage =>
+      'Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you\'re ready.';
+
+  @override
+  String get taskCompletedDialogButton => 'Keep Going';
 
   @override
   String get help => 'Help';
