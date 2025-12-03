@@ -63,6 +63,9 @@ android {
             )
 
         }
+        debug {
+            isDebuggable = true
+        }
     }
 
     // Flavor dimension for Impeller toggle

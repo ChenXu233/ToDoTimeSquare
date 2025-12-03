@@ -20,7 +20,7 @@ class PomodoroProvider extends ChangeNotifier {
   bool _isRinging = false;
   DateTime? _targetTime;
   final AudioPlayer _audioPlayer = AudioPlayer();
-  PomodoroReminderMode _reminderMode = PomodoroReminderMode.notification;
+  PomodoroReminderMode _reminderMode = PomodoroReminderMode.none;
 
   int get remainingSeconds => _remainingSeconds;
   PomodoroStatus get status => _status;
@@ -130,6 +130,9 @@ class PomodoroProvider extends ChangeNotifier {
     if (reminderMode != null) {
       _reminderMode = reminderMode;
       await prefs.setInt('reminderMode', reminderMode.index);
+      if (reminderMode != PomodoroReminderMode.none) {
+        await NotificationService().requestPermissions();
+      }
     }
     resetTimer();
   }
@@ -179,6 +182,16 @@ class PomodoroProvider extends ChangeNotifier {
         _remainingSeconds = 0;
         _targetTime = null;
         _saveState();
+        // 计时结束时弹出系统原生 heads-up 通知
+        if (_reminderMode == PomodoroReminderMode.notification ||
+            _reminderMode == PomodoroReminderMode.all) {
+          NotificationService().showHeadsUpNotification(
+            id: 1,
+            title: _status == PomodoroStatus.focus ? '专注结束' : '休息结束',
+            body: _status == PomodoroStatus.focus ? '该休息了！' : '该专注了！',
+            ongoing: true,
+          );
+        }
         _startAlarm();
       }
     });
