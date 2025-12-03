@@ -1,4 +1,4 @@
-package com.example.todo_time_square
+package com.chenxu233.todo_time_square
 
 import io.flutter.embedding.android.FlutterActivity
 

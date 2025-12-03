@@ -9,7 +9,7 @@ import java.util.Properties
 import java.io.File
 
 android {
-    namespace = "com.example.todo_time_square"
+    namespace = "com.chenxu233.todo_time_square"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.todo_time_square"
+        applicationId = "com.chenxu233.todo_time_square"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
