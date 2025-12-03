@@ -169,7 +169,7 @@ class PomodoroProvider extends ChangeNotifier {
       if (_targetTime != null && now.isBefore(_targetTime!)) {
         final newRemaining = _targetTime!.difference(now).inSeconds;
         if (newRemaining != _remainingSeconds) {
-          _remainingSeconds = newRemaining;
+          _remainingSeconds = newRemaining + 1;
           notifyListeners();
         }
       } else {
