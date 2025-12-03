@@ -428,29 +428,32 @@ jobs:
           choco install innosetup -y
 
       - name: Generate Inno Setup Script
+        shell: pwsh
         run: |
-          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | tr -d '\n')
-          cat <<EOF > installer.iss
+          $version = (Select-String '^version:' pubspec.yaml).Line.Split(':')[1].Trim()
+
+          Set-Content -Path installer.iss -Value @"
           [Setup]
           AppName=ToDoTimeSquare
-          AppVersion=$VERSION
-          DefaultDirName={pf}\\ToDoTimeSquare
+          AppVersion=$version
+          DefaultDirName={pf}\ToDoTimeSquare
           DefaultGroupName=ToDoTimeSquare
-          OutputDir=build\\windows\\installer
+          OutputDir=build\windows\installer
           OutputBaseFilename=ToDoTimeSquareInstaller
           Compression=lzma
           SolidCompression=yes
+          SetupIconFile=assets\windows\app_icon.ico
 
           [Files]
-          Source: "build\\windows\\x64\\runner\\Release\\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
           [Icons]
-          Name: "{group}\\ToDoTimeSquare"; Filename: "{app}\\ToDoTimeSquare.exe"
-          Name: "{group}\\Uninstall ToDoTimeSquare"; Filename: "{uninstallexe}"
+          Name: "{group}\ToDoTimeSquare"; Filename: "{app}\ToDoTimeSquare.exe"
+          Name: "{group}\Uninstall ToDoTimeSquare"; Filename: "{uninstallexe}"
 
           [Run]
-          Filename: "{app}\\todo_time_square.exe"; Description: "Launch ToDoTimeSquare"; Flags: nowait postinstall skipifsilent
-          EOF
+          Filename: "{app}\todo_time_square.exe"; Description: "Launch ToDoTimeSquare"; Flags: nowait postinstall skipifsilent
+          "@
 
       - name: Generate Installer
         run: |
