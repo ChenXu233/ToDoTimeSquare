@@ -379,7 +379,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         ListTile(
                           title: Text('Todo Time Square'),
-                          subtitle: Text('© 2024 ChenXu233'),
+                          subtitle: Text('© 2025 ChenXu233'),
                         ),
                         Divider(
                           color: Theme.of(

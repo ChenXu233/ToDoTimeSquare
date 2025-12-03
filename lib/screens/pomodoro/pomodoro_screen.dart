@@ -24,8 +24,6 @@ class PomodoroScreen extends StatefulWidget {
 
 class _PomodoroScreenState extends State<PomodoroScreen> {
   bool _isFullScreen = false;
-  Todo? _activeTask;
-  bool _hasAutoStartedCurrentTask = false;
   late final ConfettiController _confettiController;
   bool _isTaskExpanded = false;
 
@@ -35,14 +33,36 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
     _confettiController = ConfettiController(
       duration: const Duration(seconds: 3),
     );
-    _setActiveTask(widget.initialTask, updateState: false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final provider = context.read<PomodoroProvider>();
+      if (widget.initialTask != null) {
+        bool changed = provider.setTask(
+          id: widget.initialTask!.id,
+          title: widget.initialTask!.title,
+        );
+        if (changed) {
+          provider.startTimer();
+        }
+      }
+    });
   }
 
   @override
   void didUpdateWidget(covariant PomodoroScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.initialTask?.id != oldWidget.initialTask?.id) {
-      _setActiveTask(widget.initialTask);
+      if (widget.initialTask != null) {
+        final provider = context.read<PomodoroProvider>();
+        bool changed = provider.setTask(
+          id: widget.initialTask!.id,
+          title: widget.initialTask!.title,
+        );
+        if (changed) {
+          provider.startTimer();
+        }
+      }
     }
   }
 
@@ -64,33 +84,16 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
     super.dispose();
   }
 
-  void _setActiveTask(Todo? task, {bool updateState = true}) {
-    void assign() {
-      _activeTask = task;
-      _hasAutoStartedCurrentTask = false;
-      _isTaskExpanded = false;
+  Todo? _getActiveTask(BuildContext context, PomodoroProvider provider) {
+    final taskId = provider.currentTaskId;
+    if (taskId == null) return null;
+    try {
+      return context.watch<TodoProvider>().todos.firstWhere(
+        (t) => t.id == taskId,
+      );
+    } catch (e) {
+      return null;
     }
-
-    if (updateState) {
-      setState(assign);
-    } else {
-      assign();
-    }
-
-    if (task != null) {
-      _scheduleAutoStart();
-    }
-  }
-
-  void _scheduleAutoStart() {
-    if (_hasAutoStartedCurrentTask || _activeTask == null) return;
-    _hasAutoStartedCurrentTask = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final provider = context.read<PomodoroProvider>();
-      provider.resetTimer();
-      provider.startTimer();
-    });
   }
 
   String _formatTime(int seconds) {
@@ -100,12 +103,15 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
   }
 
   Future<void> _completeActiveTask(BuildContext context) async {
-    final task = _activeTask;
-    if (task == null) return;
-    await context.read<TodoProvider>().markTodoCompleted(task.id);
+    final provider = context.read<PomodoroProvider>();
+    final taskId = provider.currentTaskId;
+    if (taskId == null) return;
+
+    await context.read<TodoProvider>().markTodoCompleted(taskId);
     if (!mounted) return;
+
+    provider.resetTimer(clearTask: true);
     setState(() {
-      _activeTask = null;
       _isTaskExpanded = false;
     });
     _confettiController.play();
@@ -365,6 +371,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
 
     return Consumer<PomodoroProvider>(
       builder: (context, provider, child) {
+        final activeTask = _getActiveTask(context, provider);
         // Dynamic background color based on status
         Color bgColor;
         Color fgColor;
@@ -473,7 +480,8 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
-                                onPressed: provider.resetTimer,
+                                onPressed: () =>
+                                    provider.resetTimer(clearTask: true),
                                 icon: const Icon(Icons.refresh),
                                 color: fgColor.withAlpha(((0.5) * 255).round()),
                                 iconSize: 24,
@@ -500,7 +508,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                               ),
                             ],
                           ),
-                          if (_activeTask != null) ...[
+                          if (activeTask != null) ...[
                             const SizedBox(height: 24),
                             FilledButton.icon(
                               onPressed: () => _completeActiveTask(context),
@@ -579,20 +587,20 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
               ),
 
               // Task Tray (Bottom)
-              if (_activeTask != null && _isTaskExpanded)
+              if (activeTask != null && _isTaskExpanded)
                 Positioned.fill(
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
                     onTap: () => setState(() => _isTaskExpanded = false),
                   ),
                 ),
-              if (_activeTask != null)
+              if (activeTask != null)
                 Positioned(
                   left: 0,
                   right: 0,
                   bottom: 0,
                   child: TaskTray(
-                    task: _activeTask!,
+                    task: activeTask,
                     isExpanded: _isTaskExpanded,
                     fgColor: fgColor,
                     bgColor: bgColor,
