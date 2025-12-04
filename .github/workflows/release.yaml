@@ -442,7 +442,7 @@ jobs:
           OutputBaseFilename=ToDoTimeSquareInstaller
           Compression=lzma
           SolidCompression=yes
-          SetupIconFile=assets\windows\app_icon.ico
+          SetupIconFile=windows\runner\resources\app_icon.ico
 
           [Files]
           Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

@@ -30,7 +30,7 @@ class NotificationService {
         );
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
@@ -46,7 +46,7 @@ class NotificationService {
           macOS: initializationSettingsDarwin,
           windows: WindowsInitializationSettings(
             appName: 'Todo Time Square',
-            appUserModelId: 'com.example.todotimesquare',
+            appUserModelId: 'com.chenxu233.todotimesquare',
             guid: '12345678-1234-1234-1234-123456789abc',
           ),
         );
@@ -92,14 +92,14 @@ class NotificationService {
       AndroidNotificationAction(
         'SKIP_ACTION',
         '跳过',
-        icon: DrawableResourceAndroidBitmap('mipmap/ic_launcher'),
+        icon: DrawableResourceAndroidBitmap('mipmap/launcher_icon'),
         showsUserInterface: true,
         cancelNotification: true,
       ),
       AndroidNotificationAction(
         'RESET_ACTION',
         '重置',
-        icon: DrawableResourceAndroidBitmap('mipmap/ic_launcher'),
+        icon: DrawableResourceAndroidBitmap('mipmap/launcher_icon'),
         showsUserInterface: true,
         cancelNotification: true,
       ),
@@ -146,7 +146,7 @@ class NotificationService {
       AndroidNotificationAction(
         'SKIP_ACTION',
         '跳过',
-        icon: DrawableResourceAndroidBitmap('mipmap/ic_launcher'),
+        icon: DrawableResourceAndroidBitmap('mipmap/launcher_icon'),
         showsUserInterface: true,
         cancelNotification: true,
       ),
