@@ -1,12 +1,13 @@
 [Setup]
 AppName=ToDoTimeSquare
-AppVersion=0.1.0alpha
+AppVersion=$version
 DefaultDirName={pf}\ToDoTimeSquare
 DefaultGroupName=ToDoTimeSquare
 OutputDir=build\windows\installer
 OutputBaseFilename=ToDoTimeSquareInstaller
 Compression=lzma
 SolidCompression=yes
+SetupIconFile=windows\runner\resources\app_icon.ico
 
 [Files]
 Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
