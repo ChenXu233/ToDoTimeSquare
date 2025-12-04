@@ -14,10 +14,15 @@ import 'providers/todo_provider.dart';
 import 'widgets/window/window_title_bar.dart';
 import 'services/notification_service.dart';
 
+// Global key used to show SnackBars from main when services fail to initialize.
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   JustAudioMediaKit.ensureInitialized();
-  await NotificationService().init();
+  // Do NOT await NotificationService here — initialize it after the app
+  // UI is up so failures don't prevent the app from starting.
 
   if (_isDesktopPlatform() && !_isTestEnvironment()) {
     doWhenWindowReady(() {
@@ -39,6 +44,22 @@ void main() async {
     }
   }
   runApp(const MyApp());
+
+  // Initialize NotificationService after the first frame so that any
+  // initialization failure doesn't block the app. If it fails, show a
+  // SnackBar informing the user that the service is unavailable.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    () async {
+      try {
+        await NotificationService().init();
+      } catch (e, st) {
+        debugPrint('NotificationService init failed: $e\n$st');
+        scaffoldMessengerKey.currentState?.showSnackBar(
+          const SnackBar(content: Text('NotificationService不可用')),
+        );
+      }
+    }();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -56,6 +77,7 @@ class MyApp extends StatelessWidget {
         builder: (context, themeProvider, child) {
           return MaterialApp.router(
             title: 'Todo Time Square',
+            scaffoldMessengerKey: scaffoldMessengerKey,
             onGenerateTitle: (context) =>
                 APPi18n.of(context)?.appTitle ?? 'Todo Time Square',
             locale: themeProvider.currentLocale,
