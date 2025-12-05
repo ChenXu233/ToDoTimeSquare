@@ -611,19 +611,16 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                   ),
                 ),
               // Confetti Widget
-              SizedBox(
-                width: 300,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: ConfettiWidget(
-                    confettiController: _confettiController,
-                    blastDirectionality: BlastDirectionality.explosive,
-                    numberOfParticles: 25,
-                    maxBlastForce: 30,
-                    minBlastForce: 5,
-                    gravity: 0.4,
-                    emissionFrequency: 0.02,
-                  ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  numberOfParticles: 35,
+                  maxBlastForce: 20,
+                  minBlastForce: 5,
+                  gravity: 0.4,
+                  emissionFrequency: 0.02,
                 ),
               ),
             ],
