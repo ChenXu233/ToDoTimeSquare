@@ -9,7 +9,7 @@ import '../../providers/pomodoro_provider.dart';
 import '../../providers/todo_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
-import '../../widgets/settings/duration_setting.dart';
+import '../settings/widgets/duration_setting.dart';
 import '../../models/todo.dart';
 import 'widgets/task_tray.dart';
 
@@ -251,7 +251,6 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                   DurationSetting(
                     title: i18n.shortBreak,
                     value: short,
-                    items: const [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 45, 60],
                     onChanged: (val) => setState(() => short = val),
                     isDark: isDark,
                   ),
@@ -395,6 +394,9 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
           bgColor = Colors.redAccent;
           fgColor = Colors.white;
         }
+
+        // Responsive: treat narrow screens as "mobile" style.
+        final isMobile = MediaQuery.of(context).size.width < 490;
 
         return Scaffold(
           backgroundColor: bgColor,
@@ -608,6 +610,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     theme: theme,
                     i18n: i18n,
                     onExpand: () => setState(() => _isTaskExpanded = true),
+                    showMeta: !isMobile,
                   ),
                 ),
               // Confetti Widget

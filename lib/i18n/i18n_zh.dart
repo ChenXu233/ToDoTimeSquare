@@ -214,4 +214,7 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get resetToDefault => '重置为默认值';
+
+  @override
+  String get min => '分钟';
 }

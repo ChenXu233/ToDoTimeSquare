@@ -215,4 +215,7 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get resetToDefault => 'Reset to Default';
+
+  @override
+  String get min => 'min';
 }

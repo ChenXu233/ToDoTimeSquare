@@ -504,6 +504,12 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Reset to Default'**
   String get resetToDefault;
+
+  /// The label for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get min;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
