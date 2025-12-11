@@ -251,7 +251,6 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                   DurationSetting(
                     title: i18n.shortBreak,
                     value: short,
-                    items: const [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 45, 60],
                     onChanged: (val) => setState(() => short = val),
                     isDark: isDark,
                   ),

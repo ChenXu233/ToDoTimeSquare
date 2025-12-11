@@ -271,5 +271,9 @@
   "resetToDefault": "Reset to Default",
   "@resetToDefault": {
     "description": "The label for the reset to default button"
+  },
+  "min": "min",
+  "@min": {
+    "description": "The label for minutes"
   }
 }
