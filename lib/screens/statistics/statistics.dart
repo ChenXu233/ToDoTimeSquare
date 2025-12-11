@@ -131,7 +131,7 @@ class StatisticsScreen extends StatelessWidget {
               Container(
                 width: 1,
                 height: 40,
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withAlpha(70),
               ),
               _buildStatItem(
                 context,
@@ -160,7 +160,7 @@ class StatisticsScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Theme.of(
               context,
-            ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+            ).textTheme.bodyMedium?.color?.withAlpha(128),
           ),
         ),
         const SizedBox(height: 4),
@@ -227,7 +227,7 @@ class StatisticsScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: index == 6
                         ? Theme.of(context).primaryColor
-                        : Theme.of(context).primaryColor.withOpacity(0.3),
+                        : Theme.of(context).primaryColor.withAlpha(96),
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
@@ -260,7 +260,7 @@ class StatisticsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              color: Theme.of(context).primaryColor.withAlpha(30),
               shape: BoxShape.circle,
             ),
             child: Icon(

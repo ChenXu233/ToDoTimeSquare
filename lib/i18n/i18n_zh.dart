@@ -9,7 +9,7 @@ class APPi18nZh extends APPi18n {
   APPi18nZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'Time ToDo Square';
+  String get appTitle => '流窗拾刻';
 
   @override
   String get welcomeMessage => '欢迎使用Time ToDo Square';

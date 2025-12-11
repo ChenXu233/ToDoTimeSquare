@@ -197,14 +197,14 @@ class _ExpandedContent extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: fgColor.withOpacity(0.05),
+              color: fgColor.withAlpha(30),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               task.description!,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: fgColor.withOpacity(0.8),
+                color: fgColor.withAlpha(200),
               ),
             ),
           ),

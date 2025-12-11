@@ -1,0 +1,8 @@
+#include "windows.h"
+#include "resource.h"
+
+STRINGTABLE
+BEGIN
+    IDS_APP_TITLE_EN "ToDoTimeSquare"
+    IDS_APP_TITLE_ZH "流窗拾刻"
+END

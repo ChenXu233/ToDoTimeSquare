@@ -14,6 +14,21 @@ extern "C" {
   __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 
+#include "resource.h"
+
+std::wstring GetLocalizedAppName() {
+    LANGID langId = GetUserDefaultUILanguage();
+    int resourceId = IDS_APP_TITLE_EN; // Default to English
+
+    if (PRIMARYLANGID(langId) == LANG_CHINESE) {
+        resourceId = IDS_APP_TITLE_ZH;
+    }
+
+    wchar_t appName[256];
+    LoadString(GetModuleHandle(NULL), resourceId, appName, 256);
+    return std::wstring(appName);
+}
+
 int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
                       _In_ wchar_t *command_line, _In_ int show_command) {
   // Attach to console when present (e.g., 'flutter run') or create a
@@ -45,6 +60,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);
+
+  std::wstring appName = GetLocalizedAppName();
+  MessageBox(NULL, appName.c_str(), L"App Name", MB_OK);
 
   ::MSG msg;
   while (::GetMessage(&msg, nullptr, 0, 0)) {

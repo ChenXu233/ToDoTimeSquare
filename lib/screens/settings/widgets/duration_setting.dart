@@ -43,7 +43,7 @@ class DurationSetting extends StatelessWidget {
   Widget build(BuildContext context) {
     final sortedPresets = [...presets]..sort();
     final effectiveIsDark =
-        this.isDark ?? Theme.of(context).brightness == Brightness.dark;
+        isDark ?? Theme.of(context).brightness == Brightness.dark;
     final effectiveTextColor =
         textColor ?? (effectiveIsDark ? Colors.white : Colors.black);
     final minText = APPi18n.of(context)!.min;
@@ -69,8 +69,8 @@ class DurationSetting extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
                   color: effectiveIsDark
-                      ? const Color(0xFF2C2C2C).withOpacity(0.18)
-                      : Colors.white.withOpacity(0.18),
+                      ? const Color(0xFF2C2C2C).withAlpha(30)
+                      : Colors.white.withAlpha(30),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: effectiveTextColor.withAlpha(((0.3) * 255).round()),
@@ -111,8 +111,8 @@ class DurationSetting extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: effectiveIsDark
-                      ? const Color(0xFF2C2C2C).withOpacity(0.18)
-                      : Colors.white.withOpacity(0.18),
+                      ? const Color(0xFF2C2C2C).withAlpha(30)
+                      : Colors.white.withAlpha(30),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: effectiveTextColor.withAlpha(((0.3) * 255).round()),
@@ -200,8 +200,8 @@ class DurationSetting extends StatelessWidget {
                     constraints: const BoxConstraints(maxHeight: 300),
                     decoration: BoxDecoration(
                       color: effectiveIsDark
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.white.withOpacity(0.1),
+                          ? Colors.white.withAlpha(30)
+                          : Colors.white.withAlpha(30),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: effectiveTextColor.withAlpha(
@@ -210,7 +210,7 @@ class DurationSetting extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withAlpha(30),
                           blurRadius: 20,
                           spreadRadius: 0,
                           offset: const Offset(0, 8),
