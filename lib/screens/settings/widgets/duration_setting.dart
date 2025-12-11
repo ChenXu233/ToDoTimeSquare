@@ -13,6 +13,8 @@ class DurationSetting extends StatelessWidget {
   /// Maximum value for slider (default: 60)
   final int maxValue;
 
+  final int? sliderSize;
+
   /// Preset values shown in dropdown for quick selection
   final List<int> presets;
 
@@ -34,6 +36,7 @@ class DurationSetting extends StatelessWidget {
     this.presets = const [5, 10, 15, 20, 25, 30, 45, 60, 75, 90],
     this.isDark,
     this.textColor,
+    this.sliderSize,
   });
 
   @override
@@ -50,7 +53,6 @@ class DurationSetting extends StatelessWidget {
       maxValue.toDouble(),
     );
 
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -62,7 +64,7 @@ class DurationSetting extends StatelessWidget {
           children: [
             // Slider (compact, slightly wider than dropdown)
             SizedBox(
-              width: 140,
+              width: sliderSize?.toDouble() ?? 120,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
@@ -118,8 +120,7 @@ class DurationSetting extends StatelessWidget {
                 ),
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () =>
-                      _showGlassMenu(
+                  onTap: () => _showGlassMenu(
                     containerContext,
                     sortedPresets,
                     minText,

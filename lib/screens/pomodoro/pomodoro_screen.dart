@@ -224,6 +224,8 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
       barrierColor: Colors.transparent,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
+          final isMobile =
+              MediaQuery.of(context).size.width < 600; // Moved here
           return Dialog(
             backgroundColor: Colors.transparent,
             child: GlassContainer(
@@ -246,6 +248,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     value: focus,
                     onChanged: (val) => setState(() => focus = val),
                     isDark: isDark,
+                    sliderSize: isMobile ? 120 : 240,
                   ),
                   const SizedBox(height: 16),
                   DurationSetting(
@@ -253,6 +256,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     value: short,
                     onChanged: (val) => setState(() => short = val),
                     isDark: isDark,
+                    sliderSize: isMobile ? 120 : 240,
                   ),
                   const SizedBox(height: 24),
                   Text(i18n.alarmSound, style: const TextStyle(fontSize: 16)),
