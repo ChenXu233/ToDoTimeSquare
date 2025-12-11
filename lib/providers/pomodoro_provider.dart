@@ -63,9 +63,11 @@ class PomodoroProvider extends ChangeNotifier {
   }
 
   Future<void> setAlarmSound(String path) async {
-    _alarmSoundPath = path;
+    // allow callers to pass 'default' to reset to bundled asset
+    final normalizedPath = (path == 'default') ? 'audio/alarm_sound.ogg' : path;
+    _alarmSoundPath = normalizedPath;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('alarmSoundPath', path);
+    await prefs.setString('alarmSoundPath', normalizedPath);
     notifyListeners();
   }
 
