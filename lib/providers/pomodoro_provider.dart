@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
@@ -312,22 +314,48 @@ class PomodoroProvider extends ChangeNotifier {
     _isRinging = true;
     notifyListeners();
     try {
+      // Stop any previous playback to avoid races
+      await _audioPlayer.stop();
       await _audioPlayer.setLoopMode(LoopMode.one);
-      if (_alarmSoundPath.startsWith('http')) {
+
+      final path = _alarmSoundPath.trim();
+
+      // allow callers or prefs that still have 'default'
+      final effectivePath = (path.isEmpty || path == 'default')
+          ? 'audio/alarm_sound.ogg'
+          : path;
+
+      if (effectivePath.startsWith('http')) {
         await _audioPlayer.setAudioSource(
-          AudioSource.uri(Uri.parse(_alarmSoundPath)),
+          AudioSource.uri(Uri.parse(effectivePath)),
         );
-      } else if (_alarmSoundPath == 'audio/alarm_sound.ogg' ||
-          _alarmSoundPath == 'assets/audio/alarm_sound.ogg') {
-        await _audioPlayer.setAudioSource(
-          AudioSource.asset('assets/audio/alarm_sound.ogg'),
-        );
+      } else if (effectivePath.startsWith('file://')) {
+        // file:// URIs => convert to local file
+        final uri = Uri.parse(effectivePath);
+        if (kIsWeb) throw Exception('file:// not supported on web');
+        final f = File.fromUri(uri);
+        if (await f.exists()) {
+          await _audioPlayer.setAudioSource(AudioSource.file(f.path));
+        } else {
+          throw Exception('Alarm file not found: ${f.path}');
+        }
+      } else if (!kIsWeb && File(effectivePath).existsSync()) {
+        // absolute/local path
+        await _audioPlayer.setAudioSource(AudioSource.file(effectivePath));
       } else {
-        await _audioPlayer.setAudioSource(AudioSource.file(_alarmSoundPath));
+        // treat as asset path (normalize common variants)
+        final assetPath = effectivePath.startsWith('assets/')
+            ? effectivePath
+            : 'assets/$effectivePath';
+        await _audioPlayer.setAudioSource(AudioSource.asset(assetPath));
       }
-      _audioPlayer.play();
-    } catch (e) {
-      debugPrint("Error playing audio: $e");
+
+      await _audioPlayer.play();
+    } catch (e, st) {
+      debugPrint("Error playing audio: $e\n$st");
+      // ensure state is consistent for UI
+      _isRinging = false;
+      notifyListeners();
     }
   }
 
