@@ -15,8 +15,14 @@ class DurationSetting extends StatelessWidget {
 
   /// Preset values shown in dropdown for quick selection
   final List<int> presets;
-  final bool isDark;
-  final Color textColor;
+
+  /// Optional override to force dark-mode appearance. When null, the
+  /// current `Theme.of(context)` is used.
+  final bool? isDark;
+
+  /// Optional override for text color. When null, a sensible color will be
+  /// chosen based on the effective theme (dark => white, light => black).
+  final Color? textColor;
 
   const DurationSetting({
     super.key,
@@ -26,19 +32,24 @@ class DurationSetting extends StatelessWidget {
     this.minValue = 1,
     this.maxValue = 90,
     this.presets = const [5, 10, 15, 20, 25, 30, 45, 60, 75, 90],
-    required this.isDark,
-    this.textColor = Colors.black,
+    this.isDark,
+    this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
     final sortedPresets = [...presets]..sort();
+    final effectiveIsDark =
+        this.isDark ?? Theme.of(context).brightness == Brightness.dark;
+    final effectiveTextColor =
+        textColor ?? (effectiveIsDark ? Colors.white : Colors.black);
     final minText = APPi18n.of(context)!.min;
     // Clamp the current value within slider range
     final double sliderValue = value.toDouble().clamp(
       minValue.toDouble(),
       maxValue.toDouble(),
     );
+
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,21 +66,21 @@ class DurationSetting extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: isDark
+                  color: effectiveIsDark
                       ? const Color(0xFF2C2C2C).withOpacity(0.18)
                       : Colors.white.withOpacity(0.18),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: textColor.withAlpha(((0.3) * 255).round()),
+                    color: effectiveTextColor.withAlpha(((0.3) * 255).round()),
                   ),
                 ),
                 child: SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 3,
-                    thumbColor: textColor,
-                    activeTrackColor: textColor,
-                    inactiveTrackColor: textColor.withAlpha(60),
-                    overlayColor: textColor.withAlpha(30),
+                    thumbColor: effectiveTextColor,
+                    activeTrackColor: effectiveTextColor,
+                    inactiveTrackColor: effectiveTextColor.withAlpha(60),
+                    overlayColor: effectiveTextColor.withAlpha(30),
                     thumbShape: const RoundSliderThumbShape(
                       enabledThumbRadius: 7,
                     ),
@@ -97,18 +108,23 @@ class DurationSetting extends StatelessWidget {
                   vertical: 14,
                 ),
                 decoration: BoxDecoration(
-                  color: isDark
+                  color: effectiveIsDark
                       ? const Color(0xFF2C2C2C).withOpacity(0.18)
                       : Colors.white.withOpacity(0.18),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: textColor.withAlpha(((0.3) * 255).round()),
+                    color: effectiveTextColor.withAlpha(((0.3) * 255).round()),
                   ),
                 ),
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () =>
-                      _showGlassMenu(containerContext, sortedPresets, minText),
+                      _showGlassMenu(
+                    containerContext,
+                    sortedPresets,
+                    minText,
+                    effectiveTextColor,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -117,14 +133,16 @@ class DurationSetting extends StatelessWidget {
                         '$value $minText',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
-                          color: textColor,
+                          color: effectiveTextColor,
                         ),
                       ),
                       // Dropdown icon
                       Icon(
                         Icons.arrow_drop_down,
                         size: 20,
-                        color: textColor.withAlpha(((0.7) * 255).round()),
+                        color: effectiveTextColor.withAlpha(
+                          ((0.7) * 255).round(),
+                        ),
                       ),
                     ],
                   ),
@@ -137,7 +155,12 @@ class DurationSetting extends StatelessWidget {
     );
   }
 
-  void _showGlassMenu(BuildContext context, List<int> presets, String minText) {
+  void _showGlassMenu(
+    BuildContext context,
+    List<int> presets,
+    String minText,
+    Color effectiveTextColor,
+  ) {
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay =
         Overlay.of(context).context.findRenderObject() as RenderBox;
@@ -145,6 +168,9 @@ class DurationSetting extends StatelessWidget {
       Offset.zero,
       ancestor: overlay,
     );
+
+    final bool effectiveIsDark =
+        Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
@@ -172,12 +198,14 @@ class DurationSetting extends StatelessWidget {
                     width: 120,
                     constraints: const BoxConstraints(maxHeight: 300),
                     decoration: BoxDecoration(
-                      color: isDark
+                      color: effectiveIsDark
                           ? Colors.white.withOpacity(0.1)
                           : Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: textColor.withAlpha(((0.2) * 255).round()),
+                        color: effectiveTextColor.withAlpha(
+                          ((0.2) * 255).round(),
+                        ),
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -205,12 +233,14 @@ class DurationSetting extends StatelessWidget {
                                 vertical: 12,
                               ),
                               color: isSelected
-                                  ? textColor.withAlpha(((0.1) * 255).round())
+                                  ? effectiveTextColor.withAlpha(
+                                      ((0.1) * 255).round(),
+                                    )
                                   : Colors.transparent,
                               child: Text(
                                 '$e $minText',
                                 style: TextStyle(
-                                  color: textColor,
+                                  color: effectiveTextColor,
                                   fontWeight: isSelected
                                       ? FontWeight.bold
                                       : FontWeight.normal,
