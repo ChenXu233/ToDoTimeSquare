@@ -13,6 +13,7 @@ class TaskTray extends StatefulWidget {
   final ThemeData theme;
   final APPi18n i18n;
   final VoidCallback onExpand;
+  final bool showMeta;
 
   const TaskTray({
     super.key,
@@ -24,6 +25,7 @@ class TaskTray extends StatefulWidget {
     required this.theme,
     required this.i18n,
     required this.onExpand,
+    this.showMeta = true,
   });
 
   @override
@@ -80,6 +82,7 @@ class _TaskTrayState extends State<TaskTray>
                               fgColor: widget.fgColor,
                               theme: widget.theme,
                               onTap: widget.onExpand,
+                              showMeta: widget.showMeta,
                             ),
                     ),
                   ),
@@ -98,16 +101,33 @@ class _CollapsedContent extends StatelessWidget {
   final Color fgColor;
   final ThemeData theme;
   final VoidCallback onTap;
+  final bool showMeta;
 
   const _CollapsedContent({
     required this.task,
     required this.fgColor,
     required this.theme,
     required this.onTap,
+    required this.showMeta,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (!showMeta) {
+      return Container(
+        alignment: Alignment.center,
+        child: Text(
+          task.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: fgColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+          ),
+        ),
+      );
+    }
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [

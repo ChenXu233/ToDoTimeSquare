@@ -395,6 +395,9 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
           fgColor = Colors.white;
         }
 
+        // Responsive: treat narrow screens as "mobile" style.
+        final isMobile = MediaQuery.of(context).size.width < 490;
+
         return Scaffold(
           backgroundColor: bgColor,
           body: Stack(
@@ -607,6 +610,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     theme: theme,
                     i18n: i18n,
                     onExpand: () => setState(() => _isTaskExpanded = true),
+                    showMeta: !isMobile,
                   ),
                 ),
               // Confetti Widget
