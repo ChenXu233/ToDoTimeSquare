@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
+import '../models/focus_record.dart';
+import 'statistics_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
 
@@ -39,6 +40,12 @@ class PomodoroProvider extends ChangeNotifier {
 
   String? get currentTaskId => _currentTaskId;
   String? get currentTaskTitle => _currentTaskTitle;
+
+  StatisticsProvider? _statisticsProvider;
+
+  void setStatisticsProvider(StatisticsProvider provider) {
+    _statisticsProvider = provider;
+  }
 
   PomodoroProvider() {
     _loadSettings();
@@ -93,11 +100,17 @@ class PomodoroProvider extends ChangeNotifier {
         _remainingSeconds = target.difference(now).inSeconds;
         _startTimerInternal();
       } else {
-        _remainingSeconds = 0;
+        // App was closed and timer expired while closed.
+        // Requirement: "Once the app exits, it is no longer counted."
+        // So we treat this as an interrupted/invalid session.
         _isRunning = false;
         _targetTime = null;
+        _remainingSeconds = _status == PomodoroStatus.focus
+            ? _focusDuration
+            : _shortBreakDuration;
         _saveState();
-        _startAlarm();
+        // Do NOT start alarm, do NOT record stats.
+        resetTimer();
       }
     } else {
       if (savedRemaining != null) {
@@ -210,6 +223,22 @@ class PomodoroProvider extends ChangeNotifier {
         _remainingSeconds = 0;
         _targetTime = null;
         _saveState();
+
+        // Record statistics if it was a focus session
+        if (_status == PomodoroStatus.focus && _statisticsProvider != null) {
+          _statisticsProvider!.addRecord(
+            FocusRecord(
+              id: DateTime.now().toIso8601String(),
+              startTime: DateTime.now().subtract(
+                Duration(seconds: _focusDuration),
+              ),
+              durationSeconds: _focusDuration,
+              taskId: _currentTaskId,
+              taskTitle: _currentTaskTitle,
+            ),
+          );
+        }
+
         // 计时结束时弹出系统原生 heads-up 通知
         if (_reminderMode == PomodoroReminderMode.notification ||
             _reminderMode == PomodoroReminderMode.all) {

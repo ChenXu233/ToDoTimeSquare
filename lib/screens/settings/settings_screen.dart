@@ -186,6 +186,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                             isDark: isDark,
+                            sliderSize: 180,
                           ),
                         ),
                         Divider(
@@ -208,6 +209,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                             isDark: isDark,
+                            sliderSize: 180,
                           ),
                         ),
                         Divider(

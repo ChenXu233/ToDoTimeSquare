@@ -3,11 +3,12 @@
     "short_name": "todo_time_square",
     "start_url": ".",
     "display": "standalone",
+    "description": "流窗拾刻 - 专为P型人格设计的番茄工作法任务管理应用",
     "background_color": "#2196f3",
     "theme_color": "#ffffff",
-    "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "lang": "en",
     "icons": [
         {
             "src": "icons/Icon-192.png",
@@ -31,5 +32,15 @@
             "type": "image/png",
             "purpose": "maskable"
         }
-    ]
+    ],
+    "i18n": {
+        "en": {
+            "name": "ToDoTimeSquare",
+            "short_name": "ToDo"
+        },
+        "zh": {
+            "name": "流窗拾刻",
+            "short_name": "流窗"
+        }
+    }
 }
