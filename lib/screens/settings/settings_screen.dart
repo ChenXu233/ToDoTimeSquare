@@ -9,7 +9,7 @@ import '../../providers/pomodoro_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/glass/gradient_background.dart';
-import '../../widgets/settings/duration_setting.dart';
+import 'widgets/duration_setting.dart';
 import '../../widgets/glass/glass_dropdown.dart';
 
 class SettingsScreen extends StatelessWidget {

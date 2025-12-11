@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../glass/glass_dropdown.dart';
+import '../../../widgets/glass/glass_dropdown.dart';
 
 class DurationSetting extends StatelessWidget {
   final String title;

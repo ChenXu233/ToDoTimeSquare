@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/gradient_background.dart';
-import '../../widgets/todo/todo_list_widget.dart';
+import 'widgets/todo_list_widget.dart';
 
 class TodoListScreen extends StatelessWidget {
   const TodoListScreen({super.key});

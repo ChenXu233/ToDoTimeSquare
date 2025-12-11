@@ -9,7 +9,7 @@ import '../../providers/pomodoro_provider.dart';
 import '../../providers/todo_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
-import '../../widgets/settings/duration_setting.dart';
+import '../settings/widgets/duration_setting.dart';
 import '../../models/todo.dart';
 import 'widgets/task_tray.dart';
 
