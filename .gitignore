@@ -12,3 +12,4 @@ linux/
 macos/
 src/
 scripts/
+.flutter-plugins-dependencies
