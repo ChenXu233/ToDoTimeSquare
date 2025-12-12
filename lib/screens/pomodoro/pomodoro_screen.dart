@@ -1,17 +1,15 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:confetti/confetti.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../providers/todo_provider.dart';
 import '../../i18n/i18n.dart';
-import '../../widgets/glass/glass_container.dart';
-import '../settings/widgets/duration_setting.dart';
 import '../../models/todo.dart';
 import 'widgets/task_tray.dart';
+import 'widgets/settings_dialog.dart';
+import 'widgets/info_dialog.dart';
+import 'widgets/completion_dialog.dart';
 
 class PomodoroScreen extends StatefulWidget {
   final Todo? initialTask;
@@ -115,245 +113,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
       _isTaskExpanded = false;
     });
     _confettiController.play();
-    await _showCompletionDialog(context);
-  }
-
-  Future<void> _showCompletionDialog(BuildContext context) {
-    final i18n = APPi18n.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return showDialog(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.3),
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: GlassContainer(
-            color: isDark ? Colors.black : Colors.white,
-            opacity: 0.1,
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.celebration, color: Colors.orangeAccent),
-                    const SizedBox(width: 12),
-                    Text(
-                      i18n.taskCompletedDialogTitle,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  i18n.taskCompletedDialogMessage,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 24),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilledButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(i18n.taskCompletedDialogButton),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showInfoDialog(BuildContext context) {
-    final i18n = APPi18n.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.transparent,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: GlassContainer(
-          color: isDark ? Colors.black : Colors.white,
-          opacity: 0.1,
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                i18n.pomodoroInfo,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                i18n.pomodoroInfoContent,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(i18n.cancel),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showSettingsDialog(BuildContext context) {
-    final provider = Provider.of<PomodoroProvider>(context, listen: false);
-    final i18n = APPi18n.of(context)!;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    int focus = provider.focusDuration ~/ 60;
-    int short = provider.shortBreakDuration ~/ 60;
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          final isMobile =
-              MediaQuery.of(context).size.width < 600; // Moved here
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            child: GlassContainer(
-              color: isDark ? Colors.black : Colors.white,
-              opacity: 0.1,
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    i18n.settings,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  DurationSetting(
-                    title: i18n.focusTime,
-                    value: focus,
-                    onChanged: (val) => setState(() => focus = val),
-                    isDark: isDark,
-                    sliderSize: isMobile ? 120 : 240,
-                  ),
-                  const SizedBox(height: 16),
-                  DurationSetting(
-                    title: i18n.shortBreak,
-                    value: short,
-                    onChanged: (val) => setState(() => short = val),
-                    isDark: isDark,
-                    sliderSize: isMobile ? 120 : 240,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(i18n.alarmSound, style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 8),
-                  Consumer<PomodoroProvider>(
-                    builder: (context, provider, _) {
-                      final path = provider.alarmSoundPath;
-                      final name = path.startsWith('http')
-                          ? 'Default'
-                          : (kIsWeb
-                                ? path.split('/').last
-                                : path.split(Platform.pathSeparator).last);
-                      return InkWell(
-                        onTap: () async {
-                          FilePickerResult? result = await FilePicker.platform
-                              .pickFiles(type: FileType.audio);
-
-                          if (result != null &&
-                              result.files.single.path != null) {
-                            provider.setAlarmSound(result.files.single.path!);
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.white.withAlpha(((0.1) * 255).round())
-                                : Colors.black.withAlpha(
-                                    ((0.05) * 255).round(),
-                                  ),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isDark
-                                  ? Colors.white.withAlpha(
-                                      ((0.2) * 255).round(),
-                                    )
-                                  : Colors.black.withAlpha(
-                                      ((0.1) * 255).round(),
-                                    ),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.music_note,
-                                size: 20,
-                                color: isDark ? Colors.white70 : Colors.black87,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ),
-                              const Icon(Icons.chevron_right),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(i18n.cancel),
-                      ),
-                      const SizedBox(width: 16),
-                      FilledButton(
-                        onPressed: () {
-                          provider.updateSettings(
-                            focus: focus * 60,
-                            shortBreak: short * 60,
-                          );
-                          Navigator.pop(context);
-                        },
-                        child: Text(i18n.save),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+    await showPomodoroCompletionDialog(context);
   }
 
   @override
@@ -577,7 +337,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                 child: IconButton(
                   icon: const Icon(Icons.info_outline),
                   color: fgColor.withAlpha((0.5 * 255).round()),
-                  onPressed: () => _showInfoDialog(context),
+                  onPressed: () => showPomodoroInfoDialog(context),
                 ),
               ),
 
@@ -586,7 +346,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                 bottom: 32,
                 right: 32,
                 child: IconButton(
-                  onPressed: () => _showSettingsDialog(context),
+                  onPressed: () => showPomodoroSettingsDialog(context),
                   icon: const Icon(Icons.settings),
                   color: fgColor.withAlpha(((0.5) * 255).round()),
                 ),
