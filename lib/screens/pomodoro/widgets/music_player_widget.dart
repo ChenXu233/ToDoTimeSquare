@@ -57,15 +57,57 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   }
 
   Widget _buildCollapsedContent() {
-    return InkWell(
-      onTap: () => setState(() {
-        _isExpanded = true;
-        widget.expandedNotifier?.value = true;
-      }),
-      borderRadius: BorderRadius.circular(28),
-      child: const Center(
-        child: Icon(Icons.music_note),
-      ),
+    return Consumer<BackgroundMusicProvider>(
+      builder: (context, provider, child) {
+        return InkWell(
+          onTap: () => setState(() {
+            _isExpanded = true;
+            widget.expandedNotifier?.value = true;
+          }),
+          borderRadius: BorderRadius.circular(28),
+          child: Center(
+            child: StreamBuilder<Duration>(
+              stream: provider.backgroundMusicPositionStream,
+              builder: (context, positionSnapshot) {
+                final position = positionSnapshot.data ?? Duration.zero;
+                return StreamBuilder<Duration?>(
+                  stream: provider.backgroundMusicDurationStream,
+                  builder: (context, durationSnapshot) {
+                    final duration = durationSnapshot.data ?? Duration.zero;
+                    double progress = 0.0;
+                    if (duration.inMilliseconds > 0) {
+                      progress =
+                          position.inMilliseconds / duration.inMilliseconds;
+                      if (progress > 1.0) progress = 1.0;
+                    }
+
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: CircularProgressIndicator(
+                            value: progress,
+                            strokeWidth: 2.5,
+                            backgroundColor: Colors.grey.withAlpha(76),
+                          ),
+                        ),
+                        Icon(
+                          provider.isBackgroundMusicPlaying
+                              ? Icons.music_note
+                              : Icons.music_note_outlined,
+                          size: 20,
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
