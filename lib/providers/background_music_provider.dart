@@ -115,7 +115,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
     }
 
     fetchDefaultTracks();
-    fetchRadioTracks();
+    await fetchDefaultTracks();
+    await fetchRadioTracks();
+
+    // Restore last playback state (last queue + index/track id)
+    await _restorePlaybackState(prefs);
   }
 
   Future<void> fetchDefaultTracks() async {
@@ -234,11 +238,6 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
 
   Future<void> _saveImportedTracks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final paths = _playlist.where((t) => t.isLocal && t.localPath != null)
-        .map((t) => t.localPath!)
-        .toList();
-    await prefs.setStringList('pomodoro_importedMusicPaths', paths);
   }
 
   Future<void> removeTrack(MusicTrack track) async {
@@ -266,6 +265,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       await _backgroundMusicPlayer.stop();
       _currentTrackIndex = -1;
     }
+    await _savePlaybackState();
     _safeNotify();
   }
 
@@ -339,6 +339,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       }
       
       await _backgroundMusicPlayer.play();
+      await _savePlaybackState();
       _safeNotify();
     } catch (e) {
       debugPrint("Error playing track: $e");
@@ -346,6 +347,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
   
   List<MusicTrack> _activeQueue = [];
+  // persisted playback state keys
+  static const _kLastTrackId = 'pomodoro_lastTrackId';
+  static const _kLastQueue =
+      'pomodoro_lastQueue'; // values: 'local','default','radio'
+  static const _kLastTrackIndex = 'pomodoro_lastTrackIndex';
 
   Future<void> playNext() async {
     if (_activeQueue.isEmpty) return;
@@ -364,6 +370,63 @@ class BackgroundMusicProvider extends ChangeNotifier {
     
     _currentTrackIndex = nextIndex;
     await playTrack(_activeQueue[_currentTrackIndex]);
+  }
+
+  Future<void> _savePlaybackState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final track = currentTrack;
+      if (track != null) {
+        await prefs.setString(_kLastTrackId, track.id);
+      } else {
+        await prefs.remove(_kLastTrackId);
+      }
+
+      String queueName = 'local';
+      if (_activeQueue == _playlist)
+        queueName = 'local';
+      else if (_activeQueue == _defaultTracks)
+        queueName = 'default';
+      else if (_activeQueue == _radioTracks)
+        queueName = 'radio';
+      await prefs.setString(_kLastQueue, queueName);
+
+      await prefs.setInt(_kLastTrackIndex, _currentTrackIndex);
+    } catch (e) {
+      debugPrint('Error saving playback state: $e');
+    }
+  }
+
+  Future<void> _restorePlaybackState(SharedPreferences prefs) async {
+    try {
+      final lastQueue = prefs.getString(_kLastQueue);
+      final lastIndex = prefs.getInt(_kLastTrackIndex);
+      final lastTrackId = prefs.getString(_kLastTrackId);
+
+      if (lastQueue == 'local' && _playlist.isNotEmpty) {
+        _activeQueue = _playlist;
+      } else if (lastQueue == 'default' && _defaultTracks.isNotEmpty) {
+        _activeQueue = _defaultTracks;
+      } else if (lastQueue == 'radio' && _radioTracks.isNotEmpty) {
+        _activeQueue = _radioTracks;
+      }
+
+      if (lastTrackId != null && _activeQueue.isNotEmpty) {
+        final idx = _activeQueue.indexWhere((t) => t.id == lastTrackId);
+        if (idx != -1) {
+          _currentTrackIndex = idx;
+          return;
+        }
+      }
+
+      if (lastIndex != null && _activeQueue.isNotEmpty) {
+        if (lastIndex >= 0 && lastIndex < _activeQueue.length) {
+          _currentTrackIndex = lastIndex;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error restoring playback state: $e');
+    }
   }
 
   Future<void> playPrevious() async {
