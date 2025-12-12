@@ -1,0 +1,14 @@
+web/
+windows/
+build/
+android/
+ios/
+.idea/
+.gradle/
+.dart_tool/
+.vscode/
+lib/
+linux/
+macos/
+src/
+scripts/
