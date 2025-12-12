@@ -4,12 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
+import 'background_music_provider.dart';
 import '../models/focus_record.dart';
 import 'statistics_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
 
 enum PomodoroReminderMode { none, notification, alarm, all }
+
+
 
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
@@ -23,7 +26,11 @@ class PomodoroProvider extends ChangeNotifier {
   bool _isRinging = false;
   DateTime? _targetTime;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  
+
+
   PomodoroReminderMode _reminderMode = PomodoroReminderMode.none;
+  bool _autoPlayBackgroundMusic = false;
 
   int get remainingSeconds => _remainingSeconds;
   PomodoroStatus get status => _status;
@@ -34,17 +41,26 @@ class PomodoroProvider extends ChangeNotifier {
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
   String get alarmSoundPath => _alarmSoundPath;
-
-  String? _currentTaskId;
-  String? _currentTaskTitle;
+  bool get autoPlayBackgroundMusic => _autoPlayBackgroundMusic;
 
   String? get currentTaskId => _currentTaskId;
   String? get currentTaskTitle => _currentTaskTitle;
 
+
+
+  String? _currentTaskId;
+  String? _currentTaskTitle;
+
   StatisticsProvider? _statisticsProvider;
+
+  BackgroundMusicProvider? _backgroundMusicProvider;
 
   void setStatisticsProvider(StatisticsProvider provider) {
     _statisticsProvider = provider;
+  }
+
+  void setBackgroundMusicProvider(BackgroundMusicProvider provider) {
+    _backgroundMusicProvider = provider;
   }
 
   PomodoroProvider() {
@@ -68,6 +84,11 @@ class PomodoroProvider extends ChangeNotifier {
       _reminderMode = PomodoroReminderMode.values[reminderModeIndex];
     }
 
+    _autoPlayBackgroundMusic =
+        prefs.getBool('pomodoro_autoPlayBackgroundMusic') ?? false;
+
+
+
     await _restoreState(prefs);
   }
 
@@ -79,6 +100,15 @@ class PomodoroProvider extends ChangeNotifier {
     await prefs.setString('alarmSoundPath', normalizedPath);
     notifyListeners();
   }
+
+  Future<void> setAutoPlayBackgroundMusic(bool enabled) async {
+    _autoPlayBackgroundMusic = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('pomodoro_autoPlayBackgroundMusic', enabled);
+    notifyListeners();
+  }
+
+
 
   Future<void> _restoreState(SharedPreferences prefs) async {
     _isRunning = prefs.getBool('pomodoro_isRunning') ?? false;
@@ -203,6 +233,11 @@ class PomodoroProvider extends ChangeNotifier {
     _saveState();
     _startTimerInternal();
     _scheduleNotification();
+    // Start/resume background music when timer starts (only if enabled in settings)
+    if (_autoPlayBackgroundMusic) {
+      _backgroundMusicProvider?.resumeBackgroundMusic();
+    }
+
     notifyListeners();
   }
 
@@ -261,6 +296,8 @@ class PomodoroProvider extends ChangeNotifier {
     _targetTime = null;
     _saveState();
     _cancelNotification();
+    // Pause background music when timer pauses
+    _backgroundMusicProvider?.pauseBackgroundMusic();
     notifyListeners();
   }
 
@@ -276,7 +313,7 @@ class PomodoroProvider extends ChangeNotifier {
       _isRinging = false;
       _audioPlayer.stop();
     }
-
+    
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
     _cancelNotification();
@@ -299,7 +336,7 @@ class PomodoroProvider extends ChangeNotifier {
       _isRinging = false;
       _audioPlayer.stop();
     }
-
+    
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
 
@@ -310,6 +347,8 @@ class PomodoroProvider extends ChangeNotifier {
 
     _saveState();
     _cancelNotification();
+    // Ensure background music is paused on reset
+    _backgroundMusicProvider?.pauseBackgroundMusic();
     notifyListeners();
   }
 
@@ -395,6 +434,7 @@ class PomodoroProvider extends ChangeNotifier {
       _cancelNotification();
       _switchNextStatus();
       startTimer(); // Auto start next phase
+      // startTimer will resume background music if set
       notifyListeners();
     }
   }

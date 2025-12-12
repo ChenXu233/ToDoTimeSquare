@@ -196,6 +196,13 @@ class APPi18nEn extends APPi18n {
   String get reminderMode => 'Reminder Mode';
 
   @override
+  String get autoPlayBackgroundMusic => 'Auto-play background music';
+
+  @override
+  String get autoPlayBackgroundMusicSubtitle =>
+      'Resume/pause background music when timer starts or pauses';
+
+  @override
   String get reminderNone => 'None';
 
   @override

@@ -63,8 +63,8 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "cmake.ignoreCMakeListsMissing": true,
   "editor.quickSuggestions": {
-"other": true,
-"comments": true,
-"strings": true
-}
+    "other": true,
+    "comments": true,
+    "strings": true
+  }
 }

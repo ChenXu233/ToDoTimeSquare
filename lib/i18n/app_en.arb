@@ -244,6 +244,14 @@
   "@reminderMode": {
     "description": "Label for reminder mode setting"
   },
+  "autoPlayBackgroundMusic": "Auto-play background music",
+  "@autoPlayBackgroundMusic": {
+    "description": "Label for auto-play background music setting"
+  },
+  "autoPlayBackgroundMusicSubtitle": "Resume/pause background music when timer starts or pauses",
+  "@autoPlayBackgroundMusicSubtitle": {
+    "description": "Subtitle/description for auto-play background music setting"
+  },
   "reminderNone": "None",
   "@reminderNone": {
     "description": "Label for no reminder"

@@ -463,6 +463,18 @@ abstract class APPi18n {
   /// **'Reminder Mode'**
   String get reminderMode;
 
+  /// Label for auto-play background music setting
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-play background music'**
+  String get autoPlayBackgroundMusic;
+
+  /// Subtitle/description for auto-play background music setting
+  ///
+  /// In en, this message translates to:
+  /// **'Resume/pause background music when timer starts or pauses'**
+  String get autoPlayBackgroundMusicSubtitle;
+
   /// Label for no reminder
   ///
   /// In en, this message translates to:
