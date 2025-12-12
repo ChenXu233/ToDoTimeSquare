@@ -10,6 +10,7 @@ import 'routes/app_router.dart'; // 导入路由配置
 import 'i18n/i18n.dart'; // 导入生成的国际化文件
 import 'providers/theme_provider.dart';
 import 'providers/pomodoro_provider.dart';
+import 'providers/background_music_provider.dart';
 import 'providers/todo_provider.dart';
 import 'providers/statistics_provider.dart';
 import 'widgets/window/window_title_bar.dart';
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider(create: (_) => TodoProvider()),
+        ChangeNotifierProvider(create: (_) => BackgroundMusicProvider()),
         ChangeNotifierProxyProvider<StatisticsProvider, PomodoroProvider>(
           create: (_) => PomodoroProvider(),
           update: (_, stats, pomodoro) =>

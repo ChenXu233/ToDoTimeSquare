@@ -10,6 +10,7 @@ import 'widgets/task_tray.dart';
 import 'widgets/settings_dialog.dart';
 import 'widgets/info_dialog.dart';
 import 'widgets/completion_dialog.dart';
+import 'widgets/music_player_widget.dart';
 
 class PomodoroScreen extends StatefulWidget {
   final Todo? initialTask;
@@ -24,6 +25,8 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
   bool _isFullScreen = false;
   late final ConfettiController _confettiController;
   bool _isTaskExpanded = false;
+  final GlobalKey _musicKey = GlobalKey();
+  final ValueNotifier<bool> _musicExpanded = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -79,6 +82,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
   void dispose() {
     _confettiController.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    _musicExpanded.dispose();
     super.dispose();
   }
 
@@ -350,6 +354,40 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                   icon: const Icon(Icons.settings),
                   color: fgColor.withAlpha(((0.5) * 255).round()),
                 ),
+              ),
+
+              // Music Player Widget (top center) with outside-tap collapse
+              ValueListenableBuilder<bool>(
+                valueListenable: _musicExpanded,
+                builder: (context, expanded, child) {
+                  return Stack(
+                    children: [
+                      if (expanded)
+                        Positioned.fill(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              try {
+                                (_musicKey.currentState as dynamic).collapse();
+                              } catch (_) {}
+                            },
+                            child: const SizedBox.expand(),
+                          ),
+                        ),
+                      Positioned(
+                        bottom: 100,
+                        right: 32,
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: MusicPlayerWidget(
+                            key: _musicKey,
+                            expandedNotifier: _musicExpanded,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
 
               // Task Tray (Bottom)

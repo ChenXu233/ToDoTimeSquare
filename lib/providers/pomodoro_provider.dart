@@ -1,15 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
 import '../services/notification_service.dart';
 import '../models/focus_record.dart';
+import '../models/music_track.dart';
 import 'statistics_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
 
 enum PomodoroReminderMode { none, notification, alarm, all }
+
+
 
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
@@ -23,6 +31,9 @@ class PomodoroProvider extends ChangeNotifier {
   bool _isRinging = false;
   DateTime? _targetTime;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  
+
+
   PomodoroReminderMode _reminderMode = PomodoroReminderMode.none;
 
   int get remainingSeconds => _remainingSeconds;
@@ -35,11 +46,13 @@ class PomodoroProvider extends ChangeNotifier {
   int get shortBreakDuration => _shortBreakDuration;
   String get alarmSoundPath => _alarmSoundPath;
 
-  String? _currentTaskId;
-  String? _currentTaskTitle;
-
   String? get currentTaskId => _currentTaskId;
   String? get currentTaskTitle => _currentTaskTitle;
+
+
+
+  String? _currentTaskId;
+  String? _currentTaskTitle;
 
   StatisticsProvider? _statisticsProvider;
 
@@ -68,6 +81,8 @@ class PomodoroProvider extends ChangeNotifier {
       _reminderMode = PomodoroReminderMode.values[reminderModeIndex];
     }
 
+
+
     await _restoreState(prefs);
   }
 
@@ -79,6 +94,8 @@ class PomodoroProvider extends ChangeNotifier {
     await prefs.setString('alarmSoundPath', normalizedPath);
     notifyListeners();
   }
+
+
 
   Future<void> _restoreState(SharedPreferences prefs) async {
     _isRunning = prefs.getBool('pomodoro_isRunning') ?? false;
@@ -203,6 +220,8 @@ class PomodoroProvider extends ChangeNotifier {
     _saveState();
     _startTimerInternal();
     _scheduleNotification();
+    
+
     notifyListeners();
   }
 
@@ -276,7 +295,7 @@ class PomodoroProvider extends ChangeNotifier {
       _isRinging = false;
       _audioPlayer.stop();
     }
-
+    
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
     _cancelNotification();
@@ -299,7 +318,7 @@ class PomodoroProvider extends ChangeNotifier {
       _isRinging = false;
       _audioPlayer.stop();
     }
-
+    
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
 
@@ -395,6 +414,7 @@ class PomodoroProvider extends ChangeNotifier {
       _cancelNotification();
       _switchNextStatus();
       startTimer(); // Auto start next phase
+      // startTimer will resume background music if set
       notifyListeners();
     }
   }

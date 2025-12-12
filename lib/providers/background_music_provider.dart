@@ -1,0 +1,380 @@
+import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
+import '../models/music_track.dart';
+
+enum MusicPlaybackMode { listLoop, shuffle, radio }
+
+class BackgroundMusicProvider extends ChangeNotifier {
+  final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
+  
+  List<MusicTrack> _playlist = [];
+  List<MusicTrack> _defaultTracks = [];
+  List<MusicTrack> _radioTracks = [];
+  int _currentTrackIndex = -1;
+  MusicPlaybackMode _playbackMode = MusicPlaybackMode.listLoop;
+  bool _isBackgroundMusicPlaying = false;
+  double _backgroundMusicVolume = 0.5;
+  bool _isLoadingMusic = false;
+
+  // Getters
+  List<MusicTrack> get playlist => _playlist;
+  List<MusicTrack> get defaultTracks => _defaultTracks;
+  List<MusicTrack> get radioTracks => _radioTracks;
+  MusicTrack? get currentTrack => 
+      (_currentTrackIndex >= 0 && _currentTrackIndex < _playlist.length) 
+          ? _playlist[_currentTrackIndex] 
+          : null;
+  MusicPlaybackMode get playbackMode => _playbackMode;
+  bool get isBackgroundMusicPlaying => _isBackgroundMusicPlaying;
+  double get backgroundMusicVolume => _backgroundMusicVolume;
+  bool get isLoadingMusic => _isLoadingMusic;
+  
+  Stream<Duration> get backgroundMusicPositionStream =>
+      _backgroundMusicPlayer.positionStream;
+  Stream<Duration?> get backgroundMusicDurationStream =>
+      _backgroundMusicPlayer.durationStream;
+  Stream<ProcessingState> get backgroundMusicProcessingStateStream =>
+      _backgroundMusicPlayer.processingStateStream;
+
+  BackgroundMusicProvider() {
+    _loadSettings();
+    _initBackgroundMusicPlayer();
+  }
+
+  void _initBackgroundMusicPlayer() {
+    _backgroundMusicPlayer.playerStateStream.listen((state) {
+      _isBackgroundMusicPlaying = state.playing;
+      if (state.processingState == ProcessingState.completed) {
+        _onTrackFinished();
+      }
+      notifyListeners();
+    });
+  }
+
+  void _onTrackFinished() {
+    if (_playbackMode == MusicPlaybackMode.listLoop || 
+        _playbackMode == MusicPlaybackMode.shuffle) {
+      playNext();
+    } else {
+      // Radio mode
+      playNext();
+    }
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    _backgroundMusicVolume =
+        prefs.getDouble('pomodoro_backgroundMusicVolume') ?? 0.5;
+    await _backgroundMusicPlayer.setVolume(_backgroundMusicVolume);
+    
+    int? modeIndex = prefs.getInt('pomodoro_playbackMode');
+    if (modeIndex != null && modeIndex >= 0 && modeIndex < MusicPlaybackMode.values.length) {
+      _playbackMode = MusicPlaybackMode.values[modeIndex];
+    }
+
+    // Load imported tracks
+    final importedPaths = prefs.getStringList('pomodoro_importedMusicPaths') ?? [];
+    for (var path in importedPaths) {
+      final fileName = path.split(Platform.pathSeparator).last;
+      _playlist.add(MusicTrack(
+        id: path,
+        title: fileName,
+        artist: 'Local Import',
+        sourceUrl: path,
+        isLocal: true,
+        localPath: path,
+      ));
+    }
+
+    fetchDefaultTracks();
+    fetchRadioTracks();
+  }
+
+  Future<void> fetchDefaultTracks() async {
+    // Example URL - replace with your actual GitHub raw URL
+    const url = 'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/main/assets/music/default_playlist.json';
+    try {
+      // final response = await http.get(Uri.parse(url));
+      // if (response.statusCode == 200) {
+      //   final List<dynamic> data = json.decode(response.body);
+      //   _defaultTracks = data.map((e) => MusicTrack.fromJson(e)).toList();
+      //   notifyListeners();
+      // }
+      
+      // Mock data
+      _defaultTracks = [
+        MusicTrack(
+          id: 'def_1',
+          title: 'Lofi Chill 1',
+          artist: 'Unknown',
+          sourceUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        ),
+        MusicTrack(
+          id: 'def_2',
+          title: 'Lofi Chill 2',
+          artist: 'Unknown',
+          sourceUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        ),
+      ];
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching default tracks: $e');
+    }
+  }
+
+  Future<void> fetchRadioTracks() async {
+    // Example URL - replace with your actual GitHub raw URL
+    const url = 'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/main/assets/music/radio_playlist.json';
+    try {
+      // final response = await http.get(Uri.parse(url));
+      // if (response.statusCode == 200) {
+      //   final List<dynamic> data = json.decode(response.body);
+      //   _radioTracks = data.map((e) => MusicTrack.fromJson(e)..isRadio = true).toList();
+      //   notifyListeners();
+      // }
+      
+      // Mock data
+      _radioTracks = [
+        MusicTrack(
+          id: 'radio_1',
+          title: 'Weekly Radio 1',
+          artist: 'Radio Host',
+          sourceUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+          isRadio: true,
+        ),
+      ];
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching radio tracks: $e');
+    }
+  }
+
+  Future<void> importMusic() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+      allowMultiple: true,
+    );
+
+    if (result != null) {
+      final newPaths = result.paths.whereType<String>().toList();
+      for (var path in newPaths) {
+        if (!_playlist.any((t) => t.localPath == path)) {
+          final fileName = path.split(Platform.pathSeparator).last;
+          _playlist.add(MusicTrack(
+            id: path,
+            title: fileName,
+            artist: 'Local Import',
+            sourceUrl: path,
+            isLocal: true,
+            localPath: path,
+          ));
+        }
+      }
+      _saveImportedTracks();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveImportedTracks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final paths = _playlist.where((t) => t.isLocal && t.localPath != null)
+        .map((t) => t.localPath!)
+        .toList();
+    await prefs.setStringList('pomodoro_importedMusicPaths', paths);
+  }
+
+  Future<void> removeTrack(MusicTrack track) async {
+    if (track.isLocal) {
+      _playlist.removeWhere((t) => t.id == track.id);
+      _saveImportedTracks();
+    } else {
+      if (track.localPath != null) {
+        try {
+          final file = File(track.localPath!);
+          if (await file.exists()) {
+            await file.delete();
+          }
+        } catch (e) {
+          debugPrint("Error deleting file: $e");
+        }
+        final index = _defaultTracks.indexWhere((t) => t.id == track.id);
+        if (index != -1) {
+          _defaultTracks[index] = _defaultTracks[index].copyWith(localPath: null, isLocal: false);
+        }
+      }
+    }
+    
+    if (currentTrack?.id == track.id) {
+      await _backgroundMusicPlayer.stop();
+      _currentTrackIndex = -1;
+    }
+    notifyListeners();
+  }
+
+  Future<void> downloadTrack(MusicTrack track) async {
+    if (track.isLocal || track.localPath != null) return;
+    
+    _isLoadingMusic = true;
+    notifyListeners();
+
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final filename = '${track.id}.mp3';
+      final file = File('${dir.path}/$filename');
+
+      final response = await http.get(Uri.parse(track.sourceUrl));
+      if (response.statusCode == 200) {
+        await file.writeAsBytes(response.bodyBytes);
+        
+        final index = _defaultTracks.indexWhere((t) => t.id == track.id);
+        if (index != -1) {
+          _defaultTracks[index] = _defaultTracks[index].copyWith(
+            isLocal: true,
+            localPath: file.path,
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Download error: $e");
+    } finally {
+      _isLoadingMusic = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> playTrack(MusicTrack track) async {
+    // If playing from default/radio lists, we need to handle the playlist context.
+    // For now, if it's not in _playlist, we add it temporarily or just play it.
+    // To support "List Loop" correctly, we need a concept of "Current Queue".
+    // Let's simplify: 
+    // If user clicks a track in Local, queue is Local.
+    // If user clicks a track in Default, queue is Default.
+    // If user clicks a track in Radio, queue is Radio.
+    
+    List<MusicTrack> targetQueue;
+    if (_playlist.any((t) => t.id == track.id)) {
+      targetQueue = _playlist;
+    } else if (_defaultTracks.any((t) => t.id == track.id)) {
+      targetQueue = _defaultTracks;
+    } else if (_radioTracks.any((t) => t.id == track.id)) {
+      targetQueue = _radioTracks;
+    } else {
+      // Fallback
+      targetQueue = _playlist;
+    }
+    
+    // If we switched queues, we might want to update _playlist to reflect current queue?
+    // Or just keep track of "active list".
+    // For simplicity, let's just update _playlist to be the active queue if it's not Local.
+    // BUT wait, _playlist is "Local Imports".
+    // Let's introduce `_activeQueue`.
+    
+    _activeQueue = targetQueue;
+    _currentTrackIndex = _activeQueue.indexWhere((t) => t.id == track.id);
+
+    try {
+      String url = track.localPath ?? track.sourceUrl;
+      if (track.isLocal || track.localPath != null) {
+         await _backgroundMusicPlayer.setAudioSource(AudioSource.file(url));
+      } else {
+         await _backgroundMusicPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+      }
+      
+      await _backgroundMusicPlayer.play();
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Error playing track: $e");
+    }
+  }
+  
+  List<MusicTrack> _activeQueue = [];
+
+  Future<void> playNext() async {
+    if (_activeQueue.isEmpty) return;
+    
+    int nextIndex;
+    if (_playbackMode == MusicPlaybackMode.shuffle) {
+      nextIndex = Random().nextInt(_activeQueue.length);
+    } else {
+      nextIndex = (_currentTrackIndex + 1) % _activeQueue.length;
+    }
+    
+    // If list loop is off (e.g. single play), we might stop. 
+    // But usually "List Loop" means loop the list. 
+    // If we want "No Loop", we stop at end.
+    // Assuming "List Loop" is the default behavior for non-shuffle.
+    
+    _currentTrackIndex = nextIndex;
+    await playTrack(_activeQueue[_currentTrackIndex]);
+  }
+
+  Future<void> playPrevious() async {
+    if (_activeQueue.isEmpty) return;
+    
+    int prevIndex;
+    if (_playbackMode == MusicPlaybackMode.shuffle) {
+       prevIndex = Random().nextInt(_activeQueue.length);
+    } else {
+       prevIndex = (_currentTrackIndex - 1 + _activeQueue.length) % _activeQueue.length;
+    }
+    
+    _currentTrackIndex = prevIndex;
+    await playTrack(_activeQueue[_currentTrackIndex]);
+  }
+
+  Future<void> togglePlaybackMode() async {
+    final nextIndex = (_playbackMode.index + 1) % MusicPlaybackMode.values.length;
+    _playbackMode = MusicPlaybackMode.values[nextIndex];
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('pomodoro_playbackMode', _playbackMode.index);
+    
+    notifyListeners();
+  }
+
+  Future<void> toggleBackgroundMusic() async {
+    if (_backgroundMusicPlayer.playing) {
+      await _backgroundMusicPlayer.pause();
+    } else {
+      await _backgroundMusicPlayer.play();
+    }
+  }
+  
+  Future<void> pauseBackgroundMusic() async {
+    if (_backgroundMusicPlayer.playing) {
+      await _backgroundMusicPlayer.pause();
+    }
+  }
+  
+  Future<void> resumeBackgroundMusic() async {
+    if (!_backgroundMusicPlayer.playing && currentTrack != null) {
+      await _backgroundMusicPlayer.play();
+    }
+  }
+
+  Future<void> setBackgroundMusicVolume(double volume) async {
+    _backgroundMusicVolume = volume;
+    await _backgroundMusicPlayer.setVolume(volume);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('pomodoro_backgroundMusicVolume', volume);
+    notifyListeners();
+  }
+  
+  Future<void> seekTo(Duration position) async {
+    await _backgroundMusicPlayer.seek(position);
+  }
+
+  @override
+  void dispose() {
+    _backgroundMusicPlayer.dispose();
+    super.dispose();
+  }
+}
