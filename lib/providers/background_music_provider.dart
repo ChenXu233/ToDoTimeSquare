@@ -124,21 +124,21 @@ class BackgroundMusicProvider extends ChangeNotifier {
           title: 'Frozen Waters',
           artist: 'hoogway / softy',
           sourceUrl:
-              'https://m801.music.126.net/20251212194911/25b513be72c384080e8656d57b666a24/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/10141630092/3753/1062/9868/5759e313b0f77c2aff037ce5aa655f13.mp3',
+              'http://101.132.38.216:8800/download?id=1866350557',
         ),
         MusicTrack(
           id: 'def_2',
           title: "It's Okay",
           artist: 'Ayzic / Project AER',
           sourceUrl:
-              'http://m801.music.126.net/20251212193856/35ea3b4662577f4eb9adbf7d21c6cfbe/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/8697392598/33a9/6233/90bd/0f02755e78a31d307cbc6ce042c2ebd6.mp3',
+              'http://101.132.38.216:8800/download?id=1840791849',
         ),
         MusicTrack(
           id: 'def_3',
           title: 'Frozen Waters',
           artist: 'hoogway / softy',
           sourceUrl:
-              'http://m701.music.126.net/20251212194258/a9214462483fa71f4ed6e25616d99098/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/10141630278/e916/e474/806a/331720d42f0d41d4e3c79aea44fc67c2.mp3',
+              'http://101.132.38.216:8800/download?id=1866350557',
         ),
       ];
       notifyListeners();

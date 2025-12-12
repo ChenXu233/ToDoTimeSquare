@@ -96,7 +96,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: Colors.white.withAlpha(100),
                         contentPadding: EdgeInsets.zero,
                         content: const SizedBox(
                           width: double.maxFinite,
