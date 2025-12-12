@@ -522,6 +522,102 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'min'**
   String get min;
+
+  /// Music library title
+  ///
+  /// In en, this message translates to:
+  /// **'Music Library'**
+  String get musicLibrary;
+
+  /// No local music imported message
+  ///
+  /// In en, this message translates to:
+  /// **'No local music imported'**
+  String get noLocalMusicImported;
+
+  /// Import from device button label
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Device'**
+  String get importFromDevice;
+
+  /// Add more button label
+  ///
+  /// In en, this message translates to:
+  /// **'Add More'**
+  String get addMore;
+
+  /// Tab label: Local
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get localTab;
+
+  /// Tab label: Default
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get defaultTab;
+
+  /// Tab label: Radio
+  ///
+  /// In en, this message translates to:
+  /// **'Radio'**
+  String get radioTab;
+
+  /// No default tracks available message
+  ///
+  /// In en, this message translates to:
+  /// **'No default tracks available'**
+  String get noDefaultTracks;
+
+  /// No radio stations available message
+  ///
+  /// In en, this message translates to:
+  /// **'No radio stations available'**
+  String get noRadioStationsAvailable;
+
+  /// No music selected message
+  ///
+  /// In en, this message translates to:
+  /// **'No music selected'**
+  String get noMusicSelected;
+
+  /// No local music available message
+  ///
+  /// In en, this message translates to:
+  /// **'No local music available'**
+  String get noLocalMusicAvailable;
+
+  /// Playback mode: list loop
+  ///
+  /// In en, this message translates to:
+  /// **'List Loop'**
+  String get listLoop;
+
+  /// Playback mode: shuffle
+  ///
+  /// In en, this message translates to:
+  /// **'Shuffle'**
+  String get shuffle;
+
+  /// Playback mode: radio
+  ///
+  /// In en, this message translates to:
+  /// **'Radio Mode'**
+  String get radioMode;
+
+  /// Volume control dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get volume;
+
+  /// Close button label
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

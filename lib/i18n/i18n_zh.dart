@@ -223,4 +223,52 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get min => '分钟';
+
+  @override
+  String get musicLibrary => '音乐库';
+
+  @override
+  String get noLocalMusicImported => '尚未导入本地音乐';
+
+  @override
+  String get importFromDevice => '从设备导入';
+
+  @override
+  String get addMore => '添加更多';
+
+  @override
+  String get localTab => '本地';
+
+  @override
+  String get defaultTab => '默认';
+
+  @override
+  String get radioTab => '电台';
+
+  @override
+  String get noDefaultTracks => '暂无默认曲目';
+
+  @override
+  String get noRadioStationsAvailable => '暂无电台可用';
+
+  @override
+  String get noMusicSelected => '暂无音乐选中';
+
+  @override
+  String get noLocalMusicAvailable => '暂无本地音乐可用';
+
+  @override
+  String get listLoop => '列表循环';
+
+  @override
+  String get shuffle => '随机播放';
+
+  @override
+  String get radioMode => '电台模式';
+
+  @override
+  String get volume => '音量';
+
+  @override
+  String get close => '关闭';
 }

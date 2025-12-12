@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/background_music_provider.dart';
 import '../../../widgets/glass/glass_container.dart';
+import '../../../i18n/i18n.dart';
 
 class MusicImportWidget extends StatefulWidget {
   const MusicImportWidget({super.key});
@@ -28,6 +29,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final i18n = APPi18n.of(context);
     
     return GlassContainer(
       color: isDark ? Colors.black : Colors.white,
@@ -40,7 +42,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Music Library',
+                i18n?.musicLibrary ?? 'Music Library',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               IconButton(
@@ -59,10 +61,10 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
             labelColor: Theme.of(context).primaryColor,
             unselectedLabelColor: Theme.of(context).hintColor,
             indicatorColor: Theme.of(context).primaryColor,
-            tabs: const [
-              Tab(text: 'Local'),
-              Tab(text: 'Default'),
-              Tab(text: 'Radio'),
+            tabs: [
+              Tab(text: i18n?.localTab ?? 'Local'),
+              Tab(text: i18n?.defaultTab ?? 'Default'),
+              Tab(text: i18n?.radioTab ?? 'Radio'),
             ],
           ),
           const SizedBox(height: 16),
@@ -83,6 +85,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
   }
 
   Widget _buildLocalList(BuildContext context) {
+    final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final tracks = provider.playlist;
@@ -91,12 +94,12 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('No local music imported'),
+                Text(i18n?.noLocalMusicImported ?? 'No local music imported'),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: () => provider.importMusic(),
                   icon: const Icon(Icons.add),
-                  label: const Text('Import from Device'),
+                  label: Text(i18n?.importFromDevice ?? 'Import from Device'),
                 ),
               ],
             ),
@@ -109,7 +112,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
               child: TextButton.icon(
                 onPressed: () => provider.importMusic(),
                 icon: const Icon(Icons.add),
-                label: const Text('Add More'),
+                label: Text(i18n?.addMore ?? 'Add More'),
               ),
             ),
             Expanded(
@@ -142,6 +145,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
   }
 
   Widget _buildDefaultList(BuildContext context) {
+    final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final tracks = provider.defaultTracks;
@@ -149,7 +153,9 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
           return const Center(child: CircularProgressIndicator());
         }
         if (tracks.isEmpty) {
-          return const Center(child: Text('No default tracks available'));
+          return Center(
+            child: Text(i18n?.noDefaultTracks ?? 'No default tracks available'),
+          );
         }
         return ListView.builder(
           itemCount: tracks.length,
@@ -191,11 +197,16 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
   }
 
   Widget _buildRadioList(BuildContext context) {
+    final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final tracks = provider.radioTracks;
         if (tracks.isEmpty) {
-          return const Center(child: Text('No radio stations available'));
+          return Center(
+            child: Text(
+              i18n?.noRadioStationsAvailable ?? 'No radio stations available',
+            ),
+          );
         }
         return ListView.builder(
           itemCount: tracks.length,

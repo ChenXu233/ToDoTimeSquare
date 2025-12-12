@@ -225,4 +225,52 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get min => 'min';
+
+  @override
+  String get musicLibrary => 'Music Library';
+
+  @override
+  String get noLocalMusicImported => 'No local music imported';
+
+  @override
+  String get importFromDevice => 'Import from Device';
+
+  @override
+  String get addMore => 'Add More';
+
+  @override
+  String get localTab => 'Local';
+
+  @override
+  String get defaultTab => 'Default';
+
+  @override
+  String get radioTab => 'Radio';
+
+  @override
+  String get noDefaultTracks => 'No default tracks available';
+
+  @override
+  String get noRadioStationsAvailable => 'No radio stations available';
+
+  @override
+  String get noMusicSelected => 'No music selected';
+
+  @override
+  String get noLocalMusicAvailable => 'No local music available';
+
+  @override
+  String get listLoop => 'List Loop';
+
+  @override
+  String get shuffle => 'Shuffle';
+
+  @override
+  String get radioMode => 'Radio Mode';
+
+  @override
+  String get volume => 'Volume';
+
+  @override
+  String get close => 'Close';
 }
