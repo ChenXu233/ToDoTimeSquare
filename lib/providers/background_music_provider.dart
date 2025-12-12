@@ -405,9 +405,35 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
   
   Future<void> resumeBackgroundMusic() async {
-    if (!_backgroundMusicPlayer.playing && currentTrack != null) {
+    if (_backgroundMusicPlayer.playing) return;
+
+    // If there's already a current track, just resume it.
+    if (currentTrack != null) {
       await _backgroundMusicPlayer.play();
+      return;
     }
+
+    // No current track: choose the active queue if user selected it,
+    // otherwise prefer local imported playlist, then defaults, then radio.
+    if (_activeQueue.isEmpty) {
+      if (_playlist.isNotEmpty) {
+        _activeQueue = _playlist;
+      } else if (_defaultTracks.isNotEmpty) {
+        _activeQueue = _defaultTracks;
+      } else if (_radioTracks.isNotEmpty) {
+        _activeQueue = _radioTracks;
+      } else {
+        return;
+      }
+      _currentTrackIndex = 0;
+    } else {
+      if (_currentTrackIndex < 0 || _currentTrackIndex >= _activeQueue.length) {
+        _currentTrackIndex = 0;
+      }
+    }
+
+    // Start playing the selected track (which will set the audio source).
+    await playTrack(_activeQueue[_currentTrackIndex]);
   }
 
   Future<void> setBackgroundMusicVolume(double volume) async {

@@ -381,6 +381,10 @@ class PomodoroProvider extends ChangeNotifier {
   Future<void> _startAlarm() async {
     _isRinging = true;
     notifyListeners();
+    // stop background music (if any) when alarm starts
+    if (_backgroundMusicProvider != null) {
+      await _backgroundMusicProvider!.pauseBackgroundMusic();
+    }
     try {
       // Stop any previous playback to avoid races
       await _audioPlayer.stop();
