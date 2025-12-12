@@ -195,6 +195,12 @@ class APPi18nZh extends APPi18n {
   String get reminderMode => '提醒模式';
 
   @override
+  String get autoPlayBackgroundMusic => '背景音乐随番茄钟自动播放';
+
+  @override
+  String get autoPlayBackgroundMusicSubtitle => '开始/暂停计时器时同时恢复/暂停背景音乐';
+
+  @override
   String get reminderNone => '无';
 
   @override

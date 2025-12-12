@@ -347,6 +347,19 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        Divider(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          title: Text(i18n.autoPlayBackgroundMusic),
+                          trailing: Switch(
+                            value: pomodoroProvider.autoPlayBackgroundMusic,
+                            onChanged: (v) =>
+                                pomodoroProvider.setAutoPlayBackgroundMusic(v),
+                          ),
+                        ),
                       ],
                     ),
                   ),

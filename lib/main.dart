@@ -75,10 +75,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider(create: (_) => TodoProvider()),
         ChangeNotifierProvider(create: (_) => BackgroundMusicProvider()),
-        ChangeNotifierProxyProvider<StatisticsProvider, PomodoroProvider>(
+        ChangeNotifierProxyProvider2<
+          StatisticsProvider,
+          BackgroundMusicProvider,
+          PomodoroProvider
+        >(
           create: (_) => PomodoroProvider(),
-          update: (_, stats, pomodoro) =>
-              pomodoro!..setStatisticsProvider(stats),
+          update: (_, stats, bgMusic, pomodoro) => pomodoro!
+            ..setStatisticsProvider(stats)
+            ..setBackgroundMusicProvider(bgMusic),
         ),
       ],
       child: Consumer<ThemeProvider>(

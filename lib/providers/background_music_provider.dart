@@ -27,10 +27,17 @@ class BackgroundMusicProvider extends ChangeNotifier {
   List<MusicTrack> get playlist => _playlist;
   List<MusicTrack> get defaultTracks => _defaultTracks;
   List<MusicTrack> get radioTracks => _radioTracks;
-  MusicTrack? get currentTrack => 
-      (_currentTrackIndex >= 0 && _currentTrackIndex < _playlist.length) 
-          ? _playlist[_currentTrackIndex] 
-          : null;
+  MusicTrack? get currentTrack {
+    if (_activeQueue.isNotEmpty &&
+        _currentTrackIndex >= 0 &&
+        _currentTrackIndex < _activeQueue.length) {
+      return _activeQueue[_currentTrackIndex];
+    }
+    if (_currentTrackIndex >= 0 && _currentTrackIndex < _playlist.length) {
+      return _playlist[_currentTrackIndex];
+    }
+    return null;
+  }
   MusicPlaybackMode get playbackMode => _playbackMode;
   bool get isBackgroundMusicPlaying => _isBackgroundMusicPlaying;
   double get backgroundMusicVolume => _backgroundMusicVolume;
@@ -113,16 +120,19 @@ class BackgroundMusicProvider extends ChangeNotifier {
       _defaultTracks = [
         MusicTrack(
           id: 'def_1',
-          title: 'Lofi Chill 1',
-          artist: 'Unknown',
-          sourceUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+          title: 'Better, Together, Forever',
+          artist: 'Team Astro',
+          sourceUrl:
+              'http://m801.music.126.net/20251212191946/37109acbfce9f64a1341ffee61f4efd7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14502679865/c113/5a74/a93c/aa082f164d34ad6d82c500b21421c175.mp3',
         ),
         MusicTrack(
           id: 'def_2',
-          title: 'Lofi Chill 2',
-          artist: 'Unknown',
-          sourceUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+          title: "It's Okay",
+          artist: 'Ayzic / Project AER',
+          sourceUrl:
+              'http://m801.music.126.net/20251212193856/35ea3b4662577f4eb9adbf7d21c6cfbe/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/8697392598/33a9/6233/90bd/0f02755e78a31d307cbc6ce042c2ebd6.mp3',
         ),
+        
       ];
       notifyListeners();
     } catch (e) {

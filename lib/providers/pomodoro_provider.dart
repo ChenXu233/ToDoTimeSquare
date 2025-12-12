@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:file_picker/file_picker.dart';
 import '../services/notification_service.dart';
+import 'background_music_provider.dart';
 import '../models/focus_record.dart';
-import '../models/music_track.dart';
 import 'statistics_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
@@ -35,6 +30,7 @@ class PomodoroProvider extends ChangeNotifier {
 
 
   PomodoroReminderMode _reminderMode = PomodoroReminderMode.none;
+  bool _autoPlayBackgroundMusic = false;
 
   int get remainingSeconds => _remainingSeconds;
   PomodoroStatus get status => _status;
@@ -45,6 +41,7 @@ class PomodoroProvider extends ChangeNotifier {
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
   String get alarmSoundPath => _alarmSoundPath;
+  bool get autoPlayBackgroundMusic => _autoPlayBackgroundMusic;
 
   String? get currentTaskId => _currentTaskId;
   String? get currentTaskTitle => _currentTaskTitle;
@@ -56,8 +53,14 @@ class PomodoroProvider extends ChangeNotifier {
 
   StatisticsProvider? _statisticsProvider;
 
+  BackgroundMusicProvider? _backgroundMusicProvider;
+
   void setStatisticsProvider(StatisticsProvider provider) {
     _statisticsProvider = provider;
+  }
+
+  void setBackgroundMusicProvider(BackgroundMusicProvider provider) {
+    _backgroundMusicProvider = provider;
   }
 
   PomodoroProvider() {
@@ -81,6 +84,9 @@ class PomodoroProvider extends ChangeNotifier {
       _reminderMode = PomodoroReminderMode.values[reminderModeIndex];
     }
 
+    _autoPlayBackgroundMusic =
+        prefs.getBool('pomodoro_autoPlayBackgroundMusic') ?? false;
+
 
 
     await _restoreState(prefs);
@@ -92,6 +98,13 @@ class PomodoroProvider extends ChangeNotifier {
     _alarmSoundPath = normalizedPath;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('alarmSoundPath', normalizedPath);
+    notifyListeners();
+  }
+
+  Future<void> setAutoPlayBackgroundMusic(bool enabled) async {
+    _autoPlayBackgroundMusic = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('pomodoro_autoPlayBackgroundMusic', enabled);
     notifyListeners();
   }
 
@@ -220,7 +233,10 @@ class PomodoroProvider extends ChangeNotifier {
     _saveState();
     _startTimerInternal();
     _scheduleNotification();
-    
+    // Start/resume background music when timer starts (only if enabled in settings)
+    if (_autoPlayBackgroundMusic) {
+      _backgroundMusicProvider?.resumeBackgroundMusic();
+    }
 
     notifyListeners();
   }
@@ -280,6 +296,8 @@ class PomodoroProvider extends ChangeNotifier {
     _targetTime = null;
     _saveState();
     _cancelNotification();
+    // Pause background music when timer pauses
+    _backgroundMusicProvider?.pauseBackgroundMusic();
     notifyListeners();
   }
 
@@ -329,6 +347,8 @@ class PomodoroProvider extends ChangeNotifier {
 
     _saveState();
     _cancelNotification();
+    // Ensure background music is paused on reset
+    _backgroundMusicProvider?.pauseBackgroundMusic();
     notifyListeners();
   }
 

@@ -1,0 +1,18 @@
+[project]
+name = "scripts"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "XuChenXu", email = "91937041+ChenXu233@users.noreply.github.com"},
+]
+dependencies = ["fastapi>=0.124.2", "cryptography>=46.0.3", "aiohttp>=3.13.2", "uvicorn>=0.38.0"]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+"163music" = "uvicorn 163music:app --host 0.0.0.0 --port 8000"
