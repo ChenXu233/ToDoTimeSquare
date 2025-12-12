@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../widgets/glass/glass_container.dart';
 import '../../../providers/background_music_provider.dart';
 import 'music_import_widget.dart';
+import '../../../i18n/i18n.dart';
 
 class MusicPlayerWidget extends StatefulWidget {
   final ValueNotifier<bool>? expandedNotifier;
@@ -28,10 +30,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
 
   @override
   Widget build(BuildContext context) {
+    final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final track = provider.currentTrack;
-        final title = track?.title ?? 'No Music Selected';
+        final title =
+            track?.title ?? i18n?.noMusicSelected ?? 'No Music Selected';
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
@@ -68,19 +72,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   Widget _buildExpandedContent(
       BuildContext context, BackgroundMusicProvider provider, String title) {
     final artist = provider.currentTrack?.artist ?? '';
+    final i18n = APPi18n.of(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 10,
-          ),
-        ],
-      ),
+    return GlassContainer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -182,7 +176,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
               IconButton(
                 icon: Icon(_getModeIcon(provider.playbackMode)),
                 onPressed: provider.togglePlaybackMode,
-                tooltip: _getModeTooltip(provider.playbackMode),
+                tooltip: _getModeTooltip(provider.playbackMode, i18n),
               ),
               IconButton(
                 icon: const Icon(Icons.skip_previous),
@@ -230,22 +224,23 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     }
   }
 
-  String _getModeTooltip(MusicPlaybackMode mode) {
+  String _getModeTooltip(MusicPlaybackMode mode, APPi18n? i18n) {
     switch (mode) {
       case MusicPlaybackMode.listLoop:
-        return 'List Loop';
+        return i18n?.listLoop ?? 'List Loop';
       case MusicPlaybackMode.shuffle:
-        return 'Shuffle';
+        return i18n?.shuffle ?? 'Shuffle';
       case MusicPlaybackMode.radio:
-        return 'Radio Mode';
+        return i18n?.radioMode ?? 'Radio Mode';
     }
   }
 
   void _showVolumeDialog(BuildContext context, BackgroundMusicProvider provider) {
+    final i18n = APPi18n.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Volume'),
+        title: Text(i18n?.volume ?? 'Volume'),
         content: SizedBox(
           height: 200,
           child: RotatedBox(
@@ -259,7 +254,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(i18n?.close ?? 'Close'),
           ),
         ],
       ),

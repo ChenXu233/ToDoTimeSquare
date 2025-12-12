@@ -77,5 +77,48 @@
   "parentTask": "父任务",
   "noparent": "无父任务",
   "resetToDefault": "重置为默认值",
-  "min": "分钟"
+  "min": "分钟",
+  "musicLibrary": "音乐库",
+  "@musicLibrary": { "description": "音乐库 标题" },
+  "noLocalMusicImported": "尚未导入本地音乐",
+  "@noLocalMusicImported": { "description": "尚未导入本地音乐 提示" },
+  "importFromDevice": "从设备导入",
+  "@importFromDevice": { "description": "从设备导入 按钮文本" },
+  "addMore": "添加更多",
+  "@addMore": { "description": "添加更多 按钮文本" },
+  "localTab": "本地",
+  "@localTab": { "description": "选项卡：本地" },
+  "defaultTab": "默认",
+  "@defaultTab": { "description": "选项卡：默认" },
+  "radioTab": "电台",
+  "@radioTab": { "description": "选项卡：电台" },
+  "noDefaultTracks": "暂无默认曲目",
+  "@noDefaultTracks": { "description": "暂无默认曲目 提示" },
+  "noRadioStationsAvailable": "暂无电台可用",
+  "@noRadioStationsAvailable": { "description": "暂无电台可用 提示" },
+  "noMusicSelected": "暂无音乐选中",
+  "@noMusicSelected": { "description": "暂无音乐选中 提示" },
+  "noLocalMusicAvailable": "暂无本地音乐可用",  
+  "@noLocalMusicAvailable": { "description": "暂无本地音乐可用 提示" },
+
+  "listLoop": "列表循环",
+  "@listLoop": {
+    "description": "播放模式: 列表循环"
+  },
+  "shuffle": "随机播放",
+  "@shuffle": {
+    "description": "播放模式: 随机播放"
+  },
+  "radioMode": "电台模式",
+  "@radioMode": {
+    "description": "播放模式: 电台模式"
+  },
+  "volume": "音量",
+  "@volume": {
+    "description": "音量控制对话框标题"
+  },
+  "close": "关闭",
+  "@close": {
+    "description": "关闭按钮标签"
+  }
 }

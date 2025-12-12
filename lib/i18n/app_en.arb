@@ -283,5 +283,58 @@
   "min": "min",
   "@min": {
     "description": "The label for minutes"
+  },
+  "musicLibrary": "Music Library",
+  "@musicLibrary": { "description": "Music library title" },
+
+  "noLocalMusicImported": "No local music imported",
+  "@noLocalMusicImported": { "description": "No local music imported message" },
+
+  "importFromDevice": "Import from Device",
+  "@importFromDevice": { "description": "Import from device button label" },
+
+  "addMore": "Add More",
+  "@addMore": { "description": "Add more button label" },
+
+  "localTab": "Local",
+  "@localTab": { "description": "Tab label: Local" },
+
+  "defaultTab": "Default",
+  "@defaultTab": { "description": "Tab label: Default" },
+
+  "radioTab": "Radio",
+  "@radioTab": { "description": "Tab label: Radio" },
+
+  "noDefaultTracks": "No default tracks available",
+  "@noDefaultTracks": { "description": "No default tracks available message" },
+
+  "noRadioStationsAvailable": "No radio stations available",
+  "@noRadioStationsAvailable": { "description": "No radio stations available message" },
+
+  "noMusicSelected": "No music selected",
+  "@noMusicSelected": { "description": "No music selected message" },
+
+  "noLocalMusicAvailable": "No local music available",
+  "@noLocalMusicAvailable": { "description": "No local music available message" },
+
+  "listLoop": "List Loop",
+  "@listLoop": {
+    "description": "Playback mode: list loop"
+  },
+  "shuffle": "Shuffle",
+  "@shuffle": {
+    "description": "Playback mode: shuffle"
+  },
+  "radioMode": "Radio Mode",
+  "@radioMode": {
+    "description": "Playback mode: radio"
+  },
+  "volume": "Volume",
+  "@volume": {
+    "description": "Volume control dialog title"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button label"
   }
 }
