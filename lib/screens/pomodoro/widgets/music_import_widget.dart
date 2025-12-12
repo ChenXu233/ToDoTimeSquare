@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/background_music_provider.dart';
 import '../../../widgets/glass/glass_container.dart';
 import '../../../i18n/i18n.dart';
+import 'music_list_components.dart';
 
 class MusicImportWidget extends StatefulWidget {
   const MusicImportWidget({super.key});
@@ -127,37 +128,11 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
       builder: (context, provider, child) {
         final tracks = provider.playlist;
         if (tracks.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  i18n?.noLocalMusicImported ?? 'No local music imported',
-                  style: TextStyle(
-                    color: isDark ? Colors.white60 : Colors.black54,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () => provider.importMusic(),
-                  icon: Icon(
-                    Icons.add,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                  label: Text(
-                    i18n?.importFromDevice ?? 'Import from Device',
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black87,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark
-                        ? Colors.grey[800]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
+          return EmptyState(
+            message: i18n?.noLocalMusicImported ?? 'No local music imported',
+            buttonText: i18n?.importFromDevice ?? 'Import from Device',
+            onButton: () => provider.importMusic(),
+            isDark: isDark,
           );
         }
         return Column(
@@ -180,43 +155,24 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
             ),
             Expanded(
               child: ListView.builder(
+                padding: EdgeInsets.only(right: 10, left: 10),
                 itemCount: tracks.length,
                 itemBuilder: (context, index) {
                   final track = tracks[index];
                   final isPlaying = provider.currentTrack?.id == track.id;
-                  return Container(
-                    color: isPlaying
-                        ? (isDark ? Colors.grey[800] : Colors.grey[200])
-                        : Colors.transparent,
-                    child: ListTile(
-                      title: Text(
-                        track.title,
-                        style: TextStyle(
-                          color: isDark ? Colors.white70 : Colors.black87,
-                        ),
+                  return TrackTile(
+                    track: track,
+                    isPlaying: isPlaying,
+                    isDark: isDark,
+                    leadingIcon: isPlaying ? Icons.music_note : Icons.music_off,
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: isDark ? Colors.white60 : Colors.black54,
                       ),
-                      subtitle: Text(
-                        track.artist,
-                        style: TextStyle(
-                          color: isDark ? Colors.white60 : Colors.black54,
-                        ),
-                      ),
-                      leading: Icon(
-                        isPlaying ? Icons.music_note : Icons.music_off,
-                        color: isPlaying
-                            ? Theme.of(context).primaryColor
-                            : (isDark ? Colors.white60 : Colors.black54),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: isDark ? Colors.white60 : Colors.black54,
-                        ),
-                        onPressed: () => provider.removeTrack(track),
-                      ),
-                      onTap: () => provider.playTrack(track),
-                      selected: isPlaying,
+                      onPressed: () => provider.removeTrack(track),
                     ),
+                    onTap: () => provider.playTrack(track),
                   );
                 },
               ),
@@ -240,69 +196,41 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
           );
         }
         if (tracks.isEmpty) {
-          return Center(
-            child: Text(
-              i18n?.noDefaultTracks ?? 'No default tracks available',
-              style: TextStyle(color: isDark ? Colors.white60 : Colors.black54),
-            ),
+          return EmptyState(
+            message: i18n?.noDefaultTracks ?? 'No default tracks available',
+            isDark: isDark,
           );
         }
         return ListView.builder(
+          padding: EdgeInsets.only(right: 10, left: 10),
           itemCount: tracks.length,
           itemBuilder: (context, index) {
             final track = tracks[index];
             final isDownloaded = track.isLocal || track.localPath != null;
             final isPlaying = provider.currentTrack?.id == track.id;
-
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                color: isPlaying
-                    ? (isDark ? Colors.grey[800] : Colors.grey[200])
-                    : Colors.transparent,
-              ),
-              child: ListTile(
-                title: Text(
-                  track.title,
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-                subtitle: Text(
-                  track.artist,
-                  style: TextStyle(
-                    color: isDark ? Colors.white60 : Colors.black54,
-                  ),
-                ),
-                leading: Icon(
-                  isPlaying ? Icons.play_circle_filled : Icons.music_note,
-                  color: isPlaying
-                      ? Theme.of(context).primaryColor
-                      : (isDark ? Colors.white60 : Colors.black54),
-                ),
-                trailing: isDownloaded
-                    ? IconButton(
-                        icon: Icon(
-                          Icons.delete_outline,
-                          color: isDark ? Colors.white60 : Colors.black54,
-                        ),
-                        onPressed: () => provider.removeTrack(track),
-                      )
-                    : IconButton(
-                        icon: Icon(
-                          Icons.download,
-                          color: isDark ? Colors.white60 : Colors.black54,
-                        ),
-                        onPressed: () => provider.downloadTrack(track),
+            return TrackTile(
+              track: track,
+              isPlaying: isPlaying,
+              isDark: isDark,
+              leadingIcon: isPlaying
+                  ? Icons.play_circle_filled
+                  : Icons.music_note,
+              trailing: isDownloaded
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: isDark ? Colors.white60 : Colors.black54,
                       ),
-                onTap: () {
-                  if (isDownloaded) {
-                    provider.playTrack(track);
-                  } else {
-                    provider.playTrack(track);
-                  }
-                },
-              ),
+                      onPressed: () => provider.removeTrack(track),
+                    )
+                  : IconButton(
+                      icon: Icon(
+                        Icons.download,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
+                      onPressed: () => provider.downloadTrack(track),
+                    ),
+              onTap: () => provider.playTrack(track),
             );
           },
         );
@@ -316,50 +244,27 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
       builder: (context, provider, child) {
         final tracks = provider.radioTracks;
         if (tracks.isEmpty) {
-          return Center(
-            child: Text(
-              i18n?.noRadioStationsAvailable ?? 'No radio stations available',
-              style: TextStyle(color: isDark ? Colors.white60 : Colors.black54),
-            ),
+          return EmptyState(
+            message:
+                i18n?.noRadioStationsAvailable ?? 'No radio stations available',
+            isDark: isDark,
           );
         }
         return ListView.builder(
+          padding: EdgeInsets.only(right: 10, left: 10),
           itemCount: tracks.length,
           itemBuilder: (context, index) {
             final track = tracks[index];
             final isPlaying = provider.currentTrack?.id == track.id;
-            return Container(
-              color: isPlaying
-                  ? (isDark ? Colors.grey[800] : Colors.grey[200])
-                  : Colors.transparent,
-              child: ListTile(
-                title: Text(
-                  track.title,
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-                subtitle: Text(
-                  track.artist,
-                  style: TextStyle(
-                    color: isDark ? Colors.white60 : Colors.black54,
-                  ),
-                ),
-                leading: Icon(
-                  Icons.radio,
-                  color: isPlaying
-                      ? Theme.of(context).primaryColor
-                      : (isDark ? Colors.white60 : Colors.black54),
-                ),
-                trailing: isPlaying
-                    ? Icon(
-                        Icons.equalizer,
-                        color: Theme.of(context).primaryColor,
-                      )
-                    : null,
-                onTap: () => provider.playTrack(track),
-                selected: isPlaying,
-              ),
+            return TrackTile(
+              track: track,
+              isPlaying: isPlaying,
+              isDark: isDark,
+              leadingIcon: Icons.radio,
+              trailing: isPlaying
+                  ? Icon(Icons.equalizer, color: Theme.of(context).primaryColor)
+                  : null,
+              onTap: () => provider.playTrack(track),
             );
           },
         );

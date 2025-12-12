@@ -15,6 +15,7 @@ enum MusicPlaybackMode { listLoop, shuffle, radio }
 class BackgroundMusicProvider extends ChangeNotifier {
   final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
   StreamSubscription<PlayerState>? _playerStateSubscription;
+  bool _isDisposed = false;
   
   List<MusicTrack> _playlist = [];
   List<MusicTrack> _defaultTracks = [];
@@ -55,6 +56,14 @@ class BackgroundMusicProvider extends ChangeNotifier {
   BackgroundMusicProvider() {
     _loadSettings();
     _initBackgroundMusicPlayer();
+  }
+
+  void _safeNotify() {
+    if (!_isDisposed) {
+      try {
+        notifyListeners();
+      } catch (_) {}
+    }
   }
 
   void _initBackgroundMusicPlayer() {
@@ -165,7 +174,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
     int attempt = 0;
 
     _isLoadingMusic = true;
-    notifyListeners();
+    _safeNotify();
 
     while (true) {
       try {
@@ -178,7 +187,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
             return MusicTrack.fromJson(map);
           }).toList();
           _isLoadingMusic = false;
-          notifyListeners();
+          _safeNotify();
           return;
         } else {
           throw Exception('HTTP ${response.statusCode}');
@@ -188,7 +197,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
         debugPrint('Error fetching radio tracks (attempt $attempt): $e');
         if (attempt > maxRetries) {
           _isLoadingMusic = false;
-          notifyListeners();
+          _safeNotify();
           return;
         }
         // Exponential backoff before retrying
@@ -220,7 +229,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
         }
       }
       _saveImportedTracks();
-      notifyListeners();
+      _safeNotify();
     }
   }
 
@@ -257,14 +266,14 @@ class BackgroundMusicProvider extends ChangeNotifier {
       await _backgroundMusicPlayer.stop();
       _currentTrackIndex = -1;
     }
-    notifyListeners();
+    _safeNotify();
   }
 
   Future<void> downloadTrack(MusicTrack track) async {
     if (track.isLocal || track.localPath != null) return;
     
     _isLoadingMusic = true;
-    notifyListeners();
+    _safeNotify();
 
     try {
       final dir = await getApplicationDocumentsDirectory();
@@ -287,7 +296,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       debugPrint("Download error: $e");
     } finally {
       _isLoadingMusic = false;
-      notifyListeners();
+      _safeNotify();
     }
   }
 
@@ -330,7 +339,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       }
       
       await _backgroundMusicPlayer.play();
-      notifyListeners();
+      _safeNotify();
     } catch (e) {
       debugPrint("Error playing track: $e");
     }
@@ -378,7 +387,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('pomodoro_playbackMode', _playbackMode.index);
     
-    notifyListeners();
+    _safeNotify();
   }
 
   Future<void> toggleBackgroundMusic() async {
@@ -406,7 +415,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
     await _backgroundMusicPlayer.setVolume(volume);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('pomodoro_backgroundMusicVolume', volume);
-    notifyListeners();
+    _safeNotify();
   }
   
   Future<void> seekTo(Duration position) async {
@@ -415,6 +424,8 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    // Mark disposed to prevent notifyListeners calls from async work.
+    _isDisposed = true;
     // Cancel subscriptions first to avoid callbacks after dispose.
     _playerStateSubscription?.cancel();
     _playerStateSubscription = null;
