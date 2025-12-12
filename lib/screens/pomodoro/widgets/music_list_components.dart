@@ -23,19 +23,33 @@ class TrackTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).primaryColor;
+    // Compute visual values in named variables so the intent is clear.
+    final Color backgroundColor = isPlaying
+        ? (isDark
+              ? Colors.grey[800]!.withAlpha(100)
+              : Colors.grey[200]!.withAlpha(100))
+        : (isDark ? Colors.white60.withAlpha(10) : Colors.white.withAlpha(10));
+
+    final BorderRadius borderRadiusValue = isPlaying
+        ? BorderRadius.circular(24)
+        : BorderRadius.circular(8);
+
+    final List<BoxShadow>? boxShadowValue = isPlaying
+        ? [
+            BoxShadow(
+              color: isDark
+                  ? Colors.white.withAlpha(70)
+                  : primary.withAlpha(70),
+              spreadRadius: 4,
+              blurRadius: 16,
+            ),
+          ]
+        : null;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: isPlaying ? BorderRadius.circular(24) : BorderRadius.circular(8),
-        color: isPlaying ? (isDark ? Colors.grey[800]!.withAlpha(100) : Colors.grey[200]!.withAlpha(100)) : Colors.white.withAlpha(10),
-        boxShadow: isPlaying
-            ? [
-                BoxShadow(
-                  color: isDark ? Colors.white.withAlpha(70) : primary.withAlpha(70),
-                  spreadRadius: 4,
-                  blurRadius: 16,
-                ),
-              ]
-            : null,
+        borderRadius: borderRadiusValue,
+        color: backgroundColor,
+        boxShadow: boxShadowValue,
       ),
       child: ListTile(
         title: Text(
