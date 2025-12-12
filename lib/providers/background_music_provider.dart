@@ -120,10 +120,10 @@ class BackgroundMusicProvider extends ChangeNotifier {
       _defaultTracks = [
         MusicTrack(
           id: 'def_1',
-          title: 'Better, Together, Forever',
-          artist: 'Team Astro',
+          title: 'Frozen Waters',
+          artist: 'hoogway / softy',
           sourceUrl:
-              'http://m801.music.126.net/20251212191946/37109acbfce9f64a1341ffee61f4efd7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/14502679865/c113/5a74/a93c/aa082f164d34ad6d82c500b21421c175.mp3',
+              'https://m801.music.126.net/20251212194911/25b513be72c384080e8656d57b666a24/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/10141630092/3753/1062/9868/5759e313b0f77c2aff037ce5aa655f13.mp3',
         ),
         MusicTrack(
           id: 'def_2',
@@ -132,7 +132,13 @@ class BackgroundMusicProvider extends ChangeNotifier {
           sourceUrl:
               'http://m801.music.126.net/20251212193856/35ea3b4662577f4eb9adbf7d21c6cfbe/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/8697392598/33a9/6233/90bd/0f02755e78a31d307cbc6ce042c2ebd6.mp3',
         ),
-        
+        MusicTrack(
+          id: 'def_3',
+          title: 'Frozen Waters',
+          artist: 'hoogway / softy',
+          sourceUrl:
+              'http://m701.music.126.net/20251212194258/a9214462483fa71f4ed6e25616d99098/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/10141630278/e916/e474/806a/331720d42f0d41d4e3c79aea44fc67c2.mp3',
+        ),
       ];
       notifyListeners();
     } catch (e) {
