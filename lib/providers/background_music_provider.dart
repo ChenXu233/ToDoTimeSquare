@@ -14,6 +14,8 @@ enum MusicPlaybackMode { listLoop, shuffle, radio }
 
 class BackgroundMusicProvider extends ChangeNotifier {
   final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
+  StreamSubscription<PlayerState>? _playerStateSubscription;
+  bool _isDisposed = false;
   
   List<MusicTrack> _playlist = [];
   List<MusicTrack> _defaultTracks = [];
@@ -56,8 +58,18 @@ class BackgroundMusicProvider extends ChangeNotifier {
     _initBackgroundMusicPlayer();
   }
 
+  void _safeNotify() {
+    if (!_isDisposed) {
+      try {
+        notifyListeners();
+      } catch (_) {}
+    }
+  }
+
   void _initBackgroundMusicPlayer() {
-    _backgroundMusicPlayer.playerStateStream.listen((state) {
+    _playerStateSubscription = _backgroundMusicPlayer.playerStateStream.listen((
+      state,
+    ) {
       _isBackgroundMusicPlaying = state.playing;
       if (state.processingState == ProcessingState.completed) {
         _onTrackFinished();
@@ -103,7 +115,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
     }
 
     fetchDefaultTracks();
-    fetchRadioTracks();
+    await fetchDefaultTracks();
+    await fetchRadioTracks();
+
+    // Restore last playback state (last queue + index/track id)
+    await _restorePlaybackState(prefs);
   }
 
   Future<void> fetchDefaultTracks() async {
@@ -135,11 +151,17 @@ class BackgroundMusicProvider extends ChangeNotifier {
         ),
         MusicTrack(
           id: 'def_3',
-          title: 'Frozen Waters',
-          artist: 'hoogway / softy',
+          title: 'Hiraeth',
+          artist: 'Bcalm / Banks',
           sourceUrl:
-              'http://101.132.38.216:8800/download?id=1866350557',
+              'http://101.132.38.216:8800/download?id=1902794853',
         ),
+        MusicTrack(
+          id: "def_4",
+          title: "Cascade",
+          artist: "kinissue / Ayzic",
+          sourceUrl: 'http://101.132.38.216:8800/download?id=1855900632',
+        )
       ];
       notifyListeners();
     } catch (e) {
@@ -151,21 +173,41 @@ class BackgroundMusicProvider extends ChangeNotifier {
     // Example URL - replace with your actual GitHub raw URL
     const url =
         'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/music-radio/radio_playlist.json';
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _radioTracks = data.map((e) {
-          final map = e as Map<String, dynamic>;
-          map['isRadio'] = true;
-          return MusicTrack.fromJson(map);
-        }).toList();
-        notifyListeners();
+    const int maxRetries = 2;
+    const Duration timeout = Duration(seconds: 10);
+    int attempt = 0;
+
+    _isLoadingMusic = true;
+    _safeNotify();
+
+    while (true) {
+      try {
+        final response = await http.get(Uri.parse(url)).timeout(timeout);
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          _radioTracks = data.map((e) {
+            final map = e as Map<String, dynamic>;
+            map['isRadio'] = true;
+            return MusicTrack.fromJson(map);
+          }).toList();
+          _isLoadingMusic = false;
+          _safeNotify();
+          return;
+        } else {
+          throw Exception('HTTP ${response.statusCode}');
+        }
+      } catch (e) {
+        attempt++;
+        debugPrint('Error fetching radio tracks (attempt $attempt): $e');
+        if (attempt > maxRetries) {
+          _isLoadingMusic = false;
+          _safeNotify();
+          return;
+        }
+        // Exponential backoff before retrying
+        final backoff = Duration(seconds: 2 * attempt);
+        await Future.delayed(backoff);
       }
-    
-      notifyListeners();
-    } catch (e) {
-      debugPrint('Error fetching radio tracks: $e');
     }
   }
 
@@ -191,16 +233,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
         }
       }
       _saveImportedTracks();
-      notifyListeners();
+      _safeNotify();
     }
   }
 
   Future<void> _saveImportedTracks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final paths = _playlist.where((t) => t.isLocal && t.localPath != null)
-        .map((t) => t.localPath!)
-        .toList();
-    await prefs.setStringList('pomodoro_importedMusicPaths', paths);
   }
 
   Future<void> removeTrack(MusicTrack track) async {
@@ -228,14 +265,15 @@ class BackgroundMusicProvider extends ChangeNotifier {
       await _backgroundMusicPlayer.stop();
       _currentTrackIndex = -1;
     }
-    notifyListeners();
+    await _savePlaybackState();
+    _safeNotify();
   }
 
   Future<void> downloadTrack(MusicTrack track) async {
     if (track.isLocal || track.localPath != null) return;
     
     _isLoadingMusic = true;
-    notifyListeners();
+    _safeNotify();
 
     try {
       final dir = await getApplicationDocumentsDirectory();
@@ -258,7 +296,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       debugPrint("Download error: $e");
     } finally {
       _isLoadingMusic = false;
-      notifyListeners();
+      _safeNotify();
     }
   }
 
@@ -301,13 +339,19 @@ class BackgroundMusicProvider extends ChangeNotifier {
       }
       
       await _backgroundMusicPlayer.play();
-      notifyListeners();
+      await _savePlaybackState();
+      _safeNotify();
     } catch (e) {
       debugPrint("Error playing track: $e");
     }
   }
   
   List<MusicTrack> _activeQueue = [];
+  // persisted playback state keys
+  static const _kLastTrackId = 'pomodoro_lastTrackId';
+  static const _kLastQueue =
+      'pomodoro_lastQueue'; // values: 'local','default','radio'
+  static const _kLastTrackIndex = 'pomodoro_lastTrackIndex';
 
   Future<void> playNext() async {
     if (_activeQueue.isEmpty) return;
@@ -326,6 +370,63 @@ class BackgroundMusicProvider extends ChangeNotifier {
     
     _currentTrackIndex = nextIndex;
     await playTrack(_activeQueue[_currentTrackIndex]);
+  }
+
+  Future<void> _savePlaybackState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final track = currentTrack;
+      if (track != null) {
+        await prefs.setString(_kLastTrackId, track.id);
+      } else {
+        await prefs.remove(_kLastTrackId);
+      }
+
+      String queueName = 'local';
+      if (_activeQueue == _playlist)
+        queueName = 'local';
+      else if (_activeQueue == _defaultTracks)
+        queueName = 'default';
+      else if (_activeQueue == _radioTracks)
+        queueName = 'radio';
+      await prefs.setString(_kLastQueue, queueName);
+
+      await prefs.setInt(_kLastTrackIndex, _currentTrackIndex);
+    } catch (e) {
+      debugPrint('Error saving playback state: $e');
+    }
+  }
+
+  Future<void> _restorePlaybackState(SharedPreferences prefs) async {
+    try {
+      final lastQueue = prefs.getString(_kLastQueue);
+      final lastIndex = prefs.getInt(_kLastTrackIndex);
+      final lastTrackId = prefs.getString(_kLastTrackId);
+
+      if (lastQueue == 'local' && _playlist.isNotEmpty) {
+        _activeQueue = _playlist;
+      } else if (lastQueue == 'default' && _defaultTracks.isNotEmpty) {
+        _activeQueue = _defaultTracks;
+      } else if (lastQueue == 'radio' && _radioTracks.isNotEmpty) {
+        _activeQueue = _radioTracks;
+      }
+
+      if (lastTrackId != null && _activeQueue.isNotEmpty) {
+        final idx = _activeQueue.indexWhere((t) => t.id == lastTrackId);
+        if (idx != -1) {
+          _currentTrackIndex = idx;
+          return;
+        }
+      }
+
+      if (lastIndex != null && _activeQueue.isNotEmpty) {
+        if (lastIndex >= 0 && lastIndex < _activeQueue.length) {
+          _currentTrackIndex = lastIndex;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error restoring playback state: $e');
+    }
   }
 
   Future<void> playPrevious() async {
@@ -349,7 +450,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('pomodoro_playbackMode', _playbackMode.index);
     
-    notifyListeners();
+    _safeNotify();
   }
 
   Future<void> toggleBackgroundMusic() async {
@@ -367,9 +468,35 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
   
   Future<void> resumeBackgroundMusic() async {
-    if (!_backgroundMusicPlayer.playing && currentTrack != null) {
+    if (_backgroundMusicPlayer.playing) return;
+
+    // If there's already a current track, just resume it.
+    if (currentTrack != null) {
       await _backgroundMusicPlayer.play();
+      return;
     }
+
+    // No current track: choose the active queue if user selected it,
+    // otherwise prefer local imported playlist, then defaults, then radio.
+    if (_activeQueue.isEmpty) {
+      if (_playlist.isNotEmpty) {
+        _activeQueue = _playlist;
+      } else if (_defaultTracks.isNotEmpty) {
+        _activeQueue = _defaultTracks;
+      } else if (_radioTracks.isNotEmpty) {
+        _activeQueue = _radioTracks;
+      } else {
+        return;
+      }
+      _currentTrackIndex = 0;
+    } else {
+      if (_currentTrackIndex < 0 || _currentTrackIndex >= _activeQueue.length) {
+        _currentTrackIndex = 0;
+      }
+    }
+
+    // Start playing the selected track (which will set the audio source).
+    await playTrack(_activeQueue[_currentTrackIndex]);
   }
 
   Future<void> setBackgroundMusicVolume(double volume) async {
@@ -377,7 +504,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
     await _backgroundMusicPlayer.setVolume(volume);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('pomodoro_backgroundMusicVolume', volume);
-    notifyListeners();
+    _safeNotify();
   }
   
   Future<void> seekTo(Duration position) async {
@@ -386,6 +513,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    // Mark disposed to prevent notifyListeners calls from async work.
+    _isDisposed = true;
+    // Cancel subscriptions first to avoid callbacks after dispose.
+    _playerStateSubscription?.cancel();
+    _playerStateSubscription = null;
     _backgroundMusicPlayer.dispose();
     super.dispose();
   }

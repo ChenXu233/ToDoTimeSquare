@@ -10,7 +10,7 @@ import 'widgets/task_tray.dart';
 import 'widgets/settings_dialog.dart';
 import 'widgets/info_dialog.dart';
 import 'widgets/completion_dialog.dart';
-import 'widgets/music_player_widget.dart';
+import 'widgets/music_player_dialog.dart';
 
 class PomodoroScreen extends StatefulWidget {
   final Todo? initialTask;

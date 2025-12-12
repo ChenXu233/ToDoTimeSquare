@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/background_music_provider.dart';
 import '../../../widgets/glass/glass_container.dart';
 import '../../../i18n/i18n.dart';
+import 'music_list_components.dart';
 
 class MusicImportWidget extends StatefulWidget {
   const MusicImportWidget({super.key});
@@ -31,78 +32,107 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final i18n = APPi18n.of(context);
     
-    return GlassContainer(
-      color: isDark ? Colors.black : Colors.white,
-      opacity: 0.1,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                i18n?.musicLibrary ?? 'Music Library',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  final provider = context.read<BackgroundMusicProvider>();
-                  provider.fetchDefaultTracks();
-                  provider.fetchRadioTracks();
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          TabBar(
-            controller: _tabController,
-            labelColor: Theme.of(context).primaryColor,
-            unselectedLabelColor: Theme.of(context).hintColor,
-            indicatorColor: Theme.of(context).primaryColor,
-            tabs: [
-              Tab(text: i18n?.localTab ?? 'Local'),
-              Tab(text: i18n?.defaultTab ?? 'Default'),
-              Tab(text: i18n?.radioTab ?? 'Radio'),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 300,
-            child: TabBarView(
-              controller: _tabController,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth =
+            constraints.hasBoundedWidth && constraints.maxWidth > 0
+            ? constraints.maxWidth
+            : MediaQuery.of(context).size.width * 0.5;
+        return ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: availableWidth),
+          child: GlassContainer(
+            color: isDark ? Colors.black : Colors.white,
+            opacity: 0.1,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildLocalList(context),
-                _buildDefaultList(context),
-                _buildRadioList(context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      i18n?.musicLibrary ?? 'Music Library',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                      onPressed: () {
+                        final provider = context
+                            .read<BackgroundMusicProvider>();
+                        provider.fetchDefaultTracks();
+                        provider.fetchRadioTracks();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                TabBar(
+                  controller: _tabController,
+                  labelColor: isDark ? Colors.white70 : Colors.black87,
+                  unselectedLabelColor: isDark
+                      ? Colors.white60
+                      : Colors.black54,
+                  indicatorColor: Theme.of(context).primaryColor,
+                  tabs: [
+                    Tab(
+                      text: i18n?.localTab ?? 'Local',
+                      icon: Icon(
+                        Icons.folder,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    Tab(
+                      text: i18n?.defaultTab ?? 'Default',
+                      icon: Icon(
+                        Icons.music_note,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                    Tab(
+                      text: i18n?.radioTab ?? 'Radio',
+                      icon: Icon(
+                        Icons.radio,
+                        color: isDark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 300,
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildLocalList(context, isDark),
+                      _buildDefaultList(context, isDark),
+                      _buildRadioList(context, isDark),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildLocalList(BuildContext context) {
+  Widget _buildLocalList(BuildContext context, bool isDark) {
     final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final tracks = provider.playlist;
         if (tracks.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(i18n?.noLocalMusicImported ?? 'No local music imported'),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () => provider.importMusic(),
-                  icon: const Icon(Icons.add),
-                  label: Text(i18n?.importFromDevice ?? 'Import from Device'),
-                ),
-              ],
-            ),
+          return EmptyState(
+            message: i18n?.noLocalMusicImported ?? 'No local music imported',
+            buttonText: i18n?.importFromDevice ?? 'Import from Device',
+            onButton: () => provider.importMusic(),
+            isDark: isDark,
           );
         }
         return Column(
@@ -111,29 +141,38 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
               alignment: Alignment.centerRight,
               child: TextButton.icon(
                 onPressed: () => provider.importMusic(),
-                icon: const Icon(Icons.add),
-                label: Text(i18n?.addMore ?? 'Add More'),
+                icon: Icon(
+                  Icons.add,
+                  color: isDark ? Colors.white70 : Colors.black87,
+                ),
+                label: Text(
+                  i18n?.addMore ?? 'Add More',
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                ),
               ),
             ),
             Expanded(
               child: ListView.builder(
+                padding: EdgeInsets.only(right: 10, left: 10),
                 itemCount: tracks.length,
                 itemBuilder: (context, index) {
                   final track = tracks[index];
                   final isPlaying = provider.currentTrack?.id == track.id;
-                  return ListTile(
-                    title: Text(track.title),
-                    subtitle: Text(track.artist),
-                    leading: Icon(
-                      isPlaying ? Icons.music_note : Icons.music_off,
-                      color: isPlaying ? Theme.of(context).primaryColor : null,
-                    ),
+                  return TrackTile(
+                    track: track,
+                    isPlaying: isPlaying,
+                    isDark: isDark,
+                    leadingIcon: isPlaying ? Icons.music_note : Icons.music_off,
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
                       onPressed: () => provider.removeTrack(track),
                     ),
                     onTap: () => provider.playTrack(track),
-                    selected: isPlaying,
                   );
                 },
               ),
@@ -144,51 +183,54 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
     );
   }
 
-  Widget _buildDefaultList(BuildContext context) {
+  Widget _buildDefaultList(BuildContext context, bool isDark) {
     final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final tracks = provider.defaultTracks;
         if (provider.isLoadingMusic) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(
+              color: isDark ? Colors.white70 : Colors.black87,
+            ),
+          );
         }
         if (tracks.isEmpty) {
-          return Center(
-            child: Text(i18n?.noDefaultTracks ?? 'No default tracks available'),
+          return EmptyState(
+            message: i18n?.noDefaultTracks ?? 'No default tracks available',
+            isDark: isDark,
           );
         }
         return ListView.builder(
+          padding: EdgeInsets.only(right: 10, left: 10),
           itemCount: tracks.length,
           itemBuilder: (context, index) {
             final track = tracks[index];
             final isDownloaded = track.isLocal || track.localPath != null;
             final isPlaying = provider.currentTrack?.id == track.id;
-
-            return ListTile(
-              title: Text(track.title),
-              subtitle: Text(track.artist),
-              leading: Icon(
-                isPlaying ? Icons.play_circle_filled : Icons.music_note,
-                color: isPlaying ? Theme.of(context).primaryColor : null,
-              ),
+            return TrackTile(
+              track: track,
+              isPlaying: isPlaying,
+              isDark: isDark,
+              leadingIcon: isPlaying
+                  ? Icons.play_circle_filled
+                  : Icons.music_note,
               trailing: isDownloaded
                   ? IconButton(
-                      icon: const Icon(Icons.delete_outline),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
                       onPressed: () => provider.removeTrack(track),
                     )
                   : IconButton(
-                      icon: const Icon(Icons.download),
+                      icon: Icon(
+                        Icons.download,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                      ),
                       onPressed: () => provider.downloadTrack(track),
                     ),
-              onTap: () {
-                if (isDownloaded) {
-                  provider.playTrack(track);
-                } else {
-                  // Maybe prompt to download first? Or stream?
-                  // For now, let's stream it
-                  provider.playTrack(track);
-                }
-              },
+              onTap: () => provider.playTrack(track),
             );
           },
         );
@@ -196,30 +238,33 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
     );
   }
 
-  Widget _buildRadioList(BuildContext context) {
+  Widget _buildRadioList(BuildContext context, bool isDark) {
     final i18n = APPi18n.of(context);
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final tracks = provider.radioTracks;
         if (tracks.isEmpty) {
-          return Center(
-            child: Text(
-              i18n?.noRadioStationsAvailable ?? 'No radio stations available',
-            ),
+          return EmptyState(
+            message:
+                i18n?.noRadioStationsAvailable ?? 'No radio stations available',
+            isDark: isDark,
           );
         }
         return ListView.builder(
+          padding: EdgeInsets.only(right: 10, left: 10),
           itemCount: tracks.length,
           itemBuilder: (context, index) {
             final track = tracks[index];
             final isPlaying = provider.currentTrack?.id == track.id;
-            return ListTile(
-              title: Text(track.title),
-              subtitle: Text(track.artist),
-              leading: const Icon(Icons.radio),
-              trailing: isPlaying ? const Icon(Icons.equalizer) : null,
+            return TrackTile(
+              track: track,
+              isPlaying: isPlaying,
+              isDark: isDark,
+              leadingIcon: Icons.radio,
+              trailing: isPlaying
+                  ? Icon(Icons.equalizer, color: Theme.of(context).primaryColor)
+                  : null,
               onTap: () => provider.playTrack(track),
-              selected: isPlaying,
             );
           },
         );
