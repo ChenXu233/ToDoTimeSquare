@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
@@ -148,25 +149,20 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   Future<void> fetchRadioTracks() async {
     // Example URL - replace with your actual GitHub raw URL
-    const url = 'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/main/assets/music/radio_playlist.json';
+    const url =
+        'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/music-radio/radio_playlist.json';
     try {
-      // final response = await http.get(Uri.parse(url));
-      // if (response.statusCode == 200) {
-      //   final List<dynamic> data = json.decode(response.body);
-      //   _radioTracks = data.map((e) => MusicTrack.fromJson(e)..isRadio = true).toList();
-      //   notifyListeners();
-      // }
-      
-      // Mock data
-      _radioTracks = [
-        MusicTrack(
-          id: 'radio_1',
-          title: 'Weekly Radio 1',
-          artist: 'Radio Host',
-          sourceUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
-          isRadio: true,
-        ),
-      ];
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        _radioTracks = data.map((e) {
+          final map = e as Map<String, dynamic>;
+          map['isRadio'] = true;
+          return MusicTrack.fromJson(map);
+        }).toList();
+        notifyListeners();
+      }
+    
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching radio tracks: $e');
