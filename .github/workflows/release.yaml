@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: "3.38.3"
+  FLUTTER_VERSION: "3.38.4"
   BUILD_DIR: "build"
   ANDROID_KEYSTORE_PATH: "android/app/keystore.jks"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -423,6 +423,49 @@ jobs:
           name: windows-artifacts
           path: build/windows/x64/runner/Release/windows-release.zip
 
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup -y
+
+      - name: Generate Inno Setup Script
+        shell: pwsh
+        run: |
+          $version = (Select-String '^version:' pubspec.yaml).Line.Split(':')[1].Trim()
+
+          Set-Content -Path installer.iss -Value @"
+          [Setup]
+          AppName=ToDoTimeSquare
+          AppVersion=$version
+          DefaultDirName={pf}\ToDoTimeSquare
+          DefaultGroupName=ToDoTimeSquare
+          OutputDir=build\windows\installer
+          OutputBaseFilename=ToDoTimeSquareInstaller
+          Compression=lzma
+          SolidCompression=yes
+          SetupIconFile=windows\runner\resources\app_icon.ico
+
+          [Files]
+          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+          [Icons]
+          Name: "{group}\ToDoTimeSquare"; Filename: "{app}\ToDoTimeSquare.exe"
+          Name: "{group}\Uninstall ToDoTimeSquare"; Filename: "{uninstallexe}"
+
+          [Run]
+          Filename: "{app}\todo_time_square.exe"; Description: "Launch ToDoTimeSquare"; Flags: nowait postinstall skipifsilent
+          "@
+
+      - name: Generate Installer
+        run: |
+          iscc installer.iss
+        shell: cmd
+
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: build/windows/installer/ToDoTimeSquareInstaller.exe
+
   release:
     name: Create GitHub Release
     needs:
@@ -458,3 +501,4 @@ jobs:
             release-artifacts/**/*.zip
             release-artifacts/**/*.tar.gz
             release-artifacts/**/*.AppImage
+            release-artifacts/**/*.exe

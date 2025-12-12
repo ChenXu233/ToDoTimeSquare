@@ -1,15 +1,20 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/notification_service.dart';
+import '../models/focus_record.dart';
+import 'statistics_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
+
+enum PomodoroReminderMode { none, notification, alarm, all }
 
 class PomodoroProvider extends ChangeNotifier {
   int _focusDuration = 25 * 60;
   int _shortBreakDuration = 5 * 60;
-  String _alarmSoundPath =
-      'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
+  String _alarmSoundPath = 'audio/alarm_sound.ogg'; // 默认内置铃声
 
   Timer? _timer;
   int _remainingSeconds = 25 * 60;
@@ -18,15 +23,29 @@ class PomodoroProvider extends ChangeNotifier {
   bool _isRinging = false;
   DateTime? _targetTime;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  PomodoroReminderMode _reminderMode = PomodoroReminderMode.none;
 
   int get remainingSeconds => _remainingSeconds;
   PomodoroStatus get status => _status;
   bool get isRunning => _isRunning;
   bool get isRinging => _isRinging;
+  PomodoroReminderMode get reminderMode => _reminderMode;
 
   int get focusDuration => _focusDuration;
   int get shortBreakDuration => _shortBreakDuration;
   String get alarmSoundPath => _alarmSoundPath;
+
+  String? _currentTaskId;
+  String? _currentTaskTitle;
+
+  String? get currentTaskId => _currentTaskId;
+  String? get currentTaskTitle => _currentTaskTitle;
+
+  StatisticsProvider? _statisticsProvider;
+
+  void setStatisticsProvider(StatisticsProvider provider) {
+    _statisticsProvider = provider;
+  }
 
   PomodoroProvider() {
     _loadSettings();
@@ -37,16 +56,27 @@ class PomodoroProvider extends ChangeNotifier {
     _focusDuration = prefs.getInt('focusDuration') ?? 25 * 60;
     _shortBreakDuration = prefs.getInt('shortBreakDuration') ?? 5 * 60;
     _alarmSoundPath =
-        prefs.getString('alarmSoundPath') ??
-        'https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg';
+        prefs.getString('alarmSoundPath') ?? 'audio/alarm_sound.ogg';
+
+    _currentTaskId = prefs.getString('pomodoro_currentTaskId');
+    _currentTaskTitle = prefs.getString('pomodoro_currentTaskTitle');
+
+    int? reminderModeIndex = prefs.getInt('reminderMode');
+    if (reminderModeIndex != null &&
+        reminderModeIndex >= 0 &&
+        reminderModeIndex < PomodoroReminderMode.values.length) {
+      _reminderMode = PomodoroReminderMode.values[reminderModeIndex];
+    }
 
     await _restoreState(prefs);
   }
 
   Future<void> setAlarmSound(String path) async {
-    _alarmSoundPath = path;
+    // allow callers to pass 'default' to reset to bundled asset
+    final normalizedPath = (path == 'default') ? 'audio/alarm_sound.ogg' : path;
+    _alarmSoundPath = normalizedPath;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('alarmSoundPath', path);
+    await prefs.setString('alarmSoundPath', normalizedPath);
     notifyListeners();
   }
 
@@ -70,11 +100,17 @@ class PomodoroProvider extends ChangeNotifier {
         _remainingSeconds = target.difference(now).inSeconds;
         _startTimerInternal();
       } else {
-        _remainingSeconds = 0;
+        // App was closed and timer expired while closed.
+        // Requirement: "Once the app exits, it is no longer counted."
+        // So we treat this as an interrupted/invalid session.
         _isRunning = false;
         _targetTime = null;
+        _remainingSeconds = _status == PomodoroStatus.focus
+            ? _focusDuration
+            : _shortBreakDuration;
         _saveState();
-        _startAlarm();
+        // Do NOT start alarm, do NOT record stats.
+        resetTimer();
       }
     } else {
       if (savedRemaining != null) {
@@ -101,9 +137,24 @@ class PomodoroProvider extends ChangeNotifier {
       await prefs.remove('pomodoro_targetTime');
     }
     await prefs.setInt('pomodoro_savedRemaining', _remainingSeconds);
+
+    if (_currentTaskId != null) {
+      await prefs.setString('pomodoro_currentTaskId', _currentTaskId!);
+    } else {
+      await prefs.remove('pomodoro_currentTaskId');
+    }
+    if (_currentTaskTitle != null) {
+      await prefs.setString('pomodoro_currentTaskTitle', _currentTaskTitle!);
+    } else {
+      await prefs.remove('pomodoro_currentTaskTitle');
+    }
   }
 
-  Future<void> updateSettings({int? focus, int? shortBreak}) async {
+  Future<void> updateSettings({
+    int? focus,
+    int? shortBreak,
+    PomodoroReminderMode? reminderMode,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     if (focus != null) {
       _focusDuration = focus;
@@ -112,6 +163,13 @@ class PomodoroProvider extends ChangeNotifier {
     if (shortBreak != null) {
       _shortBreakDuration = shortBreak;
       await prefs.setInt('shortBreakDuration', shortBreak);
+    }
+    if (reminderMode != null) {
+      _reminderMode = reminderMode;
+      await prefs.setInt('reminderMode', reminderMode.index);
+      if (reminderMode != PomodoroReminderMode.none) {
+        await NotificationService().requestPermissions();
+      }
     }
     resetTimer();
   }
@@ -127,7 +185,11 @@ class PomodoroProvider extends ChangeNotifier {
         break;
     }
     if (totalSeconds == 0) return 0;
-    return 1.0 - (_remainingSeconds / totalSeconds);
+    final value = 1.0 - (_remainingSeconds / totalSeconds);
+    if (value.isNaN) return 0;
+    if (value < 0) return 0;
+    if (value > 1) return 1;
+    return value;
   }
 
   void startTimer() {
@@ -140,6 +202,7 @@ class PomodoroProvider extends ChangeNotifier {
     _targetTime = DateTime.now().add(Duration(seconds: _remainingSeconds));
     _saveState();
     _startTimerInternal();
+    _scheduleNotification();
     notifyListeners();
   }
 
@@ -150,7 +213,7 @@ class PomodoroProvider extends ChangeNotifier {
       if (_targetTime != null && now.isBefore(_targetTime!)) {
         final newRemaining = _targetTime!.difference(now).inSeconds;
         if (newRemaining != _remainingSeconds) {
-          _remainingSeconds = newRemaining;
+          _remainingSeconds = newRemaining + 1;
           notifyListeners();
         }
       } else {
@@ -160,6 +223,32 @@ class PomodoroProvider extends ChangeNotifier {
         _remainingSeconds = 0;
         _targetTime = null;
         _saveState();
+
+        // Record statistics if it was a focus session
+        if (_status == PomodoroStatus.focus && _statisticsProvider != null) {
+          _statisticsProvider!.addRecord(
+            FocusRecord(
+              id: DateTime.now().toIso8601String(),
+              startTime: DateTime.now().subtract(
+                Duration(seconds: _focusDuration),
+              ),
+              durationSeconds: _focusDuration,
+              taskId: _currentTaskId,
+              taskTitle: _currentTaskTitle,
+            ),
+          );
+        }
+
+        // 计时结束时弹出系统原生 heads-up 通知
+        if (_reminderMode == PomodoroReminderMode.notification ||
+            _reminderMode == PomodoroReminderMode.all) {
+          NotificationService().showHeadsUpNotification(
+            id: 1,
+            title: _status == PomodoroStatus.focus ? '专注结束' : '休息结束',
+            body: _status == PomodoroStatus.focus ? '该休息了！' : '该专注了！',
+            ongoing: true,
+          );
+        }
         _startAlarm();
       }
     });
@@ -171,10 +260,36 @@ class PomodoroProvider extends ChangeNotifier {
     _isRunning = false;
     _targetTime = null;
     _saveState();
+    _cancelNotification();
     notifyListeners();
   }
 
-  void resetTimer() {
+  bool setTask({required String id, required String title}) {
+    if (_currentTaskId == id) return false;
+
+    _timer?.cancel();
+    _timer = null;
+    _isRunning = false;
+    _targetTime = null;
+
+    if (_isRinging) {
+      _isRinging = false;
+      _audioPlayer.stop();
+    }
+
+    _status = PomodoroStatus.focus;
+    _remainingSeconds = _focusDuration;
+    _cancelNotification();
+
+    _currentTaskId = id;
+    _currentTaskTitle = title;
+
+    _saveState();
+    notifyListeners();
+    return true;
+  }
+
+  void resetTimer({bool clearTask = false}) {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
@@ -188,7 +303,13 @@ class PomodoroProvider extends ChangeNotifier {
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
 
+    if (clearTask) {
+      _currentTaskId = null;
+      _currentTaskTitle = null;
+    }
+
     _saveState();
+    _cancelNotification();
     notifyListeners();
   }
 
@@ -222,16 +343,48 @@ class PomodoroProvider extends ChangeNotifier {
     _isRinging = true;
     notifyListeners();
     try {
-      await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-      Source source;
-      if (_alarmSoundPath.startsWith('http')) {
-        source = UrlSource(_alarmSoundPath);
+      // Stop any previous playback to avoid races
+      await _audioPlayer.stop();
+      await _audioPlayer.setLoopMode(LoopMode.one);
+
+      final path = _alarmSoundPath.trim();
+
+      // allow callers or prefs that still have 'default'
+      final effectivePath = (path.isEmpty || path == 'default')
+          ? 'audio/alarm_sound.ogg'
+          : path;
+
+      if (effectivePath.startsWith('http')) {
+        await _audioPlayer.setAudioSource(
+          AudioSource.uri(Uri.parse(effectivePath)),
+        );
+      } else if (effectivePath.startsWith('file://')) {
+        // file:// URIs => convert to local file
+        final uri = Uri.parse(effectivePath);
+        if (kIsWeb) throw Exception('file:// not supported on web');
+        final f = File.fromUri(uri);
+        if (await f.exists()) {
+          await _audioPlayer.setAudioSource(AudioSource.file(f.path));
+        } else {
+          throw Exception('Alarm file not found: ${f.path}');
+        }
+      } else if (!kIsWeb && File(effectivePath).existsSync()) {
+        // absolute/local path
+        await _audioPlayer.setAudioSource(AudioSource.file(effectivePath));
       } else {
-        source = DeviceFileSource(_alarmSoundPath);
+        // treat as asset path (normalize common variants)
+        final assetPath = effectivePath.startsWith('assets/')
+            ? effectivePath
+            : 'assets/$effectivePath';
+        await _audioPlayer.setAudioSource(AudioSource.asset(assetPath));
       }
-      await _audioPlayer.play(source);
-    } catch (e) {
-      debugPrint("Error playing audio: $e");
+
+      await _audioPlayer.play();
+    } catch (e, st) {
+      debugPrint("Error playing audio: $e\n$st");
+      // ensure state is consistent for UI
+      _isRinging = false;
+      notifyListeners();
     }
   }
 
@@ -239,6 +392,7 @@ class PomodoroProvider extends ChangeNotifier {
     if (_isRinging) {
       _isRinging = false;
       _audioPlayer.stop();
+      _cancelNotification();
       _switchNextStatus();
       startTimer(); // Auto start next phase
       notifyListeners();
@@ -253,6 +407,31 @@ class PomodoroProvider extends ChangeNotifier {
       _status = PomodoroStatus.focus;
       _remainingSeconds = _focusDuration;
     }
+  }
+
+  void _scheduleNotification() {
+    if (_targetTime == null) return;
+    if (_reminderMode == PomodoroReminderMode.none) return;
+
+    bool useAlarm =
+        _reminderMode == PomodoroReminderMode.alarm ||
+        _reminderMode == PomodoroReminderMode.all;
+
+    NotificationService().scheduleNotification(
+      id: 0,
+      title: _status == PomodoroStatus.focus
+          ? 'Focus Time Finished'
+          : 'Break Time Finished',
+      body: _status == PomodoroStatus.focus
+          ? 'Time to take a break!'
+          : 'Time to focus!',
+      scheduledDate: _targetTime!,
+      useAlarmChannel: useAlarm,
+    );
+  }
+
+  void _cancelNotification() {
+    NotificationService().cancel(0);
   }
 
   @override

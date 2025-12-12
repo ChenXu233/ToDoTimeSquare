@@ -247,6 +247,12 @@ abstract class APPi18n {
   /// **'Start'**
   String get start;
 
+  /// The label for the start task action
+  ///
+  /// In en, this message translates to:
+  /// **'Start Task'**
+  String get startTask;
+
   /// The label for the pause button
   ///
   /// In en, this message translates to:
@@ -300,6 +306,36 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Long Break'**
   String get pomodoroStatusLongBreak;
+
+  /// Heading for the active task panel
+  ///
+  /// In en, this message translates to:
+  /// **'Current Task'**
+  String get currentTask;
+
+  /// Button label to mark task completed
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Task'**
+  String get completeTask;
+
+  /// Dialog title shown after finishing a task
+  ///
+  /// In en, this message translates to:
+  /// **'Task Completed'**
+  String get taskCompletedDialogTitle;
+
+  /// Dialog message shown after finishing a task
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you\'re ready.'**
+  String get taskCompletedDialogMessage;
+
+  /// Button label inside completion dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Going'**
+  String get taskCompletedDialogButton;
 
   /// The label for the help section
   ///
@@ -420,6 +456,60 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Statistics'**
   String get statistics;
+
+  /// Label for reminder mode setting
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Mode'**
+  String get reminderMode;
+
+  /// Label for no reminder
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get reminderNone;
+
+  /// Label for notification only reminder
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Only'**
+  String get reminderNotification;
+
+  /// Label for alarm only reminder
+  ///
+  /// In en, this message translates to:
+  /// **'Alarm Only'**
+  String get reminderAlarm;
+
+  /// Label for all reminders
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get reminderAll;
+
+  /// The label for the parent task dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Parent Task'**
+  String get parentTask;
+
+  /// The label for no parent task option
+  ///
+  /// In en, this message translates to:
+  /// **'No Parent Task'**
+  String get noparent;
+
+  /// The label for the reset to default button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Default'**
+  String get resetToDefault;
+
+  /// The label for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get min;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

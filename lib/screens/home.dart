@@ -3,8 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../i18n/i18n.dart';
 import '../widgets/glass/glass_container.dart';
 import '../widgets/glass/gradient_background.dart';
-import '../widgets/todo/todo_list_widget.dart';
-import 'statistics/statistics.dart';
+import 'todo/widgets/todo_list_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -84,6 +84,9 @@ class APPi18nEn extends APPi18n {
   String get start => 'Start';
 
   @override
+  String get startTask => 'Start Task';
+
+  @override
   String get pause => 'Pause';
 
   @override
@@ -109,6 +112,22 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get pomodoroStatusLongBreak => 'Long Break';
+
+  @override
+  String get currentTask => 'Current Task';
+
+  @override
+  String get completeTask => 'Complete Task';
+
+  @override
+  String get taskCompletedDialogTitle => 'Task Completed';
+
+  @override
+  String get taskCompletedDialogMessage =>
+      'Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you\'re ready.';
+
+  @override
+  String get taskCompletedDialogButton => 'Keep Going';
 
   @override
   String get help => 'Help';
@@ -172,4 +191,31 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get statistics => 'Statistics';
+
+  @override
+  String get reminderMode => 'Reminder Mode';
+
+  @override
+  String get reminderNone => 'None';
+
+  @override
+  String get reminderNotification => 'Notification Only';
+
+  @override
+  String get reminderAlarm => 'Alarm Only';
+
+  @override
+  String get reminderAll => 'All';
+
+  @override
+  String get parentTask => 'Parent Task';
+
+  @override
+  String get noparent => 'No Parent Task';
+
+  @override
+  String get resetToDefault => 'Reset to Default';
+
+  @override
+  String get min => 'min';
 }

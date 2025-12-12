@@ -1,197 +1,163 @@
+<div align="center">
+
 # Todo Time Square ⏰✅
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.9.2+-02569B?logo=flutter)](https://flutter.dev)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](pubspec.yaml)
+[![Flutter](https://img.shields.io/badge/Flutter-3.9+-02569B?logo=flutter)](https://flutter.dev)  
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)  
 
-> **专注. 组织. 实现.** | Focus. Organize. Achieve.
+**自由选择 · 专注执行**
 
-一个现代化UI的待办事项管理应用，结合了番茄工作法（Pomodoro）计时功能，帮助你更高效地完成任务。支持Windows、macOS、Linux、Android和iOS平台。
+</div>
 
-## ✨ 功能特性
+<div align="center">
+这是为偏好灵活与开放认知风格（MBTI 中的 P 型）量身打造的生产力工具：
 
-### 📝 待办事项管理
-- ✅ 创建、编辑和删除任务
-- 🎯 设置任务重要性（低、中、高）
-- ⏱️ 预估任务时长
-- 📅 计划任务开始时间
-- 📋 任务描述支持
-- 🔄 自动排序（未完成任务优先）
-- 💾 本地数据持久化
+“将无强制顺序的开放式任务池与定制番茄钟深度结合，支持即时选择单一任务并进入受保护的心流冲刺。”
 
-### 🍅 番茄钟计时器
-- ⏰ 专注时间和短休息循环
-- ⏯️ 开始/暂停/重置功能
-- 🔔 计时结束提醒（带音效）
-- 📊 可视化进度条
-- ⚙️ 自定义专注和休息时长
-- 🎵 响铃提醒
+</div>
 
-### 🎨 界面与体验
-- 🌓 深色/浅色主题切换
-- 🌍 多语言支持（中文/English）
-- 💎 现代化玻璃态（Glassmorphism）设计
-- 📱 响应式布局（适配手机和桌面）
-- 🖥️ 桌面端自定义窗口标题栏
-- 🎯 Material Design 3
-- 📐 高刷新率支持（Android）
 
-## 🛠️ 技术栈
+<div align="center">
 
-- **框架**: Flutter 3.9.2+
-- **状态管理**: Provider
-- **路由**: GoRouter
-- **国际化**: flutter_localizations, intl
-- **本地存储**: SharedPreferences
-- **音频播放**: AudioPlayers
-- **桌面窗口**: bitsdojo_window
-- **动画**: animated_list_plus
+## 应用理念
 
-## 📱 支持平台
+</div>
 
-- ✅ Windows
-- ✅ macOS
-- ✅ Linux
-- ✅ Android
-- ✅ iOS
-- ✅ Web
+<div align="center">
+通过把宏观计划拆解为“可随时执行”的微观单元，我们把决策成本降到最低：用户无需提前把一天计划填满，而是从开放任务池中随心挑选，立刻启动番茄钟，进入 25 分钟（可定制）专注冲刺。每次冲刺后给予即时反馈与统计，任务可自动完成或继续下一轮。
+</div>
 
-## 🚀 快速开始
 
-### 环境要求
+<div align="center">
+    
+## 核心功能速览
 
-- Flutter SDK 3.9.2 或更高版本
-- Dart SDK 3.9.2 或更高版本
+</div>
 
-### 安装步骤
+- **开放任务池**：无强制顺序、支持随时增删、零负担浏览与挑选。  
+- **一键番茄冲刺**：从任务池选择单个任务并启动专注计时（默认 25/5，可定制）。  
+- **专注保护区**：最小化干扰、可锁定状态、即时可视化进度。  
+- **冲刺后回馈**：任务自动标记，统计专注时长与完成次数。  
+- **跨平台 Flutter 实现**：支持桌面与移动平台，界面现代且响应迅速。
 
-1. **克隆项目**
-```bash
-git clone https://github.com/ChenXu233/ToDoTimeSquare.git
-cd ToDoTimeSquare
+
+<div align="center">
+    
+## 工作循环（可视化）
+
+</div>
+
+```mermaid
+flowchart LR
+    A[开放任务池] --> B{选择当前任务}
+    B --> C[启动番茄钟（自定义）]
+    C --> D[受保护专注冲刺]
+    D --> E{计时结束}
+    E -->|完成| F[标记任务完成 & 记录统计]
+    E -->|继续| C
+    F --> B
 ```
 
-2. **安装依赖**
-```bash
-flutter pub get
+
+<div align="center">
+    
+## 仪表盘展示（示例）
+
+</div>
+
+<div align="center">
+
+专注趋势（过去 7 天）
+
+</div>
+
+```
+专注时长 (小时)
+Mon ▉▉▉▉ 3.5
+Tue ▉▉▉▉▉ 4.0
+Wed ▉▉▉ 2.0
+Thu ▉▉▉▉▉▉ 5.5
+Fri ▉▉▉ 2.5
+Sat ▉▉▉▉ 3.8
+Sun ▉▉▉▉ 4.2
 ```
 
-3. **生成国际化文件**
-```bash
-flutter gen-l10n
+<div align="center">
+任务完成率 vs 选择自由度
+</div>
+
+| 指标 | 说明 | 示例 |
+|---:|---|:---:|
+| 完成率 | 完成的任务 / 启动的任务 | 78% |
+| 平均单次专注 | 单轮平均分钟数 | 25m |
+| 连续冲刺率 | 同任务多轮比率 | 42% |
+
+
+<div align="center">
+    
+## 为什么这套设计有效？
+
+</div>
+
+- **降低决策门槛**：把“今天该做什么”这种高成本问题，转化为“现在就做一件事”的低成本操作。  
+- **把分散注意力变成重复短冲刺**：P 型人格的灵活性转为探索动力，再通过受保护冲刺把探索转成产出。  
+- **即时反馈强化动机**：每次番茄钟后的统计和视觉回馈，会让正向循环持续建立。
+
+<div align="center">
+    
+## 快速开始
+
+</div>
+
+- 克隆仓库并进入目录：
+
+```powershell
+git clone https://github.com/ChenXu233/ToDoTimeSquare.git; cd ToDoTimeSquare
 ```
 
-4. **运行应用**
-```bash
-# 开发模式
+- 安装依赖并生成本地化文件：
+
+```powershell
+flutter pub get; flutter gen-l10n
+```
+
+- 运行（开发模式）：
+
+```powershell
 flutter run
-
-# 指定设备运行
-flutter run -d windows
-flutter run -d chrome
-flutter run -d android
 ```
 
-### 构建发布版本
+（指定平台示例：`flutter run -d windows`）
 
-```bash
-# Windows
-flutter build windows
 
-# macOS
-flutter build macos
+<div align="center">
+    
+## 项目结构速览
 
-# Linux
-flutter build linux
+</div>
 
-# Android APK
-flutter build apk
+- `lib/`：应用入口与主要模块（`main.dart`、`screens/`、`providers/`、`widgets/`）。  
+- `assets/`：图像、音效与本地资源。  
+- `l10n/` & `i18n/`：多语言资源与生成配置。  
 
-# iOS
-flutter build ios
-```
 
-## 📂 项目结构
+<div align="center">
+    
+## 贡献与联系
 
-```
-lib/
-├── main.dart                 # 应用入口
-├── constants/                # 常量定义
-├── i18n/                     # 国际化文件
-│   ├── app_en.arb           # 英文翻译
-│   └── app_zh.arb           # 中文翻译
-├── models/                   # 数据模型
-│   └── todo.dart            # 待办事项模型
-├── providers/                # 状态管理
-│   ├── pomodoro_provider.dart
-│   ├── theme_provider.dart
-│   └── todo_provider.dart
-├── routes/                   # 路由配置
-│   └── app_router.dart
-├── screens/                  # 页面
-│   ├── home.dart            # 主页
-│   ├── pomodoro/            # 番茄钟页面
-│   ├── settings/            # 设置页面
-│   └── todo/                # 待办事项页面
-├── services/                 # 服务层
-├── utils/                    # 工具函数
-└── widgets/                  # 可复用组件
-    ├── glass_container.dart  # 玻璃态容器
-    ├── gradient_background.dart
-    ├── todo_list_widget.dart
-    └── window_title_bar.dart
-```
+</div>
 
-## 🎯 使用指南
+- 欢迎通过 Issue 或 Pull Request 提交建议与补丁。  
+- 如需帮助或讨论产品设计，打开一个 Issue 或在 PR 中 @ChenXu233。
 
-### 添加任务
-1. 点击主页的"待办事项"或导航到待办列表页面
-2. 点击"+"按钮添加新任务
-3. 填写任务标题、描述、预估时长等信息
-4. 设置任务重要性和开始时间
-5. 保存任务
 
-### 使用番茄钟
-1. 导航到"番茄钟"页面
-2. 点击"开始"按钮启动计时
-3. 专注工作直到计时结束
-4. 休息时间会自动开始
-5. 可在设置中自定义时长
+<div align="center">
+    
+## 许可证
 
-### 切换主题和语言
-1. 进入"设置"页面
-2. 切换深色/浅色主题
-3. 选择中文或英文界面
+</div>
 
-## 🔧 配置说明
-
-### 番茄钟默认设置
-- 专注时间: 25分钟
-- 短休息: 5分钟
-
-可在应用设置中自定义修改。
-
-### 窗口设置（桌面端）
-- 默认窗口大小: 1280x720
-- 最小窗口大小: 600x450
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 📄 许可证
-
-MIT License. 详见 LICENSE 文件。
-
-## 👨‍💻 作者
-
-**ChenXu233**
-
-## 📮 联系方式
-
-如有问题或建议，欢迎通过 GitHub Issues 联系。
-
----
+本仓库使用 MIT 许可证，详见 `LICENSE` 文件。
 
 <div align="center">
 Made with ❤️ using Flutter

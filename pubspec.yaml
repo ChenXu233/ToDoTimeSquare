@@ -18,10 +18,10 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.3.0
+version: 0.5.0
 
 environment:
-  sdk: ^3.9.2
+  sdk: ">=3.10.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -43,13 +43,19 @@ dependencies:
     sdk: flutter
   intl: ^0.20.2
   intl_utils: ^2.8.12
-  audioplayers: ^6.5.1
   shared_preferences: ^2.5.3
   flutter_displaymode: ^0.7.0
   bitsdojo_window: ^0.1.6
   animated_list_plus: ^0.5.2
   file_picker: ^10.3.7
+  confetti: ^0.8.0
   package_info_plus: ^9.0.0
+  flutter_local_notifications: ^19.5.0
+  permission_handler: ^12.0.1
+  timezone: ^0.10.1
+  just_audio: ^0.10.5
+  just_audio_media_kit: ^2.1.0
+  media_kit_libs_windows_audio: ^1.0.9
 
 dev_dependencies:
   flutter_test:
@@ -77,7 +83,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon.png
-
+    - assets/audio/alarm_sound.ogg
+    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

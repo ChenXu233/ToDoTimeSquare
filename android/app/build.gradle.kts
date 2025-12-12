@@ -9,22 +9,23 @@ import java.util.Properties
 import java.io.File
 
 android {
-    namespace = "com.example.todo_time_square"
+    namespace = "com.chenxu233.todo_time_square"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "11"
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.todo_time_square"
+        applicationId = "com.chenxu233.todo_time_square"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -62,6 +63,9 @@ android {
             )
 
         }
+        debug {
+            isDebuggable = true
+        }
     }
 
     // Flavor dimension for Impeller toggle
@@ -81,4 +85,9 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Add the desugaring library
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
