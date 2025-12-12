@@ -31,55 +31,57 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final i18n = APPi18n.of(context);
     
-    return GlassContainer(
-      color: isDark ? Colors.black : Colors.white,
-      opacity: 0.1,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                i18n?.musicLibrary ?? 'Music Library',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  final provider = context.read<BackgroundMusicProvider>();
-                  provider.fetchDefaultTracks();
-                  provider.fetchRadioTracks();
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          TabBar(
-            controller: _tabController,
-            labelColor: Theme.of(context).primaryColor,
-            unselectedLabelColor: Theme.of(context).hintColor,
-            indicatorColor: Theme.of(context).primaryColor,
-            tabs: [
-              Tab(text: i18n?.localTab ?? 'Local'),
-              Tab(text: i18n?.defaultTab ?? 'Default'),
-              Tab(text: i18n?.radioTab ?? 'Radio'),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 300,
-            child: TabBarView(
-              controller: _tabController,
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.5,
+      child: GlassContainer(
+        opacity: 0.1,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildLocalList(context),
-                _buildDefaultList(context),
-                _buildRadioList(context),
+                Text(
+                  i18n?.musicLibrary ?? 'Music Library',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    final provider = context.read<BackgroundMusicProvider>();
+                    provider.fetchDefaultTracks();
+                    provider.fetchRadioTracks();
+                  },
+                ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            TabBar(
+              controller: _tabController,
+              labelColor: Theme.of(context).primaryColor,
+              unselectedLabelColor: Theme.of(context).hintColor,
+              indicatorColor: Theme.of(context).primaryColor,
+              tabs: [
+                Tab(text: i18n?.localTab ?? 'Local'),
+                Tab(text: i18n?.defaultTab ?? 'Default'),
+                Tab(text: i18n?.radioTab ?? 'Radio'),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 300,
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildLocalList(context),
+                  _buildDefaultList(context),
+                  _buildRadioList(context),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

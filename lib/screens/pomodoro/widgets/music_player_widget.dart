@@ -31,6 +31,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   @override
   Widget build(BuildContext context) {
     final i18n = APPi18n.of(context);
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final track = provider.currentTrack;
@@ -48,7 +49,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           child: Material(
             color: Colors.transparent,
             child: _isExpanded
-                ? _buildExpandedContent(context, provider, title)
+                ? _buildExpandedContent(context, provider, title, isMobile)
                 : _buildCollapsedContent(),
           ),
         );
@@ -112,7 +113,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   }
 
   Widget _buildExpandedContent(
-      BuildContext context, BackgroundMusicProvider provider, String title) {
+    BuildContext context,
+    BackgroundMusicProvider provider,
+    String title,
+    bool isMobile,
+  ) {
     final artist = provider.currentTrack?.artist ?? '';
     final i18n = APPi18n.of(context);
 
@@ -131,12 +136,25 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                   onPressed: () {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        backgroundColor: Colors.white.withAlpha(100),
-                        contentPadding: EdgeInsets.zero,
-                        content: const SizedBox(
-                          width: double.maxFinite,
-                          child: SingleChildScrollView(child: MusicImportWidget()),
+                      barrierDismissible: true,
+                      builder: (context) => Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: isMobile
+                                  ? MediaQuery.of(context).size.width * 0.9
+                                  : MediaQuery.of(context).size.width * 0.6,
+                              maxHeight:
+                                  MediaQuery.of(context).size.height * 0.85,
+                            ),
+                            child: SingleChildScrollView(
+                              child: Material(
+                                color: Colors.transparent,
+                                child: MusicImportWidget(),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -230,7 +248,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                     : Icons.play_circle_filled),
                 onPressed: provider.toggleBackgroundMusic,
                 iconSize: 48,
-                color: Theme.of(context).primaryColor,
               ),
               IconButton(
                 icon: const Icon(Icons.skip_next),

@@ -14,6 +14,7 @@ enum MusicPlaybackMode { listLoop, shuffle, radio }
 
 class BackgroundMusicProvider extends ChangeNotifier {
   final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
+  StreamSubscription<PlayerState>? _playerStateSubscription;
   
   List<MusicTrack> _playlist = [];
   List<MusicTrack> _defaultTracks = [];
@@ -57,7 +58,9 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
 
   void _initBackgroundMusicPlayer() {
-    _backgroundMusicPlayer.playerStateStream.listen((state) {
+    _playerStateSubscription = _backgroundMusicPlayer.playerStateStream.listen((
+      state,
+    ) {
       _isBackgroundMusicPlaying = state.playing;
       if (state.processingState == ProcessingState.completed) {
         _onTrackFinished();
@@ -157,21 +160,41 @@ class BackgroundMusicProvider extends ChangeNotifier {
     // Example URL - replace with your actual GitHub raw URL
     const url =
         'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/music-radio/radio_playlist.json';
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _radioTracks = data.map((e) {
-          final map = e as Map<String, dynamic>;
-          map['isRadio'] = true;
-          return MusicTrack.fromJson(map);
-        }).toList();
-        notifyListeners();
+    const int maxRetries = 2;
+    const Duration timeout = Duration(seconds: 10);
+    int attempt = 0;
+
+    _isLoadingMusic = true;
+    notifyListeners();
+
+    while (true) {
+      try {
+        final response = await http.get(Uri.parse(url)).timeout(timeout);
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          _radioTracks = data.map((e) {
+            final map = e as Map<String, dynamic>;
+            map['isRadio'] = true;
+            return MusicTrack.fromJson(map);
+          }).toList();
+          _isLoadingMusic = false;
+          notifyListeners();
+          return;
+        } else {
+          throw Exception('HTTP ${response.statusCode}');
+        }
+      } catch (e) {
+        attempt++;
+        debugPrint('Error fetching radio tracks (attempt $attempt): $e');
+        if (attempt > maxRetries) {
+          _isLoadingMusic = false;
+          notifyListeners();
+          return;
+        }
+        // Exponential backoff before retrying
+        final backoff = Duration(seconds: 2 * attempt);
+        await Future.delayed(backoff);
       }
-    
-      notifyListeners();
-    } catch (e) {
-      debugPrint('Error fetching radio tracks: $e');
     }
   }
 
@@ -392,6 +415,9 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    // Cancel subscriptions first to avoid callbacks after dispose.
+    _playerStateSubscription?.cancel();
+    _playerStateSubscription = null;
     _backgroundMusicPlayer.dispose();
     super.dispose();
   }
