@@ -135,11 +135,17 @@ class BackgroundMusicProvider extends ChangeNotifier {
         ),
         MusicTrack(
           id: 'def_3',
-          title: 'Frozen Waters',
-          artist: 'hoogway / softy',
+          title: 'Hiraeth',
+          artist: 'Bcalm / Banks',
           sourceUrl:
-              'http://101.132.38.216:8800/download?id=1866350557',
+              'http://101.132.38.216:8800/download?id=1902794853',
         ),
+        MusicTrack(
+          id: "def_4",
+          title: "Cascade",
+          artist: "kinissue / Ayzic",
+          sourceUrl: 'http://101.132.38.216:8800/download?id=1855900632',
+        )
       ];
       notifyListeners();
     } catch (e) {
