@@ -228,6 +228,30 @@ class APPi18nZh extends APPi18n {
   String get musicLibrary => '音乐库';
 
   @override
+  String get musicCache => '音乐缓存';
+
+  @override
+  String get currentCache => '当前缓存：';
+
+  @override
+  String get maxCacheMb => '最大缓存（MB）';
+
+  @override
+  String get clearCache => '清除';
+
+  @override
+  String get sourceCode => '源码';
+
+  @override
+  String get cacheMaxUpdated => '缓存上限已更新';
+
+  @override
+  String get cacheCleared => '缓存已清理';
+
+  @override
+  String get couldNotOpenUrl => '无法打开链接';
+
+  @override
   String get noLocalMusicImported => '尚未导入本地音乐';
 
   @override

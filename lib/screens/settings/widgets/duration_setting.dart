@@ -15,6 +15,8 @@ class DurationSetting extends StatelessWidget {
 
   final int? sliderSize;
 
+  final bool? showsSlider;
+
   /// Preset values shown in dropdown for quick selection
   final List<int> presets;
 
@@ -37,6 +39,7 @@ class DurationSetting extends StatelessWidget {
     this.isDark,
     this.textColor,
     this.sliderSize,
+    this.showsSlider,
   });
 
   @override
@@ -63,7 +66,8 @@ class DurationSetting extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Slider (compact, slightly wider than dropdown)
-            SizedBox(
+            if (showsSlider ?? true)
+              SizedBox(
               width: sliderSize?.toDouble() ?? 120,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -99,7 +103,7 @@ class DurationSetting extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            if (showsSlider ?? true) const SizedBox(width: 8),
             // Value display with dropdown button
             Builder(
               builder: (containerContext) => Container(

@@ -230,6 +230,30 @@ class APPi18nEn extends APPi18n {
   String get musicLibrary => 'Music Library';
 
   @override
+  String get musicCache => 'Music Cache';
+
+  @override
+  String get currentCache => 'Current cache:';
+
+  @override
+  String get maxCacheMb => 'Max cache (MB)';
+
+  @override
+  String get clearCache => 'Clear';
+
+  @override
+  String get sourceCode => 'Source Code';
+
+  @override
+  String get cacheMaxUpdated => 'Cache max updated';
+
+  @override
+  String get cacheCleared => 'Cache cleared';
+
+  @override
+  String get couldNotOpenUrl => 'Could not open URL';
+
+  @override
   String get noLocalMusicImported => 'No local music imported';
 
   @override

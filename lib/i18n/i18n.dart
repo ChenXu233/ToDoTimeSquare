@@ -529,6 +529,54 @@ abstract class APPi18n {
   /// **'Music Library'**
   String get musicLibrary;
 
+  /// Title for music cache section
+  ///
+  /// In en, this message translates to:
+  /// **'Music Cache'**
+  String get musicCache;
+
+  /// Label prefix for current cache size
+  ///
+  /// In en, this message translates to:
+  /// **'Current cache:'**
+  String get currentCache;
+
+  /// Label for max cache input
+  ///
+  /// In en, this message translates to:
+  /// **'Max cache (MB)'**
+  String get maxCacheMb;
+
+  /// Button label to clear cache
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearCache;
+
+  /// Label for source code link
+  ///
+  /// In en, this message translates to:
+  /// **'Source Code'**
+  String get sourceCode;
+
+  /// Snackbar text when cache max updated
+  ///
+  /// In en, this message translates to:
+  /// **'Cache max updated'**
+  String get cacheMaxUpdated;
+
+  /// Snackbar text when cache cleared
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared'**
+  String get cacheCleared;
+
+  /// Snackbar text when URL cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open URL'**
+  String get couldNotOpenUrl;
+
   /// No local music imported message
   ///
   /// In en, this message translates to:

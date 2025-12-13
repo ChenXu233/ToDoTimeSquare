@@ -44,7 +44,7 @@ Future<void> showPomodoroSettingsDialog(BuildContext context) {
                   value: focus,
                   onChanged: (val) => setState(() => focus = val),
                   isDark: isDark,
-                  sliderSize: isMobile ? 100 : 240,
+                  showsSlider: isMobile ? false : true,
                 ),
                 const SizedBox(height: 16),
                 DurationSetting(
@@ -52,7 +52,7 @@ Future<void> showPomodoroSettingsDialog(BuildContext context) {
                   value: short,
                   onChanged: (val) => setState(() => short = val),
                   isDark: isDark,
-                  sliderSize: isMobile ? 100 : 240,
+                  showsSlider: isMobile ? false : true,
                 ),
                 const SizedBox(height: 24),
                 Text(i18n.alarmSound, style: const TextStyle(fontSize: 16)),

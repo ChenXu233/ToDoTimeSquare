@@ -8,8 +8,10 @@ import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../providers/background_music_provider.dart';
 import '../../i18n/i18n.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/glass/gradient_background.dart';
+import 'widgets/consistent_icon.dart';
 import 'widgets/duration_setting.dart';
 import '../../widgets/glass/glass_dropdown.dart';
 
@@ -46,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.language),
+                          leading: ConsistentIcon(Icons.language),
                           title: Text(i18n.language),
                           trailing: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 150),
@@ -95,13 +97,8 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Divider(
-                          color: Theme.of(
-                            context,
-                          ).dividerColor.withAlpha(((0.1) * 255).round()),
-                        ),
                         ListTile(
-                          leading: Icon(
+                          leading: ConsistentIcon(
                             themeProvider.themeMode == ThemeMode.dark
                                 ? Icons.dark_mode
                                 : (themeProvider.themeMode == ThemeMode.light
@@ -159,17 +156,17 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  //cache settings
                   GlassContainer(
                     color: isDark ? Colors.black : Colors.white,
                     opacity: 0.1,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Music cache settings
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            'Music Cache',
+                            i18n.musicCache,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
@@ -187,7 +184,7 @@ class SettingsScreen extends StatelessWidget {
                                     builder: (context, snap) {
                                       final size = snap.data ?? 0;
                                       return Text(
-                                        'Current cache: ${(size / 1024 / 1024).toStringAsFixed(2)} MB',
+                                        '${i18n.currentCache} ${(size / 1024 / 1024).toStringAsFixed(2)} MB',
                                       );
                                     },
                                   ),
@@ -202,7 +199,7 @@ class SettingsScreen extends StatelessWidget {
                                                   .toString(),
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
-                                            labelText: 'Max cache (MB)',
+                                            labelText: i18n.maxCacheMb,
                                           ),
                                           onFieldSubmitted: (v) async {
                                             final mb = int.tryParse(v) ?? 200;
@@ -213,9 +210,9 @@ class SettingsScreen extends StatelessWidget {
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
-                                              const SnackBar(
+                                              SnackBar(
                                                 content: Text(
-                                                  'Cache max updated',
+                                                  i18n.cacheMaxUpdated,
                                                 ),
                                               ),
                                             );
@@ -229,12 +226,12 @@ class SettingsScreen extends StatelessWidget {
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Cache cleared'),
+                                            SnackBar(
+                                              content: Text(i18n.cacheCleared),
                                             ),
                                           );
                                         },
-                                        child: const Text('Clear'),
+                                        child: Text(i18n.clearCache),
                                       ),
                                     ],
                                   ),
@@ -244,7 +241,16 @@ class SettingsScreen extends StatelessWidget {
                             );
                           },
                         ),
-
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  GlassContainer(
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
@@ -267,7 +273,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                             isDark: isDark,
-                            sliderSize: 160,
+                            sliderSize: 145,
                           ),
                         ),
                         Divider(
@@ -290,7 +296,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                             isDark: isDark,
-                            sliderSize: 160,
+                            sliderSize: 145,
                           ),
                         ),
                         Divider(
@@ -300,6 +306,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         // 提示音
                         ListTile(
+                          leading: ConsistentIcon(Icons.volume_up),
                           title: Text(i18n.alarmSound),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -374,10 +381,12 @@ class SettingsScreen extends StatelessWidget {
                             context,
                           ).dividerColor.withAlpha(((0.1) * 255).round()),
                         ),
+                        // 提示方式
                         ListTile(
+                          leading: ConsistentIcon(Icons.notifications),
                           title: Text(i18n.reminderMode),
                           trailing: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 200),
+                            constraints: const BoxConstraints(maxWidth: 160),
                             child: GlassDropdownFormField<PomodoroReminderMode>(
                               items: [
                                 DropdownMenuItem(
@@ -434,7 +443,9 @@ class SettingsScreen extends StatelessWidget {
                           ).dividerColor.withAlpha(((0.1) * 255).round()),
                         ),
                         ListTile(
+                          leading: ConsistentIcon(Icons.music_note),
                           title: Text(i18n.autoPlayBackgroundMusic),
+                          subtitle: Text(i18n.autoPlayBackgroundMusicSubtitle),
                           trailing: Switch(
                             value: pomodoroProvider.autoPlayBackgroundMusic,
                             onChanged: (v) =>
@@ -476,6 +487,32 @@ class SettingsScreen extends StatelessWidget {
                         ListTile(
                           title: Text('Todo Time Square'),
                           subtitle: Text('© 2025 ChenXu233'),
+                        ),
+                        ListTile(
+                          leading: ConsistentIcon(Icons.code),
+                          title: Text(i18n.sourceCode),
+                          subtitle: const Text('https://github.com/ChenXu233'),
+                          onTap: () async {
+                            final uri = Uri.parse(
+                              'https://github.com/ChenXu233',
+                            );
+                            try {
+                              if (!await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              )) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(i18n.couldNotOpenUrl),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(i18n.couldNotOpenUrl),
+                                ),
+                              );
+                            }
+                          },
                         ),
                         Divider(
                           color: Theme.of(
