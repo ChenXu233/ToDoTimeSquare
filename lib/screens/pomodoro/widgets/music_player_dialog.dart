@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
 import '../../../widgets/glass/glass_container.dart';
 import '../../../providers/background_music_provider.dart';
 import 'music_import_widget.dart';
