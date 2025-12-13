@@ -552,15 +552,28 @@ class BackgroundMusicProvider extends ChangeNotifier {
       // Prefer cached/local file to avoid network requests every time.
       if (track.isLocal || track.localPath != null) {
         final localPath = track.localPath ?? track.sourceUrl;
-        await _backgroundMusicPlayer.setAudioSource(
-          AudioSource.file(localPath),
-        );
+        if (kIsWeb) {
+          // Web cannot play local file paths; fall back to streaming the source URL.
+          await _backgroundMusicPlayer.setAudioSource(
+            AudioSource.uri(Uri.parse(track.sourceUrl)),
+          );
+        } else {
+          await _backgroundMusicPlayer.setAudioSource(
+            AudioSource.file(localPath),
+          );
+        }
       } else {
         final cachedFile = await _getCachedFile(track);
         if (await cachedFile.exists()) {
-          await _backgroundMusicPlayer.setAudioSource(
-            AudioSource.file(cachedFile.path),
-          );
+          if (kIsWeb) {
+            await _backgroundMusicPlayer.setAudioSource(
+              AudioSource.uri(Uri.parse(track.sourceUrl)),
+            );
+          } else {
+            await _backgroundMusicPlayer.setAudioSource(
+              AudioSource.file(cachedFile.path),
+            );
+          }
         } else {
           // Not cached yet: download to cache then play from file to avoid subsequent network calls.
           _isLoadingMusic = true;
@@ -570,9 +583,15 @@ class BackgroundMusicProvider extends ChangeNotifier {
             if (response.statusCode == 200) {
               await cachedFile.parent.create(recursive: true);
               await cachedFile.writeAsBytes(response.bodyBytes);
-              await _backgroundMusicPlayer.setAudioSource(
-                AudioSource.file(cachedFile.path),
-              );
+              if (kIsWeb) {
+                await _backgroundMusicPlayer.setAudioSource(
+                  AudioSource.uri(Uri.parse(track.sourceUrl)),
+                );
+              } else {
+                await _backgroundMusicPlayer.setAudioSource(
+                  AudioSource.file(cachedFile.path),
+                );
+              }
               // update defaultTracks entry if applicable
               final index = _defaultTracks.indexWhere((t) => t.id == track.id);
               if (index != -1) {
@@ -601,8 +620,8 @@ class BackgroundMusicProvider extends ChangeNotifier {
       await _backgroundMusicPlayer.play();
       await _savePlaybackState();
       _safeNotify();
-    } catch (e) {
-      debugPrint("Error playing track: $e");
+    } catch (e, st) {
+      debugPrint("Error playing track: $e\n$st");
     }
   }
   
