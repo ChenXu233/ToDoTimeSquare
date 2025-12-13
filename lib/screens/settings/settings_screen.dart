@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
+import '../../providers/background_music_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/glass/gradient_background.dart';
@@ -164,6 +165,86 @@ class SettingsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Music cache settings
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Music Cache',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        Consumer<BackgroundMusicProvider>(
+                          builder: (context, musicProvider, child) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FutureBuilder<int>(
+                                    future: musicProvider.getCacheSize(),
+                                    builder: (context, snap) {
+                                      final size = snap.data ?? 0;
+                                      return Text(
+                                        'Current cache: ${(size / 1024 / 1024).toStringAsFixed(2)} MB',
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          initialValue:
+                                              (musicProvider.cacheMaxBytes ~/
+                                                      (1024 * 1024))
+                                                  .toString(),
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            labelText: 'Max cache (MB)',
+                                          ),
+                                          onFieldSubmitted: (v) async {
+                                            final mb = int.tryParse(v) ?? 200;
+                                            await musicProvider
+                                                .setCacheMaxBytes(
+                                                  mb * 1024 * 1024,
+                                                );
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Cache max updated',
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          await musicProvider.clearCache();
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Cache cleared'),
+                                            ),
+                                          );
+                                        },
+                                        child: const Text('Clear'),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+
                         Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(

@@ -25,6 +25,14 @@ class BackgroundMusicProvider extends ChangeNotifier {
   bool _isBackgroundMusicPlaying = false;
   double _backgroundMusicVolume = 0.5;
   bool _isLoadingMusic = false;
+  // Cache settings
+  int _cacheMaxBytes = 200 * 1024 * 1024; // default 200 MB
+  final Map<String, String> _cachedTrackMap = {}; // trackId -> localPath
+
+  // Public accessors for settings/UI
+  int get cacheMaxBytes => _cacheMaxBytes;
+  Future<int> getCacheSize() async => await _calculateCacheSize();
+
 
   // Getters
   List<MusicTrack> get playlist => _playlist;
@@ -117,6 +125,41 @@ class BackgroundMusicProvider extends ChangeNotifier {
     fetchDefaultTracks();
     await fetchDefaultTracks();
     await fetchRadioTracks();
+
+    // Load cache settings and cached track map
+    try {
+      final maxBytes = prefs.getInt(_kCacheMaxBytesKey);
+      if (maxBytes != null && maxBytes > 0) _cacheMaxBytes = maxBytes;
+
+      final mapJson = prefs.getString(_kCachedTrackMapKey);
+      if (mapJson != null && mapJson.isNotEmpty) {
+        final Map<String, dynamic> decoded = json.decode(mapJson);
+        decoded.forEach((key, value) {
+          if (value is String) _cachedTrackMap[key] = value;
+        });
+      }
+
+      // Validate cached files and apply to defaultTracks
+      final toRemove = <String>[];
+      for (final entry in _cachedTrackMap.entries) {
+        final file = File(entry.value);
+        if (await file.exists()) {
+          final idx = _defaultTracks.indexWhere((t) => t.id == entry.key);
+          if (idx != -1) {
+            _defaultTracks[idx] = _defaultTracks[idx].copyWith(
+              isLocal: true,
+              localPath: entry.value,
+            );
+          }
+        } else {
+          toRemove.add(entry.key);
+        }
+      }
+      for (final k in toRemove) _cachedTrackMap.remove(k);
+      await _persistCachedTrackMap(prefs);
+    } catch (e) {
+      debugPrint('Error loading cache settings: $e');
+    }
 
     // Restore last playback state (last queue + index/track id)
     await _restorePlaybackState(prefs);
@@ -239,6 +282,16 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
 
   Future<void> _saveImportedTracks() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final paths = _playlist
+          .where((t) => t.isLocal && t.localPath != null)
+          .map((t) => t.localPath!)
+          .toList();
+      await prefs.setStringList('pomodoro_importedMusicPaths', paths);
+    } catch (e) {
+      debugPrint('Error saving imported tracks: $e');
+    }
   }
 
   Future<void> removeTrack(MusicTrack track) async {
@@ -277,14 +330,10 @@ class BackgroundMusicProvider extends ChangeNotifier {
     _safeNotify();
 
     try {
-      final dir = await getApplicationDocumentsDirectory();
-      final filename = '${track.id}.mp3';
-      final file = File('${dir.path}/$filename');
+      final file = await _getCachedFile(track);
 
-      final response = await http.get(Uri.parse(track.sourceUrl));
-      if (response.statusCode == 200) {
-        await file.writeAsBytes(response.bodyBytes);
-        
+      // If already cached, mark as local and return
+      if (await file.exists()) {
         final index = _defaultTracks.indexWhere((t) => t.id == track.id);
         if (index != -1) {
           _defaultTracks[index] = _defaultTracks[index].copyWith(
@@ -292,12 +341,157 @@ class BackgroundMusicProvider extends ChangeNotifier {
             localPath: file.path,
           );
         }
+        return;
+      }
+
+      final response = await http.get(Uri.parse(track.sourceUrl));
+      if (response.statusCode == 200) {
+        await file.parent.create(recursive: true);
+        await file.writeAsBytes(response.bodyBytes);
+        final index = _defaultTracks.indexWhere((t) => t.id == track.id);
+        if (index != -1) {
+          _defaultTracks[index] = _defaultTracks[index].copyWith(
+            isLocal: true,
+            localPath: file.path,
+          );
+        }
+        // persist cache map and enforce size limit
+        _cachedTrackMap[track.id] = file.path;
+        await _persistCachedTrackMap();
+        await _enforceCacheSize();
       }
     } catch (e) {
       debugPrint("Download error: $e");
     } finally {
       _isLoadingMusic = false;
       _safeNotify();
+    }
+  }
+
+  // --- Cache helpers ---
+  Future<Directory> _getCacheDir() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final cacheDir = Directory('${dir.path}/music_cache');
+    if (!await cacheDir.exists()) await cacheDir.create(recursive: true);
+    return cacheDir;
+  }
+
+  String _cachedFileNameForTrack(MusicTrack track) {
+    // Use base64url of the sourceUrl so filename is unique and filesystem-safe
+    final encoded = base64Url.encode(utf8.encode(track.sourceUrl));
+    return 'cache_$encoded.mp3';
+  }
+
+  Future<File> _getCachedFile(MusicTrack track) async {
+    final cacheDir = await _getCacheDir();
+    final filename = _cachedFileNameForTrack(track);
+    return File('${cacheDir.path}/$filename');
+  }
+
+  // --- Cache persistence & maintenance ---
+  static const _kCacheMaxBytesKey = 'pomodoro_cacheMaxBytes';
+  static const _kCachedTrackMapKey = 'pomodoro_cachedTrackMap';
+
+  Future<void> _persistCachedTrackMap([SharedPreferences? prefs]) async {
+    try {
+      final p = prefs ?? await SharedPreferences.getInstance();
+      await p.setString(_kCachedTrackMapKey, json.encode(_cachedTrackMap));
+      await p.setInt(_kCacheMaxBytesKey, _cacheMaxBytes);
+    } catch (e) {
+      debugPrint('Error persisting cached track map: $e');
+    }
+  }
+
+  Future<int> _calculateCacheSize() async {
+    try {
+      final dir = await _getCacheDir();
+      if (!await dir.exists()) return 0;
+      int total = 0;
+      await for (final entity in dir.list(recursive: true)) {
+        if (entity is File) {
+          try {
+            total += await entity.length();
+          } catch (_) {}
+        }
+      }
+      return total;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<void> _enforceCacheSize() async {
+    try {
+      final maxBytes = _cacheMaxBytes;
+      int total = await _calculateCacheSize();
+      if (total <= maxBytes) return;
+
+      final dir = await _getCacheDir();
+      final files = <File>[];
+      await for (final entity in dir.list(recursive: false)) {
+        if (entity is File) files.add(entity);
+      }
+
+      // Sort by last modified ascending (oldest first)
+      files.sort((a, b) {
+        final am = a.lastModifiedSync();
+        final bm = b.lastModifiedSync();
+        return am.compareTo(bm);
+      });
+
+      for (final f in files) {
+        if (total <= maxBytes) break;
+        try {
+          final len = await f.length();
+          await f.delete();
+          total -= len;
+          // remove from cached map if present
+          final entryKey = _cachedTrackMap.entries.firstWhere(
+            (e) => e.value == f.path,
+            orElse: () => const MapEntry('', ''),
+          );
+          if (entryKey.key.isNotEmpty) {
+            _cachedTrackMap.remove(entryKey.key);
+          }
+        } catch (e) {}
+      }
+
+      await _persistCachedTrackMap();
+    } catch (e) {
+      debugPrint('Error enforcing cache size: $e');
+    }
+  }
+
+  /// Set maximum cache size in bytes and enforce it immediately.
+  Future<void> setCacheMaxBytes(int bytes) async {
+    _cacheMaxBytes = bytes;
+    await _persistCachedTrackMap();
+    await _enforceCacheSize();
+  }
+
+  /// Clear entire music cache directory and cached mappings.
+  Future<void> clearCache() async {
+    try {
+      final dir = await _getCacheDir();
+      if (await dir.exists()) {
+        await for (final entity in dir.list(recursive: true)) {
+          try {
+            if (entity is File) await entity.delete();
+            if (entity is Directory) await entity.delete(recursive: true);
+          } catch (_) {}
+        }
+      }
+      _cachedTrackMap.clear();
+      // remove localPath flags from defaultTracks
+      for (int i = 0; i < _defaultTracks.length; i++) {
+        _defaultTracks[i] = _defaultTracks[i].copyWith(
+          isLocal: false,
+          localPath: null,
+        );
+      }
+      await _persistCachedTrackMap();
+    } catch (e) {
+      debugPrint('Error clearing cache: $e');
     }
   }
 
@@ -332,11 +526,53 @@ class BackgroundMusicProvider extends ChangeNotifier {
     _currentTrackIndex = _activeQueue.indexWhere((t) => t.id == track.id);
 
     try {
-      String url = track.localPath ?? track.sourceUrl;
+      // Prefer cached/local file to avoid network requests every time.
       if (track.isLocal || track.localPath != null) {
-         await _backgroundMusicPlayer.setAudioSource(AudioSource.file(url));
+        final localPath = track.localPath ?? track.sourceUrl;
+        await _backgroundMusicPlayer.setAudioSource(
+          AudioSource.file(localPath),
+        );
       } else {
-         await _backgroundMusicPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+        final cachedFile = await _getCachedFile(track);
+        if (await cachedFile.exists()) {
+          await _backgroundMusicPlayer.setAudioSource(
+            AudioSource.file(cachedFile.path),
+          );
+        } else {
+          // Not cached yet: download to cache then play from file to avoid subsequent network calls.
+          _isLoadingMusic = true;
+          _safeNotify();
+          try {
+            final response = await http.get(Uri.parse(track.sourceUrl));
+            if (response.statusCode == 200) {
+              await cachedFile.parent.create(recursive: true);
+              await cachedFile.writeAsBytes(response.bodyBytes);
+              await _backgroundMusicPlayer.setAudioSource(
+                AudioSource.file(cachedFile.path),
+              );
+              // update defaultTracks entry if applicable
+              final index = _defaultTracks.indexWhere((t) => t.id == track.id);
+              if (index != -1) {
+                _defaultTracks[index] = _defaultTracks[index].copyWith(
+                  isLocal: true,
+                  localPath: cachedFile.path,
+                );
+              }
+              // persist cache map and enforce size limit
+              _cachedTrackMap[track.id] = cachedFile.path;
+              await _persistCachedTrackMap();
+              await _enforceCacheSize();
+            } else {
+              // Fallback to streaming if download failed
+              await _backgroundMusicPlayer.setAudioSource(
+                AudioSource.uri(Uri.parse(track.sourceUrl)),
+              );
+            }
+          } finally {
+            _isLoadingMusic = false;
+            _safeNotify();
+          }
+        }
       }
       
       await _backgroundMusicPlayer.play();
