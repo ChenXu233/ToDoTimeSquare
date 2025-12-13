@@ -169,9 +169,9 @@ class BackgroundMusicProvider extends ChangeNotifier {
           // Try to find the track in default or radio lists and re-download immediately.
           MusicTrack? missingTrack;
           final defIdx = _defaultTracks.indexWhere((t) => t.id == entry.key);
-          if (defIdx != -1)
+          if (defIdx != -1) {
             missingTrack = _defaultTracks[defIdx];
-          else {
+          } else {
             final rIdx = _radioTracks.indexWhere((t) => t.id == entry.key);
             if (rIdx != -1) missingTrack = _radioTracks[rIdx];
           }
@@ -192,7 +192,9 @@ class BackgroundMusicProvider extends ChangeNotifier {
           }
         }
       }
-      for (final k in toRemove) _cachedTrackMap.remove(k);
+      for (final k in toRemove) {
+        _cachedTrackMap.remove(k);
+      }
       await _persistCachedTrackMap(prefs);
     } catch (e) {
       debugPrint('Error loading cache settings: $e');
@@ -514,7 +516,9 @@ class BackgroundMusicProvider extends ChangeNotifier {
           if (entryKey.key.isNotEmpty) {
             _cachedTrackMap.remove(entryKey.key);
           }
-        } catch (e) {}
+        } catch (e) {
+          debugPrint("Error deleting cached file ${f.path}: $e");
+        }
       }
 
       await _persistCachedTrackMap();
@@ -718,10 +722,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
       String queueName = 'local';
       if (_activeQueue == _playlist) {
         queueName = 'local';
-      } else if (_activeQueue == _defaultTracks)
+      } else if (_activeQueue == _defaultTracks) {
         queueName = 'default';
-      else if (_activeQueue == _radioTracks)
+      } else if (_activeQueue == _radioTracks) {
         queueName = 'radio';
+      }
       await prefs.setString(_kLastQueue, queueName);
 
       await prefs.setInt(_kLastTrackIndex, _currentTrackIndex);
