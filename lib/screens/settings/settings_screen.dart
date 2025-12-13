@@ -6,9 +6,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
+import '../../providers/background_music_provider.dart';
 import '../../i18n/i18n.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../widgets/glass/gradient_background.dart';
+import 'widgets/consistent_icon.dart';
 import 'widgets/duration_setting.dart';
 import '../../widgets/glass/glass_dropdown.dart';
 
@@ -45,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.language),
+                          leading: ConsistentIcon(Icons.language),
                           title: Text(i18n.language),
                           trailing: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 150),
@@ -94,13 +97,8 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Divider(
-                          color: Theme.of(
-                            context,
-                          ).dividerColor.withAlpha(((0.1) * 255).round()),
-                        ),
                         ListTile(
-                          leading: Icon(
+                          leading: ConsistentIcon(
                             themeProvider.themeMode == ThemeMode.dark
                                 ? Icons.dark_mode
                                 : (themeProvider.themeMode == ThemeMode.light
@@ -158,6 +156,95 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  //cache settings
+                  GlassContainer(
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      children: [
+                        // Music cache settings
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            i18n.musicCache,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        Consumer<BackgroundMusicProvider>(
+                          builder: (context, musicProvider, child) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FutureBuilder<int>(
+                                    future: musicProvider.getCacheSize(),
+                                    builder: (context, snap) {
+                                      final size = snap.data ?? 0;
+                                      return Text(
+                                        '${i18n.currentCache} ${(size / 1024 / 1024).toStringAsFixed(2)} MB',
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          initialValue:
+                                              (musicProvider.cacheMaxBytes ~/
+                                                      (1024 * 1024))
+                                                  .toString(),
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            labelText: i18n.maxCacheMb,
+                                          ),
+                                          onFieldSubmitted: (v) async {
+                                            final mb = int.tryParse(v) ?? 200;
+                                            await musicProvider
+                                                .setCacheMaxBytes(
+                                                  mb * 1024 * 1024,
+                                                );
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  i18n.cacheMaxUpdated,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          await musicProvider.clearCache();
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(i18n.cacheCleared),
+                                            ),
+                                          );
+                                        },
+                                        child: Text(i18n.clearCache),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   GlassContainer(
                     color: isDark ? Colors.black : Colors.white,
                     opacity: 0.1,
@@ -186,7 +273,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                             isDark: isDark,
-                            sliderSize: 160,
+                            sliderSize: 145,
                           ),
                         ),
                         Divider(
@@ -209,7 +296,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                             isDark: isDark,
-                            sliderSize: 160,
+                            sliderSize: 145,
                           ),
                         ),
                         Divider(
@@ -219,6 +306,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         // 提示音
                         ListTile(
+                          leading: ConsistentIcon(Icons.volume_up),
                           title: Text(i18n.alarmSound),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -293,10 +381,12 @@ class SettingsScreen extends StatelessWidget {
                             context,
                           ).dividerColor.withAlpha(((0.1) * 255).round()),
                         ),
+                        // 提示方式
                         ListTile(
+                          leading: ConsistentIcon(Icons.notifications),
                           title: Text(i18n.reminderMode),
                           trailing: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 200),
+                            constraints: const BoxConstraints(maxWidth: 160),
                             child: GlassDropdownFormField<PomodoroReminderMode>(
                               items: [
                                 DropdownMenuItem(
@@ -353,7 +443,9 @@ class SettingsScreen extends StatelessWidget {
                           ).dividerColor.withAlpha(((0.1) * 255).round()),
                         ),
                         ListTile(
+                          leading: ConsistentIcon(Icons.music_note),
                           title: Text(i18n.autoPlayBackgroundMusic),
+                          subtitle: Text(i18n.autoPlayBackgroundMusicSubtitle),
                           trailing: Switch(
                             value: pomodoroProvider.autoPlayBackgroundMusic,
                             onChanged: (v) =>
@@ -395,6 +487,32 @@ class SettingsScreen extends StatelessWidget {
                         ListTile(
                           title: Text('Todo Time Square'),
                           subtitle: Text('© 2025 ChenXu233'),
+                        ),
+                        ListTile(
+                          leading: ConsistentIcon(Icons.code),
+                          title: Text(i18n.sourceCode),
+                          subtitle: const Text('https://github.com/ChenXu233'),
+                          onTap: () async {
+                            final uri = Uri.parse(
+                              'https://github.com/ChenXu233',
+                            );
+                            try {
+                              if (!await launchUrl(
+                                uri,
+                                mode: LaunchMode.externalApplication,
+                              )) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(i18n.couldNotOpenUrl),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(i18n.couldNotOpenUrl),
+                                ),
+                              );
+                            }
+                          },
                         ),
                         Divider(
                           color: Theme.of(
