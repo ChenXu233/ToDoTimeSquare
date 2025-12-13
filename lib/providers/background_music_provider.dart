@@ -16,7 +16,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
   final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
   StreamSubscription<PlayerState>? _playerStateSubscription;
   bool _isDisposed = false;
-  
+
   final List<MusicTrack> _playlist = [];
   List<MusicTrack> _defaultTracks = [];
   List<MusicTrack> _radioTracks = [];
@@ -33,7 +33,6 @@ class BackgroundMusicProvider extends ChangeNotifier {
   int get cacheMaxBytes => _cacheMaxBytes;
   Future<int> getCacheSize() async => await _calculateCacheSize();
 
-
   // Getters
   List<MusicTrack> get playlist => _playlist;
   List<MusicTrack> get defaultTracks => _defaultTracks;
@@ -49,11 +48,12 @@ class BackgroundMusicProvider extends ChangeNotifier {
     }
     return null;
   }
+
   MusicPlaybackMode get playbackMode => _playbackMode;
   bool get isBackgroundMusicPlaying => _isBackgroundMusicPlaying;
   double get backgroundMusicVolume => _backgroundMusicVolume;
   bool get isLoadingMusic => _isLoadingMusic;
-  
+
   Stream<Duration> get backgroundMusicPositionStream =>
       _backgroundMusicPlayer.positionStream;
   Stream<Duration?> get backgroundMusicDurationStream =>
@@ -87,7 +87,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
 
   void _onTrackFinished() {
-    if (_playbackMode == MusicPlaybackMode.listLoop || 
+    if (_playbackMode == MusicPlaybackMode.listLoop ||
         _playbackMode == MusicPlaybackMode.shuffle) {
       playNext();
     } else {
@@ -98,28 +98,37 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     _backgroundMusicVolume =
         prefs.getDouble('pomodoro_backgroundMusicVolume') ?? 0.5;
     await _backgroundMusicPlayer.setVolume(_backgroundMusicVolume);
-    
+
     int? modeIndex = prefs.getInt('pomodoro_playbackMode');
-    if (modeIndex != null && modeIndex >= 0 && modeIndex < MusicPlaybackMode.values.length) {
+    if (modeIndex != null &&
+        modeIndex >= 0 &&
+        modeIndex < MusicPlaybackMode.values.length) {
       _playbackMode = MusicPlaybackMode.values[modeIndex];
     }
 
     // Load imported tracks
-    final importedPaths = prefs.getStringList('pomodoro_importedMusicPaths') ?? [];
+    final importedPaths =
+        prefs.getStringList('pomodoro_importedMusicPaths') ?? [];
     for (var path in importedPaths) {
-      final fileName = path.split(Platform.pathSeparator).last;
-      _playlist.add(MusicTrack(
-        id: path,
-        title: fileName,
-        artist: 'Local Import',
-        sourceUrl: path,
-        isLocal: true,
-        localPath: path,
-      ));
+      final fileName = path.contains('/')
+          ? path.split('/').last
+          : path.contains('\\')
+          ? path.split('\\').last
+          : path;
+      _playlist.add(
+        MusicTrack(
+          id: path,
+          title: fileName,
+          artist: 'Local Import',
+          sourceUrl: path,
+          isLocal: true,
+          localPath: path,
+        ),
+      );
     }
 
     fetchDefaultTracks();
@@ -142,6 +151,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
       // Validate cached files and apply to defaultTracks
       final toRemove = <String>[];
       for (final entry in _cachedTrackMap.entries) {
+        if (kIsWeb) {
+          // No local file system on web — remove mapping.
+          toRemove.add(entry.key);
+          continue;
+        }
         final file = File(entry.value);
         if (await file.exists()) {
           final idx = _defaultTracks.indexWhere((t) => t.id == entry.key);
@@ -190,7 +204,8 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   Future<void> fetchDefaultTracks() async {
     // Example URL - replace with your actual GitHub raw URL
-    const url = 'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/main/assets/music/default_playlist.json';
+    const url =
+        'https://raw.githubusercontent.com/ChenXu233/ToDoTimeSquare/main/assets/music/default_playlist.json';
     try {
       // final response = await http.get(Uri.parse(url));
       // if (response.statusCode == 200) {
@@ -198,7 +213,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       //   _defaultTracks = data.map((e) => MusicTrack.fromJson(e)).toList();
       //   notifyListeners();
       // }
-      
+
       // Mock data
       _defaultTracks = [
         MusicTrack(
@@ -228,7 +243,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
           artist: "kinissue / Ayzic",
           sourceUrl:
               'https://fastapi-python-163music.vercel.app/gd/redirect?id=1855900632',
-        )
+        ),
       ];
       notifyListeners();
     } catch (e) {
@@ -285,20 +300,31 @@ class BackgroundMusicProvider extends ChangeNotifier {
     );
 
     if (result != null) {
+      // On non-web platforms, FilePicker returns file system paths.
       final newPaths = result.paths.whereType<String>().toList();
       for (var path in newPaths) {
         if (!_playlist.any((t) => t.localPath == path)) {
-          final fileName = path.split(Platform.pathSeparator).last;
-          _playlist.add(MusicTrack(
-            id: path,
-            title: fileName,
-            artist: 'Local Import',
-            sourceUrl: path,
-            isLocal: true,
-            localPath: path,
-          ));
+          final fileName = path.contains('/')
+              ? path.split('/').last
+              : path.contains('\\')
+              ? path.split('\\').last
+              : path;
+          _playlist.add(
+            MusicTrack(
+              id: path,
+              title: fileName,
+              artist: 'Local Import',
+              sourceUrl: path,
+              isLocal: true,
+              localPath: path,
+            ),
+          );
         }
       }
+
+      // On web, FilePicker may not provide paths. We deliberately skip adding
+      // web-picked files to the playlist here to avoid requiring Blob URL handling.
+      // If web import is desired, implement Blob -> Object URL logic.
       _saveImportedTracks();
       _safeNotify();
     }
@@ -323,21 +349,26 @@ class BackgroundMusicProvider extends ChangeNotifier {
       _saveImportedTracks();
     } else {
       if (track.localPath != null) {
-        try {
-          final file = File(track.localPath!);
-          if (await file.exists()) {
-            await file.delete();
+        if (!kIsWeb) {
+          try {
+            final file = File(track.localPath!);
+            if (await file.exists()) {
+              await file.delete();
+            }
+          } catch (e) {
+            debugPrint("Error deleting file: $e");
           }
-        } catch (e) {
-          debugPrint("Error deleting file: $e");
         }
         final index = _defaultTracks.indexWhere((t) => t.id == track.id);
         if (index != -1) {
-          _defaultTracks[index] = _defaultTracks[index].copyWith(localPath: null, isLocal: false);
+          _defaultTracks[index] = _defaultTracks[index].copyWith(
+            localPath: null,
+            isLocal: false,
+          );
         }
       }
     }
-    
+
     if (currentTrack?.id == track.id) {
       await _backgroundMusicPlayer.stop();
       _currentTrackIndex = -1;
@@ -348,7 +379,13 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   Future<void> downloadTrack(MusicTrack track) async {
     if (track.isLocal || track.localPath != null) return;
-    
+    if (kIsWeb) {
+      debugPrint(
+        'downloadTrack: skipping cache/download on web for ${track.id}',
+      );
+      return;
+    }
+
     _isLoadingMusic = true;
     _safeNotify();
 
@@ -426,6 +463,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
   }
 
   Future<int> _calculateCacheSize() async {
+    if (kIsWeb) return 0;
     try {
       final dir = await _getCacheDir();
       if (!await dir.exists()) return 0;
@@ -494,6 +532,19 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   /// Clear entire music cache directory and cached mappings.
   Future<void> clearCache() async {
+    if (kIsWeb) {
+      // On web we don't have a file cache; just clear mappings and flags.
+      _cachedTrackMap.clear();
+      for (int i = 0; i < _defaultTracks.length; i++) {
+        _defaultTracks[i] = _defaultTracks[i].copyWith(
+          isLocal: false,
+          localPath: null,
+        );
+      }
+      await _persistCachedTrackMap();
+      return;
+    }
+
     try {
       final dir = await _getCacheDir();
       if (await dir.exists()) {
@@ -522,11 +573,11 @@ class BackgroundMusicProvider extends ChangeNotifier {
     // If playing from default/radio lists, we need to handle the playlist context.
     // For now, if it's not in _playlist, we add it temporarily or just play it.
     // To support "List Loop" correctly, we need a concept of "Current Queue".
-    // Let's simplify: 
+    // Let's simplify:
     // If user clicks a track in Local, queue is Local.
     // If user clicks a track in Default, queue is Default.
     // If user clicks a track in Radio, queue is Radio.
-    
+
     List<MusicTrack> targetQueue;
     if (_playlist.any((t) => t.id == track.id)) {
       targetQueue = _playlist;
@@ -538,13 +589,13 @@ class BackgroundMusicProvider extends ChangeNotifier {
       // Fallback
       targetQueue = _playlist;
     }
-    
+
     // If we switched queues, we might want to update _playlist to reflect current queue?
     // Or just keep track of "active list".
     // For simplicity, let's just update _playlist to be the active queue if it's not Local.
     // BUT wait, _playlist is "Local Imports".
     // Let's introduce `_activeQueue`.
-    
+
     _activeQueue = targetQueue;
     _currentTrackIndex = _activeQueue.indexWhere((t) => t.id == track.id);
 
@@ -563,60 +614,63 @@ class BackgroundMusicProvider extends ChangeNotifier {
           );
         }
       } else {
-        final cachedFile = await _getCachedFile(track);
-        if (await cachedFile.exists()) {
-          if (kIsWeb) {
-            await _backgroundMusicPlayer.setAudioSource(
-              AudioSource.uri(Uri.parse(track.sourceUrl)),
-            );
-          } else {
+        if (kIsWeb) {
+          // No local cache on web — stream directly.
+          await _backgroundMusicPlayer.setAudioSource(
+            AudioSource.uri(Uri.parse(track.sourceUrl)),
+          );
+        } else {
+          final cachedFile = await _getCachedFile(track);
+          if (await cachedFile.exists()) {
             await _backgroundMusicPlayer.setAudioSource(
               AudioSource.file(cachedFile.path),
             );
-          }
-        } else {
-          // Not cached yet: download to cache then play from file to avoid subsequent network calls.
-          _isLoadingMusic = true;
-          _safeNotify();
-          try {
-            final response = await http.get(Uri.parse(track.sourceUrl));
-            if (response.statusCode == 200) {
-              await cachedFile.parent.create(recursive: true);
-              await cachedFile.writeAsBytes(response.bodyBytes);
-              if (kIsWeb) {
+          } else {
+            // Not cached yet: download to cache then play from file to avoid subsequent network calls.
+            _isLoadingMusic = true;
+            _safeNotify();
+            try {
+              final response = await http.get(Uri.parse(track.sourceUrl));
+              if (response.statusCode == 200) {
+                await cachedFile.parent.create(recursive: true);
+                await cachedFile.writeAsBytes(response.bodyBytes);
+                if (kIsWeb) {
+                  await _backgroundMusicPlayer.setAudioSource(
+                    AudioSource.uri(Uri.parse(track.sourceUrl)),
+                  );
+                } else {
+                  await _backgroundMusicPlayer.setAudioSource(
+                    AudioSource.file(cachedFile.path),
+                  );
+                }
+                // update defaultTracks entry if applicable
+                final index = _defaultTracks.indexWhere(
+                  (t) => t.id == track.id,
+                );
+                if (index != -1) {
+                  _defaultTracks[index] = _defaultTracks[index].copyWith(
+                    isLocal: true,
+                    localPath: cachedFile.path,
+                  );
+                }
+                // persist cache map and enforce size limit
+                _cachedTrackMap[track.id] = cachedFile.path;
+                await _persistCachedTrackMap();
+                await _enforceCacheSize();
+              } else {
+                // Fallback to streaming if download failed
                 await _backgroundMusicPlayer.setAudioSource(
                   AudioSource.uri(Uri.parse(track.sourceUrl)),
                 );
-              } else {
-                await _backgroundMusicPlayer.setAudioSource(
-                  AudioSource.file(cachedFile.path),
-                );
               }
-              // update defaultTracks entry if applicable
-              final index = _defaultTracks.indexWhere((t) => t.id == track.id);
-              if (index != -1) {
-                _defaultTracks[index] = _defaultTracks[index].copyWith(
-                  isLocal: true,
-                  localPath: cachedFile.path,
-                );
-              }
-              // persist cache map and enforce size limit
-              _cachedTrackMap[track.id] = cachedFile.path;
-              await _persistCachedTrackMap();
-              await _enforceCacheSize();
-            } else {
-              // Fallback to streaming if download failed
-              await _backgroundMusicPlayer.setAudioSource(
-                AudioSource.uri(Uri.parse(track.sourceUrl)),
-              );
+            } finally {
+              _isLoadingMusic = false;
+              _safeNotify();
             }
-          } finally {
-            _isLoadingMusic = false;
-            _safeNotify();
           }
         }
       }
-      
+
       await _backgroundMusicPlayer.play();
       await _savePlaybackState();
       _safeNotify();
@@ -624,7 +678,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
       debugPrint("Error playing track: $e\n$st");
     }
   }
-  
+
   List<MusicTrack> _activeQueue = [];
   // persisted playback state keys
   static const _kLastTrackId = 'pomodoro_lastTrackId';
@@ -634,19 +688,19 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   Future<void> playNext() async {
     if (_activeQueue.isEmpty) return;
-    
+
     int nextIndex;
     if (_playbackMode == MusicPlaybackMode.shuffle) {
       nextIndex = Random().nextInt(_activeQueue.length);
     } else {
       nextIndex = (_currentTrackIndex + 1) % _activeQueue.length;
     }
-    
-    // If list loop is off (e.g. single play), we might stop. 
-    // But usually "List Loop" means loop the list. 
+
+    // If list loop is off (e.g. single play), we might stop.
+    // But usually "List Loop" means loop the list.
     // If we want "No Loop", we stop at end.
     // Assuming "List Loop" is the default behavior for non-shuffle.
-    
+
     _currentTrackIndex = nextIndex;
     await playTrack(_activeQueue[_currentTrackIndex]);
   }
@@ -710,25 +764,27 @@ class BackgroundMusicProvider extends ChangeNotifier {
 
   Future<void> playPrevious() async {
     if (_activeQueue.isEmpty) return;
-    
+
     int prevIndex;
     if (_playbackMode == MusicPlaybackMode.shuffle) {
-       prevIndex = Random().nextInt(_activeQueue.length);
+      prevIndex = Random().nextInt(_activeQueue.length);
     } else {
-       prevIndex = (_currentTrackIndex - 1 + _activeQueue.length) % _activeQueue.length;
+      prevIndex =
+          (_currentTrackIndex - 1 + _activeQueue.length) % _activeQueue.length;
     }
-    
+
     _currentTrackIndex = prevIndex;
     await playTrack(_activeQueue[_currentTrackIndex]);
   }
 
   Future<void> togglePlaybackMode() async {
-    final nextIndex = (_playbackMode.index + 1) % MusicPlaybackMode.values.length;
+    final nextIndex =
+        (_playbackMode.index + 1) % MusicPlaybackMode.values.length;
     _playbackMode = MusicPlaybackMode.values[nextIndex];
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('pomodoro_playbackMode', _playbackMode.index);
-    
+
     _safeNotify();
   }
 
@@ -739,13 +795,13 @@ class BackgroundMusicProvider extends ChangeNotifier {
       await _backgroundMusicPlayer.play();
     }
   }
-  
+
   Future<void> pauseBackgroundMusic() async {
     if (_backgroundMusicPlayer.playing) {
       await _backgroundMusicPlayer.pause();
     }
   }
-  
+
   Future<void> resumeBackgroundMusic() async {
     if (_backgroundMusicPlayer.playing) return;
 
@@ -785,7 +841,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
     await prefs.setDouble('pomodoro_backgroundMusicVolume', volume);
     _safeNotify();
   }
-  
+
   Future<void> seekTo(Duration position) async {
     await _backgroundMusicPlayer.seek(position);
   }
