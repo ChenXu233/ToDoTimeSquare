@@ -152,7 +152,30 @@ class BackgroundMusicProvider extends ChangeNotifier {
             );
           }
         } else {
-          toRemove.add(entry.key);
+          // Try to find the track in default or radio lists and re-download immediately.
+          MusicTrack? missingTrack;
+          final defIdx = _defaultTracks.indexWhere((t) => t.id == entry.key);
+          if (defIdx != -1)
+            missingTrack = _defaultTracks[defIdx];
+          else {
+            final rIdx = _radioTracks.indexWhere((t) => t.id == entry.key);
+            if (rIdx != -1) missingTrack = _radioTracks[rIdx];
+          }
+
+          if (missingTrack != null) {
+            // Schedule an immediate re-download without blocking settings load.
+            Future.microtask(() async {
+              try {
+                await downloadTrack(missingTrack!);
+              } catch (e) {
+                debugPrint(
+                  'Failed to re-download missing cached track ${entry.key}: $e',
+                );
+              }
+            });
+          } else {
+            toRemove.add(entry.key);
+          }
         }
       }
       for (final k in toRemove) _cachedTrackMap.remove(k);
