@@ -17,7 +17,7 @@ class BackgroundMusicProvider extends ChangeNotifier {
   StreamSubscription<PlayerState>? _playerStateSubscription;
   bool _isDisposed = false;
   
-  List<MusicTrack> _playlist = [];
+  final List<MusicTrack> _playlist = [];
   List<MusicTrack> _defaultTracks = [];
   List<MusicTrack> _radioTracks = [];
   int _currentTrackIndex = -1;
@@ -140,27 +140,28 @@ class BackgroundMusicProvider extends ChangeNotifier {
           title: 'Frozen Waters',
           artist: 'hoogway / softy',
           sourceUrl:
-              'http://101.132.38.216:8800/download?id=1866350557',
+              'https://fastapi-python-163music.vercel.app/gd/redirect?id=1866350557',
         ),
         MusicTrack(
           id: 'def_2',
           title: "It's Okay",
           artist: 'Ayzic / Project AER',
           sourceUrl:
-              'http://101.132.38.216:8800/download?id=1840791849',
+              'https://fastapi-python-163music.vercel.app/gd/redirect?id=1840791849',
         ),
         MusicTrack(
           id: 'def_3',
           title: 'Hiraeth',
           artist: 'Bcalm / Banks',
           sourceUrl:
-              'http://101.132.38.216:8800/download?id=1902794853',
+              'https://fastapi-python-163music.vercel.app/gd/redirect?id=1902794853',
         ),
         MusicTrack(
           id: "def_4",
           title: "Cascade",
           artist: "kinissue / Ayzic",
-          sourceUrl: 'http://101.132.38.216:8800/download?id=1855900632',
+          sourceUrl:
+              'https://fastapi-python-163music.vercel.app/gd/redirect?id=1855900632',
         )
       ];
       notifyListeners();
@@ -383,9 +384,9 @@ class BackgroundMusicProvider extends ChangeNotifier {
       }
 
       String queueName = 'local';
-      if (_activeQueue == _playlist)
+      if (_activeQueue == _playlist) {
         queueName = 'local';
-      else if (_activeQueue == _defaultTracks)
+      } else if (_activeQueue == _defaultTracks)
         queueName = 'default';
       else if (_activeQueue == _radioTracks)
         queueName = 'radio';
