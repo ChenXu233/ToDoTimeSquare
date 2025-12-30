@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../i18n/i18n.dart';
-import 'package:animated_list_plus/animated_list_plus.dart';
-import 'package:animated_list_plus/transitions.dart';
 import '../../../providers/todo_provider.dart';
 import '../../../models/todo.dart';
-import '../../../widgets/modal/add_todo/add_todo_modal.dart';
+import 'modal/add_todo/add_todo_modal.dart';
 import 'todo_item.dart';
 import '../../../widgets/glass/glass_popup_menu.dart';
 
@@ -19,8 +17,6 @@ class TodoListWidget extends StatefulWidget {
 }
 
 class _TodoListWidgetState extends State<TodoListWidget> {
-  final Set<String> _dismissedTaskIds = {};
-
   void _showAddTodoModal(BuildContext context, {Todo? todo}) {
     showGeneralDialog(
       context: context,
@@ -40,7 +36,8 @@ class _TodoListWidgetState extends State<TodoListWidget> {
     );
   }
 
-  void _showEditDeleteMenu(BuildContext context, Todo todo, Offset position) {
+  /// 显示操作菜单（长按/右键）
+  void _showContextMenu(BuildContext context, Todo todo, Offset position) {
     final i18n = APPi18n.of(context)!;
     showGlassMenu(
       context: context,
@@ -85,7 +82,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
           child: Row(
             children: [
               Icon(Icons.delete, color: Colors.red),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(i18n.delete, style: const TextStyle(color: Colors.red)),
             ],
           ),
@@ -103,17 +100,73 @@ class _TodoListWidgetState extends State<TodoListWidget> {
     });
   }
 
+  /// 构建主任务项（带拖拽）
+  Widget _buildReorderableTodoItem(
+    BuildContext context,
+    Todo todo,
+    int index,
+    TodoProvider provider,
+  ) {
+    return Padding(
+      key: Key(todo.id),
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 主任务（可拖拽）- 拖拽仅由项内的手柄触发
+          TodoItem(
+            todo: todo,
+            enableReorder: true,
+            reorderIndex: index,
+            onToggle: () => provider.toggleTodo(todo.id),
+            onShowMenu: (position) => _showContextMenu(context, todo, position),
+            onEdit: () => _showAddTodoModal(context, todo: todo),
+            onDelete: () => provider.removeTodo(todo.id),
+          ),
+          // 子任务（不可拖拽，但可操作）
+          Consumer<TodoProvider>(
+            builder: (context, subProvider, child) {
+              final subTasks = subProvider.getSubTasks(todo.id);
+              if (subTasks.isEmpty) return const SizedBox.shrink();
+
+              return Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 8),
+                child: Column(
+                  children: subTasks.map((subTask) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: TodoItem(
+                        todo: subTask,
+                        enableReorder: false,
+                        onToggle: () => subProvider.toggleTodo(subTask.id),
+                        onShowMenu: (position) =>
+                            _showContextMenu(context, subTask, position),
+                        onEdit: () => _showAddTodoModal(context, todo: subTask),
+                        onDelete: () => subProvider.removeTodo(subTask.id),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final todoProvider = Provider.of<TodoProvider>(context);
+    final todos = todoProvider.todos.where((t) => t.parentId == null).toList();
 
     return Stack(
       children: [
         // List Area
-        todoProvider.todos.isEmpty
+        todos.isEmpty
             ? Center(
                 child: Text(
-                  "No tasks yet",
+                  APPi18n.of(context)!.noTasksYet,
                   style: TextStyle(
                     color: Theme.of(
                       context,
@@ -121,82 +174,26 @@ class _TodoListWidgetState extends State<TodoListWidget> {
                   ),
                 ),
               )
-            : ImplicitlyAnimatedList<Todo>(
+            : ReorderableListView.builder(
                 padding: const EdgeInsets.only(bottom: 80),
-                items: todoProvider.todos
-                    .where((t) => t.parentId == null)
-                    .toList(),
-                areItemsTheSame: (a, b) => a.id == b.id,
-                itemBuilder: (context, animation, todo, index) {
-                  final isDismissed = _dismissedTaskIds.contains(todo.id);
-                  if (isDismissed) {
-                    // If dismissed, we return a shrunk box to allow the list to animate the space closing
-                    // but we don't render the Dismissible widget again.
-                    return SizeFadeTransition(
-                      sizeFraction: 0.7,
-                      curve: Curves.easeInOut,
-                      animation: animation,
-                      child: const SizedBox.shrink(),
-                    );
-                  }
-
-                  return SizeFadeTransition(
-                    sizeFraction: 0.7,
-                    curve: Curves.easeInOut,
-                    animation: animation,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Column(
-                        children: [
-                          TodoItem(
-                            todo: todo,
-                            enableDismiss: true,
-                            onToggle: () => todoProvider.toggleTodo(todo.id),
-                            onDelete: () {
-                              setState(() {
-                                _dismissedTaskIds.add(todo.id);
-                              });
-                              todoProvider.removeTodo(todo.id);
-                            },
-                            onShowMenu: (position) =>
-                                _showEditDeleteMenu(context, todo, position),
-                          ),
-                          Consumer<TodoProvider>(
-                            builder: (context, provider, child) {
-                              final subTasks = provider.getSubTasks(todo.id);
-                              if (subTasks.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 24.0),
-                                child: Column(
-                                  children: subTasks.map((subTask) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 8),
-                                      child: TodoItem(
-                                        todo: subTask,
-                                        enableDismiss: true,
-                                        onToggle: () =>
-                                            provider.toggleTodo(subTask.id),
-                                        onDelete: () =>
-                                            provider.removeTodo(subTask.id),
-                                        onShowMenu: (position) =>
-                                            _showEditDeleteMenu(
-                                              context,
-                                              subTask,
-                                              position,
-                                            ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                buildDefaultDragHandles: false,
+                itemCount: todos.length,
+                itemBuilder: (context, index) {
+                  final todo = todos[index];
+                  return _buildReorderableTodoItem(
+                    context,
+                    todo,
+                    index,
+                    todoProvider,
                   );
+                },
+                onReorder: (oldIndex, newIndex) {
+                  // 处理拖拽排序
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final todoId = todos[oldIndex].id;
+                  todoProvider.moveTodo(todoId, newIndex);
                 },
               ),
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../models/todo.dart';
-import '../../../providers/todo_provider.dart';
-import '../../../i18n/i18n.dart';
-import '../../glass/glass_container.dart';
-import './component/importance_segmented_button.dart';
-import './component/parent_task_dropdown.dart';
-import './component/duration_picker.dart';
-import './component/start_time_picker.dart';
+import '../../../../../models/todo.dart';
+import '../../../../../providers/todo_provider.dart';
+import '../../../../../i18n/i18n.dart';
+import '../../../../../widgets/glass/glass_container.dart';
+import 'component/importance_segmented_button.dart';
+import 'component/parent_task_dropdown.dart';
+import 'component/duration_picker.dart';
+import 'component/start_time_picker.dart';
 
 class AddTodoModal extends StatefulWidget {
   final Todo? todo;

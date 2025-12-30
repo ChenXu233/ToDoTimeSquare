@@ -297,4 +297,10 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get noTasksYet => 'No tasks yet';
+
+  @override
+  String get taskActions => 'Task Actions';
 }

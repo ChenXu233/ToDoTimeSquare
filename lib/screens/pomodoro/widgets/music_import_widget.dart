@@ -103,8 +103,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
                   ],
                 ),
                 const SizedBox(height: 16),
-                SizedBox(
-                  height: 300,
+                Expanded(
                   child: TabBarView(
                     controller: _tabController,
                     children: [
@@ -136,26 +135,29 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
           );
         }
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                onPressed: () => provider.importMusic(),
-                icon: Icon(
-                  Icons.add,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
-                label: Text(
-                  i18n?.addMore ?? 'Add More',
-                  style: TextStyle(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () => provider.importMusic(),
+                  icon: Icon(
+                    Icons.add,
                     color: isDark ? Colors.white70 : Colors.black87,
                   ),
+                  label: Text(
+                    i18n?.addMore ?? 'Add More',
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.only(right: 10, left: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 itemCount: tracks.length,
                 itemBuilder: (context, index) {
                   final track = tracks[index];
@@ -202,7 +204,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
           );
         }
         return ListView.builder(
-          padding: EdgeInsets.only(right: 10, left: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           itemCount: tracks.length,
           itemBuilder: (context, index) {
             final track = tracks[index];
@@ -251,7 +253,7 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
           );
         }
         return ListView.builder(
-          padding: EdgeInsets.only(right: 10, left: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           itemCount: tracks.length,
           itemBuilder: (context, index) {
             final track = tracks[index];

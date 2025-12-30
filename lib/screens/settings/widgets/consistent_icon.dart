@@ -19,7 +19,7 @@ class ConsistentIcon extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.08),
+        color: theme.colorScheme.primary.withAlpha(20),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(

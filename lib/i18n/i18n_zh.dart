@@ -295,4 +295,10 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get close => '关闭';
+
+  @override
+  String get noTasksYet => '暂无任务';
+
+  @override
+  String get taskActions => '任务操作';
 }

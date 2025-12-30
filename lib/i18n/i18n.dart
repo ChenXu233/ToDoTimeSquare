@@ -666,6 +666,18 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// Message shown when no tasks exist
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks yet'**
+  String get noTasksYet;
+
+  /// Title for task actions menu
+  ///
+  /// In en, this message translates to:
+  /// **'Task Actions'**
+  String get taskActions;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
