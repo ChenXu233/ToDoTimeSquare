@@ -352,5 +352,13 @@
   "close": "Close",
   "@close": {
     "description": "Close button label"
+  },
+  "noTasksYet": "No tasks yet",
+  "@noTasksYet": {
+    "description": "Message shown when no tasks exist"
+  },
+  "taskActions": "Task Actions",
+  "@taskActions": {
+    "description": "Title for task actions menu"
   }
 }

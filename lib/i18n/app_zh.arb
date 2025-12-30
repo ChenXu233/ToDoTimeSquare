@@ -136,5 +136,13 @@
   "close": "关闭",
   "@close": {
     "description": "关闭按钮标签"
+  },
+  "noTasksYet": "暂无任务",
+  "@noTasksYet": {
+    "description": "没有任务时显示的消息"
+  },
+  "taskActions": "任务操作",
+  "@taskActions": {
+    "description": "任务操作菜单标题"
   }
 }
