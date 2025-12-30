@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_picker/file_picker.dart';
-import '../models/music_track.dart';
+import '../models/sample/music_track.dart';
 import 'music_cache_manager.dart';
 
 enum MusicPlaybackMode { listLoop, shuffle, radio }

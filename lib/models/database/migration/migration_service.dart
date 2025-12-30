@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '/database/app_database.dart';
-import '/models/todo.dart' as old_todo;
-import '/models/focus_record.dart' as old_focus;
+import '../app_database.dart';
+import '../migrations/legacy_models/todo.dart' as old_todo;
+import '../migrations/legacy_models/focus_record.dart' as old_focus;
 
 /// 数据迁移服务
 /// 将 SharedPreferences 中的数据迁移到 Drift 数据库

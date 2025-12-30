@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/music_track.dart';
+import '../../models/sample/music_track.dart';
 
 /// 错误图标组件 - 根据错误类型显示对应的图标
 class ErrorIcon extends StatelessWidget {

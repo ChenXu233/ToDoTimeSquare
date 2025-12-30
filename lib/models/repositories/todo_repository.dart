@@ -1,8 +1,11 @@
 import 'package:drift/drift.dart';
-import '/database/app_database.dart';
-import '/database/schema/todos.dart';
+import '../database/app_database.dart';
+import '../database/schema/todos.dart';
 
 part 'todo_repository.g.dart';
+
+/// 任务重要性枚举
+enum TodoImportance { low, medium, high }
 
 /// 任务数据模型
 /// 与现有的 Todo Model 保持兼容

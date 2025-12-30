@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import '/database/app_database.dart';
-import '/database/schema/focus_records.dart';
+import '../database/app_database.dart';
+import '../database/schema/focus_records.dart';
 
 part 'focus_record_repository.g.dart';
 

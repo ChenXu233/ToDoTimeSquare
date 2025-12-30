@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../models/todo.dart';
+import '../../../models/models.dart';
 import '../../../i18n/i18n.dart';
 import '../../../widgets/glass/glass_container.dart';
 import 'task_meta_row.dart';
 
 class TaskTray extends StatefulWidget {
-  final Todo task;
+  final TaskModel task;
   final bool isExpanded;
   final Color fgColor;
   final Color bgColor;
@@ -97,7 +97,7 @@ class _TaskTrayState extends State<TaskTray>
 }
 
 class _CollapsedContent extends StatelessWidget {
-  final Todo task;
+  final TaskModel task;
   final Color fgColor;
   final ThemeData theme;
   final VoidCallback onTap;
@@ -150,7 +150,7 @@ class _CollapsedContent extends StatelessWidget {
 }
 
 class _ExpandedContent extends StatelessWidget {
-  final Todo task;
+  final TaskModel task;
   final Color fgColor;
   final ThemeData theme;
   final APPi18n i18n;

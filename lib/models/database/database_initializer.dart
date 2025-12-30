@@ -1,5 +1,5 @@
-import '/database/app_database.dart';
-import '/database/migration/migration_service.dart';
+import 'app_database.dart';
+import 'migration/migration_service.dart';
 
 /// 数据库初始化服务
 /// 管理数据库的创建、迁移和初始化

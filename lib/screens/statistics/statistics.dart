@@ -5,7 +5,7 @@ import '../../i18n/i18n.dart';
 import '../../widgets/glass/gradient_background.dart';
 import '../../widgets/glass/glass_container.dart';
 import '../../providers/statistics_provider.dart';
-import '../../models/focus_record.dart';
+import '../../models/models.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -248,7 +248,7 @@ class StatisticsScreen extends StatelessWidget {
 
   Widget _buildRecordItem(
     BuildContext context,
-    FocusRecord record,
+    FocusRecordModel record,
     bool isDark,
   ) {
     return GlassContainer(

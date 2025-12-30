@@ -1,47 +1,41 @@
-import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/focus_record.dart';
+import 'package:flutter/material.dart';
+import '../models/database/database_initializer.dart';
+import '../models/repositories/focus_record_repository.dart';
+import '../models/models.dart' show FocusRecordModel;
 
 class StatisticsProvider extends ChangeNotifier {
-  List<FocusRecord> _records = [];
+  List<FocusRecordModel> _records = [];
   bool _isLoading = true;
+  late final FocusRecordRepository _repository;
 
-  List<FocusRecord> get records => _records;
+  List<FocusRecordModel> get records => _records;
   bool get isLoading => _isLoading;
 
   StatisticsProvider() {
-    _loadRecords();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final db = DatabaseInitializer().database;
+    _repository = FocusRecordRepository(db);
+    await _loadRecords();
   }
 
   Future<void> _loadRecords() async {
     _isLoading = true;
     notifyListeners();
 
-    final prefs = await SharedPreferences.getInstance();
-    final List<String>? recordsJson = prefs.getStringList('focus_records');
-
-    if (recordsJson != null) {
-      _records =
-          recordsJson.map((jsonStr) => FocusRecord.fromJson(jsonStr)).toList();
-      // Sort by start time descending
-      _records.sort((a, b) => b.startTime.compareTo(a.startTime));
-    }
+    _records = await _repository.getAllRecords();
+    _records.sort((a, b) => b.startTime.compareTo(a.startTime));
 
     _isLoading = false;
     notifyListeners();
   }
 
-  Future<void> addRecord(FocusRecord record) async {
+  Future<void> addRecord(FocusRecordModel record) async {
     _records.insert(0, record);
     notifyListeners();
-    await _saveRecords();
-  }
-
-  Future<void> _saveRecords() async {
-    final prefs = await SharedPreferences.getInstance();
-    final List<String> recordsJson =
-        _records.map((record) => record.toJson()).toList();
-    await prefs.setStringList('focus_records', recordsJson);
+    await _repository.createRecord(record);
   }
 
   // Statistics Getters
@@ -63,17 +57,15 @@ class StatisticsProvider extends ChangeNotifier {
 
   int get thisWeekFocusMinutes {
     final now = DateTime.now();
-    // Find the start of the week (Monday)
     final todayStart = DateTime(now.year, now.month, now.day);
     final weekStart = todayStart.subtract(Duration(days: now.weekday - 1));
-    
+
     return _records
         .where((record) => record.startTime.isAfter(weekStart))
         .fold(0, (sum, record) => sum + (record.durationSeconds ~/ 60));
   }
-  
-  // Helper to get recent records
-  List<FocusRecord> get recentRecords {
+
+  List<FocusRecordModel> get recentRecords {
     return _records.take(20).toList();
   }
 }

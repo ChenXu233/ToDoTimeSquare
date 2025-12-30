@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../i18n/i18n.dart';
-import '../../../../models/todo.dart';
+import '../../../models/models.dart';
 import '../../../widgets/glass/glass_container.dart';
 
 class TodoItem extends StatefulWidget {
-  final Todo todo;
+  final TaskModel todo;
   final VoidCallback onToggle;
   final Function(Offset) onShowMenu;
   final VoidCallback onEdit;
@@ -55,14 +55,16 @@ class _TodoItemState extends State<TodoItem>
     super.dispose();
   }
 
-  Color _getImportanceColor(TodoImportance importance) {
+  Color _getImportanceColor(int importance) {
     switch (importance) {
-      case TodoImportance.high:
+      case 3: // high
         return Colors.redAccent;
-      case TodoImportance.medium:
+      case 2: // medium
         return Colors.orangeAccent;
-      case TodoImportance.low:
+      case 1: // low
         return Colors.greenAccent;
+      default:
+        return Colors.orangeAccent;
     }
   }
 
@@ -357,7 +359,7 @@ class _TodoItemState extends State<TodoItem>
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              "${widget.todo.estimatedDuration!.inHours}h ${widget.todo.estimatedDuration!.inMinutes % 60}m",
+                              "${widget.todo.estimatedDuration! ~/ 60}h ${widget.todo.estimatedDuration! % 60}m",
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Theme.of(

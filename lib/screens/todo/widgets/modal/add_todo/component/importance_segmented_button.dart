@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../models/todo.dart';
+import '../../../../../../models/models.dart';
 import '../../../../../../i18n/i18n.dart';
 
 class ImportanceSegmentedButton extends StatelessWidget {

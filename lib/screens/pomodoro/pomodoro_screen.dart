@@ -5,7 +5,7 @@ import 'package:confetti/confetti.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../providers/todo_provider.dart';
 import '../../i18n/i18n.dart';
-import '../../models/todo.dart';
+import '../../models/models.dart' show TaskModel;
 import 'widgets/task_tray.dart';
 import 'widgets/settings_dialog.dart';
 import 'widgets/info_dialog.dart';
@@ -13,7 +13,7 @@ import 'widgets/completion_dialog.dart';
 import 'widgets/music_player_dialog.dart';
 
 class PomodoroScreen extends StatefulWidget {
-  final Todo? initialTask;
+  final TaskModel? initialTask;
 
   const PomodoroScreen({super.key, this.initialTask});
 
@@ -86,7 +86,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
     super.dispose();
   }
 
-  Todo? _getActiveTask(BuildContext context, PomodoroProvider provider) {
+  TaskModel? _getActiveTask(BuildContext context, PomodoroProvider provider) {
     final taskId = provider.currentTaskId;
     if (taskId == null) return null;
     try {
