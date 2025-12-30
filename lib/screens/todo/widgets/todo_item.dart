@@ -1,22 +1,61 @@
 import 'package:flutter/material.dart';
+import '../../../../i18n/i18n.dart';
 import '../../../../models/todo.dart';
 import '../../../widgets/glass/glass_container.dart';
 
-class TodoItem extends StatelessWidget {
+class TodoItem extends StatefulWidget {
   final Todo todo;
   final VoidCallback onToggle;
-  final VoidCallback onDelete;
   final Function(Offset) onShowMenu;
-  final bool enableDismiss;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final bool enableReorder;
+  final int? reorderIndex;
 
   const TodoItem({
     super.key,
     required this.todo,
     required this.onToggle,
-    required this.onDelete,
     required this.onShowMenu,
-    this.enableDismiss = true,
+    required this.onEdit,
+    required this.onDelete,
+    this.enableReorder = false,
+    this.reorderIndex,
   });
+
+  @override
+  State<TodoItem> createState() => _TodoItemState();
+}
+
+class _TodoItemState extends State<TodoItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  Animation<double>? _offsetAnimation;
+  Animation<double>? _currentAnimation;
+  VoidCallback? _currentAnimationListener;
+  void Function(AnimationStatus)? _currentStatusListener;
+
+  double _dragExtent = 0;
+  bool _isSwipedOut = false;
+  bool _isDragging = false;
+
+  // 滑动卡住的阈值（屏幕宽度的30%）
+  double get _dismissThreshold => MediaQuery.of(context).size.width * 0.20;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   Color _getImportanceColor(TodoImportance importance) {
     switch (importance) {
@@ -29,152 +68,399 @@ class TodoItem extends StatelessWidget {
     }
   }
 
+  void _handleDragUpdate(DragUpdateDetails details) {
+    // Stop any running animation so user drag is immediately reflected
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+      _animationController.reset();
+    }
+
+    // If already swiped out, only allow rightward drag to restore
+    if (_isSwipedOut) {
+      if (details.delta.dx > 0) {
+        setState(() {
+          _dragExtent += details.delta.dx;
+          // Clamp so it won't overshoot to the right
+          if (_dragExtent >= 0) {
+            // User dragged fully back to origin; clear swiped-out state so release will behave normally
+            _dragExtent = 0;
+            _isSwipedOut = false;
+            _isDragging = true;
+          } else {
+            _isDragging = true;
+          }
+        });
+      }
+      return;
+    }
+
+    // If currently have left offset, allow rightward drag to cancel
+    if (_dragExtent < 0 && details.delta.dx > 0) {
+      setState(() {
+        _dragExtent += details.delta.dx;
+        if (_dragExtent > 0) _dragExtent = 0;
+        _isDragging = true;
+      });
+      return;
+    }
+
+    // Start left swipe
+    if (details.delta.dx < 0) {
+      setState(() {
+        _dragExtent += details.delta.dx;
+        // Allow a small overscroll but clamp to a reasonable max
+        final maxOverscroll = -_dismissThreshold * 1.05;
+        if (_dragExtent < maxOverscroll) _dragExtent = maxOverscroll;
+        _isDragging = true;
+      });
+    }
+  }
+
+  void _handleDragEnd(DragEndDetails details) {
+    // If currently in swiped-out state, handle release appropriately
+    if (_isSwipedOut) {
+      _isDragging = false;
+      if (_dragExtent >= 0) {
+        // user dragged back to origin — restore
+        _animateTo(0);
+      } else {
+        // not fully restored — animate back to swiped position
+        _animateTo(-_dismissThreshold);
+      }
+      return;
+    }
+
+    _isDragging = false;
+
+    // 如果滑动超过阈值，卡住
+    if (_dragExtent <= -_dismissThreshold) {
+      _animateTo(-_dismissThreshold);
+    } else {
+      // 否则恢复原位
+      _animateTo(0);
+    }
+  }
+
+  void _resetPosition() {
+    _isDragging = false;
+    _animateTo(0);
+  }
+
+  void _handleButtonTap(VoidCallback action) {
+    action();
+    _resetPosition();
+  }
+
+  void _animateTo(double target) {
+    // Cancel any existing animation and its listeners
+    if (_currentAnimation != null && _currentAnimationListener != null) {
+      _currentAnimation!.removeListener(_currentAnimationListener!);
+      _currentAnimation = null;
+    }
+    if (_currentStatusListener != null) {
+      _animationController.removeStatusListener(_currentStatusListener!);
+      _currentStatusListener = null;
+    }
+
+    _animationController.stop();
+    _animationController.reset();
+
+    final double start = _dragExtent;
+    _currentAnimation = Tween<double>(begin: start, end: target).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
+
+    _currentAnimationListener = () {
+      if (!mounted) return;
+      setState(() {
+        _dragExtent = _currentAnimation!.value;
+      });
+    };
+
+    _currentAnimation!.addListener(_currentAnimationListener!);
+
+    _currentStatusListener = (AnimationStatus status) {
+      if (status == AnimationStatus.completed ||
+          status == AnimationStatus.dismissed) {
+        // Cleanup listeners
+        if (_currentAnimation != null && _currentAnimationListener != null) {
+          _currentAnimation!.removeListener(_currentAnimationListener!);
+        }
+        if (_currentStatusListener != null) {
+          _animationController.removeStatusListener(_currentStatusListener!);
+        }
+        _currentAnimation = null;
+        _currentAnimationListener = null;
+        _currentStatusListener = null;
+
+        if (!mounted) return;
+        setState(() {
+          _dragExtent = target;
+          _isSwipedOut = (target == -_dismissThreshold);
+        });
+        _animationController.reset();
+      }
+    };
+
+    _animationController.addStatusListener(_currentStatusListener!);
+    _animationController.forward();
+  }
+
+  // 获取当前滑动偏移量（用于动画）
+  double get _currentOffset {
+    if (_isSwipedOut) {
+      return -_dismissThreshold;
+    }
+    return _dragExtent;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final i18n = APPi18n.of(context)!;
 
-    Widget content = GestureDetector(
-      onLongPressStart: (details) {
-        onShowMenu(details.globalPosition);
-      },
-      onSecondaryTapDown: (details) {
-        onShowMenu(details.globalPosition);
-      },
-      child: GlassContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        color: isDark ? Colors.black : Colors.white,
-        opacity: 0.05,
+    // 背景操作按钮
+    Widget background = Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 8),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Checkbox(
-              value: todo.isCompleted,
-              activeColor: Theme.of(context).colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-              ),
-              onChanged: (value) => onToggle(),
+            // 取消按钮（灰色）
+            _buildSwipeButton(
+              icon: Icons.close,
+              label: i18n.cancel,
+              color: isDark ? Colors.grey[400]! : Colors.grey[600]!,
+              onTap: () => _handleButtonTap(() {}),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    todo.title,
-                    style: TextStyle(
-                      decoration: todo.isCompleted
-                          ? TextDecoration.lineThrough
-                          : null,
-                      color: todo.isCompleted
-                          ? Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.5)
-                          : Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (todo.description != null && todo.description!.isNotEmpty)
-                    Text(
-                      todo.description!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  if (todo.plannedStartTime != null ||
-                      todo.estimatedDuration != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Row(
-                        children: [
-                          if (todo.plannedStartTime != null)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.calendar_today,
-                                    size: 12,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.5),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    "${todo.plannedStartTime!.month}/${todo.plannedStartTime!.day} ${todo.plannedStartTime!.hour}:${todo.plannedStartTime!.minute.toString().padLeft(2, '0')}",
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface
-                                          .withValues(alpha: 0.5),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          if (todo.estimatedDuration != null)
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.timer,
-                                  size: 12,
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.5),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  "${todo.estimatedDuration!.inHours}h ${todo.estimatedDuration!.inMinutes % 60}m",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.5),
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
+            const SizedBox(width: 1),
+            // 删除按钮（红色）
+            _buildSwipeButton(
+              icon: Icons.delete,
+              label: i18n.delete,
+              color: Colors.red,
+              onTap: () => _handleButtonTap(widget.onDelete),
             ),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: _getImportanceColor(todo.importance),
-                shape: BoxShape.circle,
-              ),
+            const SizedBox(width: 1),
+            // 编辑按钮（主色）
+            _buildSwipeButton(
+              icon: Icons.edit,
+              label: i18n.edit,
+              color: Theme.of(context).colorScheme.primary,
+              onTap: () => _handleButtonTap(widget.onEdit),
             ),
           ],
         ),
       ),
     );
 
-    if (!enableDismiss) {
-      return content;
-    }
-
-    return Dismissible(
-      key: Key(todo.id),
-      onDismissed: (direction) => onDelete(),
-      background: Container(
-        decoration: BoxDecoration(
-          color: Colors.red.withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete, color: Colors.white),
+    // 任务内容
+    Widget content = GlassContainer(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: isDark ? Colors.black : Colors.white,
+      opacity: 0.05,
+      child: Row(
+        children: [
+          // 拖拽手柄（启用拖拽时显示）
+          if (widget.enableReorder)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: widget.reorderIndex != null
+                  ? ReorderableDragStartListener(
+                      index: widget.reorderIndex!,
+                      child: Icon(
+                        Icons.drag_indicator,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.3),
+                        size: 20,
+                      ),
+                    )
+                  : Icon(
+                      Icons.drag_indicator,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.3),
+                      size: 20,
+                    ),
+            ),
+          Checkbox(
+            value: widget.todo.isCompleted,
+            activeColor: Theme.of(context).colorScheme.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            onChanged: (value) => widget.onToggle(),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.todo.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    decoration: widget.todo.isCompleted
+                        ? TextDecoration.lineThrough
+                        : null,
+                    color: widget.todo.isCompleted
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5)
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  widget.todo.description ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Row(
+                    children: [
+                      if (widget.todo.plannedStartTime != null)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                size: 12,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${widget.todo.plannedStartTime!.month}/${widget.todo.plannedStartTime!.day} ${widget.todo.plannedStartTime!.hour}:${widget.todo.plannedStartTime!.minute.toString().padLeft(2, '0')}",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (widget.todo.estimatedDuration != null)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.timer,
+                              size: 12,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${widget.todo.estimatedDuration!.inHours}h ${widget.todo.estimatedDuration!.inMinutes % 60}m",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: _getImportanceColor(widget.todo.importance),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
       ),
-      child: content,
+    );
+
+    return SizedBox(
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.centerLeft,
+        children: [
+          // 背景操作栏（铺满内容高度）
+          Positioned.fill(child: background),
+          // 滑动的内容（使用 Transform.translate 实现滑动），偏移由 _dragExtent 驱动
+          Transform.translate(
+            offset: Offset(_dragExtent, 0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 80),
+              child: Container(
+                width: double.infinity,
+                child: GestureDetector(
+                  onHorizontalDragUpdate: _handleDragUpdate,
+                  onHorizontalDragEnd: _handleDragEnd,
+                  onLongPressStart: (details) {
+                    widget.onShowMenu(details.globalPosition);
+                  },
+                  onSecondaryTapDown: (details) {
+                    widget.onShowMenu(details.globalPosition);
+                  },
+                  child: content,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSwipeButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 70),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 22),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

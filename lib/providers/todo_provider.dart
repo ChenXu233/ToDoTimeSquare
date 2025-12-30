@@ -121,4 +121,42 @@ class TodoProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// 移动任务到指定位置（用于拖拽排序）
+  void moveTodo(String todoId, int newIndex) {
+    final currentIndex = _todos.indexWhere((todo) => todo.id == todoId);
+    if (currentIndex == -1) return;
+
+    final todo = _todos.removeAt(currentIndex);
+    // 确保 newIndex 在有效范围内
+    final adjustedIndex = newIndex.clamp(0, _todos.length);
+    _todos.insert(adjustedIndex, todo);
+    _saveTodos();
+    notifyListeners();
+  }
+
+  /// 根据任务 ID 列表重新排序（用于持久化拖拽结果）
+  void reorderTodos(List<String> orderedIds) {
+    final idSet = orderedIds.toSet();
+    final reordered = <Todo>[];
+
+    // 按 ID 列表顺序添加存在的任务
+    for (final id in orderedIds) {
+      final index = _todos.indexWhere((t) => t.id == id);
+      if (index != -1) {
+        reordered.add(_todos[index]);
+      }
+    }
+
+    // 添加不在列表中的任务（保持相对顺序）
+    for (final todo in _todos) {
+      if (!idSet.contains(todo.id)) {
+        reordered.add(todo);
+      }
+    }
+
+    _todos = reordered;
+    _saveTodos();
+    notifyListeners();
+  }
 }
