@@ -126,15 +126,11 @@ class MyApp extends StatelessWidget {
               if (isDesktop && !isTestEnv) {
                 final isDark = Theme.of(context).brightness == Brightness.dark;
                 return Scaffold(
-                  body: WindowBorder(
-                    color: isDark ? Colors.black : Colors.grey[300]!,
-                    width: 1,
-                    child: Column(
-                      children: [
-                        WindowTitleBar(isDark: isDark),
-                        Expanded(child: child!),
-                      ],
-                    ),
+                  body: Column(
+                    children: [
+                      WindowTitleBar(isDark: isDark),
+                      Expanded(child: child!),
+                    ],
                   ),
                 );
               }

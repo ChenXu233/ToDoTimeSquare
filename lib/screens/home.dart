@@ -18,38 +18,34 @@ class HomeScreen extends StatelessWidget {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              if (constraints.maxWidth > 900) {
-                // PC Layout
-                return Row(
-                  children: [
-                    // Left Sidebar / Dashboard
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              i18n.appTitle,
-                              style: Theme.of(context).textTheme.displayMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
-                                  ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              i18n.homeMessage,
-                              style: Theme.of(context).textTheme.headlineSmall
-                                  ?.copyWith(
-                                    color: isDark
-                                        ? Colors.white70
-                                        : Colors.black54,
-                                  ),
-                            ),
+          if (constraints.maxWidth > 900) {
+            // PC Layout
+            return Row(
+              children: [
+                // Left Sidebar / Dashboard
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          i18n.appTitle,
+                          style: Theme.of(context).textTheme.displayMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black87,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          i18n.homeMessage,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: isDark ? Colors.white70 : Colors.black54,
+                              ),
+                        ),
                             const SizedBox(height: 60),
                             Expanded(
                               child: GridView.count(
@@ -178,6 +174,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
 
 class _DashboardCard extends StatelessWidget {
   final String title;

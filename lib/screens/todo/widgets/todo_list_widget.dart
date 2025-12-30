@@ -6,7 +6,7 @@ import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import '../../../providers/todo_provider.dart';
 import '../../../models/todo.dart';
-import '../../../widgets/modal/add_todo/add_todo_modal.dart';
+import 'modal/add_todo/add_todo_modal.dart';
 import 'todo_item.dart';
 import '../../../widgets/glass/glass_popup_menu.dart';
 

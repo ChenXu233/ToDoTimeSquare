@@ -17,6 +17,7 @@ class MusicPlayerWidget extends StatefulWidget {
 class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
+  bool _showVolumeBar = false;
 
   bool get isExpanded => _isExpanded;
 
@@ -24,8 +25,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     if (!mounted) return;
     setState(() {
       _isExpanded = false;
+      _showVolumeBar = false;
       widget.expandedNotifier?.value = false;
     });
+  }
+
+  void _toggleVolumeBar() {
+    setState(() => _showVolumeBar = !_showVolumeBar);
   }
 
   @override
@@ -33,7 +39,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     final i18n = APPi18n.of(context);
     final isMobile = MediaQuery.of(context).size.width < 600;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Consumer<BackgroundMusicProvider>(
       builder: (context, provider, child) {
         final track = provider.currentTrack;
@@ -44,7 +50,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           width: _isExpanded ? 320 : 40,
-          height: _isExpanded ? 260 : 40,
+          height: _isExpanded
+              ? (_showVolumeBar ? 280 : 220)
+              : 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(_isExpanded ? 16 : 28),
           ),
@@ -133,6 +141,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
   ) {
     final artist = provider.currentTrack?.artist ?? '';
     final i18n = APPi18n.of(context);
+    final primaryColor = isDark ? Colors.white70 : Colors.black87;
+    final secondaryColor = isDark ? Colors.white30 : Colors.black26;
 
     return GlassContainer(
       color: isDark ? Colors.black : Colors.white,
@@ -149,16 +159,17 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 IconButton(
                   icon: Icon(
                     Icons.playlist_add,
-                    color: isDark ? Colors.white70 : Colors.black87,
+                    color: primaryColor,
                   ),
                   onPressed: () {
                     showDialog(
                       context: context,
                       barrierDismissible: true,
                       builder: (context) {
-                        // Use the root navigator's context to get the actual window width
-                        final rootContext = Navigator.of(context, rootNavigator: true).context;
-                        final dialogWidth = MediaQuery.of(rootContext).size.width;
+                        final rootContext =
+                            Navigator.of(context, rootNavigator: true).context;
+                        final dialogWidth =
+                            MediaQuery.of(rootContext).size.width;
                         final isDialogMobile = dialogWidth < 600;
                         return GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
@@ -166,7 +177,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                             backgroundColor: Colors.transparent,
                             child: Center(
                               child: GestureDetector(
-                                onTap: () {}, // 阻止事件冒泡
+                                onTap: () {},
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
                                     maxWidth: isDialogMobile
@@ -174,7 +185,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                                         : dialogWidth * 0.6,
                                     maxHeight:
                                         MediaQuery.of(context).size.height *
-                                        0.85,
+                                            0.85,
                                   ),
                                   child: SingleChildScrollView(
                                     child: Material(
@@ -200,7 +211,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white70 : Colors.black87,
+                          color: primaryColor,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -208,8 +219,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                         Text(
                           artist,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
                           overflow: TextOverflow.ellipsis,
@@ -218,16 +228,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                   ),
                 ),
                 IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
+                  icon: Icon(Icons.close, color: primaryColor),
                   onPressed: () => collapse(),
                 ),
               ],
             ),
           ),
-          
+
           // Progress Bar & Time
           StreamBuilder<Duration>(
             stream: provider.backgroundMusicPositionStream,
@@ -242,13 +249,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                     value = position.inMilliseconds / duration.inMilliseconds;
                     if (value > 1.0) value = 1.0;
                   }
-                  
+
                   return Column(
                     children: [
                       Slider(
                         value: value,
-                        activeColor: isDark ? Colors.white70 : Colors.black87,
-                        inactiveColor: isDark ? Colors.white30 : Colors.black26,
+                        activeColor: primaryColor,
+                        inactiveColor: secondaryColor,
                         onChanged: (v) {
                           final newPos = duration * v;
                           provider.seekTo(newPos);
@@ -257,7 +264,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               _formatDuration(position),
@@ -266,6 +273,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
                             ),
+                            const SizedBox(width: 8),
                             Text(
                               _formatDuration(duration),
                               style: TextStyle(
@@ -282,7 +290,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
               );
             },
           ),
-      
+
           // Controls
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -290,16 +298,13 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
               IconButton(
                 icon: Icon(
                   _getModeIcon(provider.playbackMode),
-                  color: isDark ? Colors.white70 : Colors.black87,
+                  color: primaryColor,
                 ),
                 onPressed: provider.togglePlaybackMode,
                 tooltip: _getModeTooltip(provider.playbackMode, i18n),
               ),
               IconButton(
-                icon: Icon(
-                  Icons.skip_previous,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
+                icon: Icon(Icons.skip_previous, color: primaryColor),
                 onPressed: provider.playPrevious,
               ),
               IconButton(
@@ -307,28 +312,72 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                   provider.isBackgroundMusicPlaying
                       ? Icons.pause_circle_filled
                       : Icons.play_circle_filled,
-                  color: isDark ? Colors.white70 : Colors.black87,
+                  color: primaryColor,
                 ),
                 onPressed: provider.toggleBackgroundMusic,
                 iconSize: 48,
               ),
               IconButton(
-                icon: Icon(
-                  Icons.skip_next,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
+                icon: Icon(Icons.skip_next, color: primaryColor),
                 onPressed: provider.playNext,
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.volume_up,
-                  color: isDark ? Colors.white70 : Colors.black87,
+              GestureDetector(
+                onTap: _toggleVolumeBar,
+                child: Icon(
+                  _getVolumeIcon(provider.backgroundMusicVolume),
+                  color: _showVolumeBar ? primaryColor : primaryColor.withOpacity(0.5),
                 ),
-                onPressed: () {
-                  _showVolumeDialog(context, provider, isDark);
-                },
               ),
             ],
+          ),
+
+          // Volume Bar (底部，可折叠)
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) {
+              return SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: -1.0,
+                child: child,
+              );
+            },
+            child: _showVolumeBar
+                ? Column(
+                    key: const ValueKey('volumeBar'),
+                    children: [
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            Icon(
+                              _getVolumeIcon(provider.backgroundMusicVolume),
+                              size: 16,
+                              color: isDark ? Colors.white60 : Colors.black54,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Slider(
+                                value: provider.backgroundMusicVolume,
+                                activeColor: primaryColor,
+                                inactiveColor: secondaryColor,
+                                onChanged: provider.setBackgroundMusicVolume,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${(provider.backgroundMusicVolume * 100).round()}%',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: isDark ? Colors.white60 : Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(key: ValueKey('empty')),
           ),
         ],
       ),
@@ -363,51 +412,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     }
   }
 
-  void _showVolumeDialog(
-    BuildContext context,
-    BackgroundMusicProvider provider,
-    bool isDark,
-  ) {
-    final i18n = APPi18n.of(context);
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => GestureDetector(
-        onTap: () => Navigator.of(context).pop(),
-        child: AlertDialog(
-          backgroundColor: isDark ? Colors.grey[900] : Colors.white,
-          title: Text(
-            i18n?.volume ?? 'Volume',
-            style: TextStyle(color: isDark ? Colors.white70 : Colors.black87),
-          ),
-          content: GestureDetector(
-            onTap: () {}, // 阻止事件冒泡
-            child: SizedBox(
-              height: 200,
-              child: RotatedBox(
-                quarterTurns: 3,
-                child: Slider(
-                  value: provider.backgroundMusicVolume,
-                  activeColor: isDark ? Colors.white70 : Colors.black87,
-                  inactiveColor: isDark ? Colors.white30 : Colors.black26,
-                  onChanged: (v) => provider.setBackgroundMusicVolume(v),
-                ),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                i18n?.close ?? 'Close',
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  IconData _getVolumeIcon(double volume) {
+    if (volume == 0) return Icons.volume_off;
+    if (volume < 0.5) return Icons.volume_down;
+    return Icons.volume_up;
   }
 }
