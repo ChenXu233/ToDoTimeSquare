@@ -17,7 +17,7 @@
 ### 待办事项功能增强
 - ✨ 添加任务滑动操作菜单 (SwipeActionMenu)
 - ✨ 支持左滑删除、编辑、完成等操作
-- ✨ TodoProvider 新增 moveTodo 和 reorderTodos 方法
+- ✨ TodoProvider 新增 moveTod
 - ✨ 添加待办事项模态框及相关组件
 
 ### 国际化
