@@ -412,7 +412,7 @@ class _TodoItemState extends State<TodoItem>
             offset: Offset(_dragExtent, 0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 80),
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 child: GestureDetector(
                   onHorizontalDragUpdate: _handleDragUpdate,
