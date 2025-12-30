@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../widgets/glass/glass_container.dart';
+import '../../../widgets/error/error_view.dart';
 import '../../../providers/background_music_provider.dart';
 import 'music_import_widget.dart';
 import '../../../i18n/i18n.dart';
@@ -51,7 +52,9 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           curve: Curves.easeInOut,
           width: _isExpanded ? 320 : 40,
           height: _isExpanded
-              ? (_showVolumeBar ? 280 : 220)
+              ? (_showVolumeBar
+                  ? (provider.hasError ? 320 : 280)
+                  : (provider.hasError ? 260 : 220))
               : 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(_isExpanded ? 16 : 28),
@@ -147,82 +150,99 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
     return GlassContainer(
       color: isDark ? Colors.black : Colors.white,
       opacity: 0.1,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Header with Close Button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.playlist_add,
-                    color: primaryColor,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (context) {
-                        final rootContext =
-                            Navigator.of(context, rootNavigator: true).context;
-                        final dialogWidth =
-                            MediaQuery.of(rootContext).size.width;
-                        final isDialogMobile = dialogWidth < 600;
-                        return GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Dialog(
-                            backgroundColor: Colors.transparent,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: isDialogMobile
-                                        ? dialogWidth * 0.9
-                                        : dialogWidth * 0.6,
-                                    maxHeight:
-                                        MediaQuery.of(context).size.height *
-                                            0.85,
-                                  ),
-                                  child: SingleChildScrollView(
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      child: MusicImportWidget(),
+      child: SizedBox(
+        width: 320,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header with Close Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.playlist_add,
+                      color: primaryColor,
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (context) {
+                          final rootContext =
+                              Navigator.of(context, rootNavigator: true).context;
+                          final dialogWidth =
+                              MediaQuery.of(rootContext).size.width;
+                          final isDialogMobile = dialogWidth < 600;
+                          return GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Dialog(
+                              backgroundColor: Colors.transparent,
+                              child: Center(
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: isDialogMobile
+                                          ? dialogWidth * 0.9
+                                          : dialogWidth * 0.6,
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height *
+                                              0.85,
+                                    ),
+                                    child: SingleChildScrollView(
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: MusicImportWidget(),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: primaryColor,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (artist.isNotEmpty)
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                         Text(
-                          artist,
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: primaryColor,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (artist.isNotEmpty)
+                          Text(
+                            artist,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
                           overflow: TextOverflow.ellipsis,
+                        ),
+                      // 错误提示（紧凑模式）
+                      if (provider.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: ErrorView(
+                            errorType: provider.errorType,
+                            message: provider.errorMessage,
+                            recoveryAction: provider.recoveryAction,
+                            showRetryButton: provider.canRetry,
+                            onRetry: provider.retryAfterError,
+                            onDismiss: provider.clearError,
+                            isDark: isDark,
+                            compact: true,
+                          ),
                         ),
                     ],
                   ),
@@ -332,57 +352,62 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
           ),
 
           // Volume Bar (底部，可折叠)
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) {
-              return SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: -1.0,
-                child: child,
-              );
-            },
-            child: _showVolumeBar
-                ? Column(
-                    key: const ValueKey('volumeBar'),
-                    children: [
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _getVolumeIcon(provider.backgroundMusicVolume),
-                              size: 16,
-                              color: isDark ? Colors.white60 : Colors.black54,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Slider(
-                                value: provider.backgroundMusicVolume,
-                                activeColor: primaryColor,
-                                inactiveColor: secondaryColor,
-                                onChanged: provider.setBackgroundMusicVolume,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${(provider.backgroundMusicVolume * 100).round()}%',
-                              style: TextStyle(
-                                fontSize: 10,
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 50),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) {
+                return SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: -1.0,
+                  child: child,
+                );
+              },
+              child: _showVolumeBar
+                  ? Column(
+                      key: const ValueKey('volumeBar'),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _getVolumeIcon(provider.backgroundMusicVolume),
+                                size: 16,
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Slider(
+                                  value: provider.backgroundMusicVolume,
+                                  activeColor: primaryColor,
+                                  inactiveColor: secondaryColor,
+                                  onChanged: provider.setBackgroundMusicVolume,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${(provider.backgroundMusicVolume * 100).round()}%',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: isDark ? Colors.white60 : Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                : const SizedBox.shrink(key: ValueKey('empty')),
+                      ],
+                    )
+                  : const SizedBox.shrink(key: ValueKey('empty')),
+            ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   String _formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
