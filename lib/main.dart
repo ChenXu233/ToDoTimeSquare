@@ -15,6 +15,7 @@ import 'providers/todo_provider.dart';
 import 'providers/statistics_provider.dart';
 import 'widgets/window/window_title_bar.dart';
 import 'services/notification_service.dart';
+import 'database/database_initializer.dart'; // 导入数据库初始化
 
 // Global key used to show SnackBars from main when services fail to initialize.
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -25,6 +26,14 @@ void main() async {
   JustAudioMediaKit.ensureInitialized();
   // Do NOT await NotificationService here — initialize it after the app
   // UI is up so failures don't prevent the app from starting.
+
+  // 初始化数据库（包含数据迁移）
+  // final dbInitResult = await DatabaseInitializer().initialize(enableMigration: true);
+  // if (dbInitResult.success) {
+  //   debugPrint('数据库初始化成功：${dbInitResult.message}');
+  // } else {
+  //   debugPrint('数据库初始化失败：${dbInitResult.message}');
+  // }
 
   if (_isDesktopPlatform() && !_isTestEnvironment()) {
     doWhenWindowReady(() {

@@ -1,0 +1,4 @@
+# build.yaml for Drift code generation (空配置，使用默认值)
+targets:
+  $default:
+    builders: {}
