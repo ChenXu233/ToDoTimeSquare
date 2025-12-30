@@ -1,3 +1,23 @@
+/// 音乐播放错误类型分类
+enum MusicErrorType {
+  networkError, // 网络问题（离线、超时、服务器错误）
+  fileError, // 文件问题（不存在、权限、损坏）
+  audioError, // 音频播放错误（格式不支持、编解码）
+  playbackError, // 播放运行时错误
+  cacheError, // 缓存问题
+  unknownError, // 未知错误
+}
+
+/// 恢复操作建议
+enum RecoveryAction {
+  none, // 无需操作
+  retry, // 重试播放
+  redownload, // 重新下载
+  clearCache, // 清除缓存
+  importAgain, // 重新导入
+  checkNetwork, // 检查网络
+}
+
 class MusicTrack {
   final String id;
   final String title;
