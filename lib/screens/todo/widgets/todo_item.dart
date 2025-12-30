@@ -30,14 +30,12 @@ class TodoItem extends StatefulWidget {
 class _TodoItemState extends State<TodoItem>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  Animation<double>? _offsetAnimation;
   Animation<double>? _currentAnimation;
   VoidCallback? _currentAnimationListener;
   void Function(AnimationStatus)? _currentStatusListener;
 
   double _dragExtent = 0;
   bool _isSwipedOut = false;
-  bool _isDragging = false;
 
   // 滑动卡住的阈值（屏幕宽度的30%）
   double get _dismissThreshold => MediaQuery.of(context).size.width * 0.20;
@@ -85,9 +83,7 @@ class _TodoItemState extends State<TodoItem>
             // User dragged fully back to origin; clear swiped-out state so release will behave normally
             _dragExtent = 0;
             _isSwipedOut = false;
-            _isDragging = true;
           } else {
-            _isDragging = true;
           }
         });
       }
@@ -99,7 +95,6 @@ class _TodoItemState extends State<TodoItem>
       setState(() {
         _dragExtent += details.delta.dx;
         if (_dragExtent > 0) _dragExtent = 0;
-        _isDragging = true;
       });
       return;
     }
@@ -111,7 +106,6 @@ class _TodoItemState extends State<TodoItem>
         // Allow a small overscroll but clamp to a reasonable max
         final maxOverscroll = -_dismissThreshold * 1.05;
         if (_dragExtent < maxOverscroll) _dragExtent = maxOverscroll;
-        _isDragging = true;
       });
     }
   }
@@ -119,7 +113,6 @@ class _TodoItemState extends State<TodoItem>
   void _handleDragEnd(DragEndDetails details) {
     // If currently in swiped-out state, handle release appropriately
     if (_isSwipedOut) {
-      _isDragging = false;
       if (_dragExtent >= 0) {
         // user dragged back to origin — restore
         _animateTo(0);
@@ -130,7 +123,6 @@ class _TodoItemState extends State<TodoItem>
       return;
     }
 
-    _isDragging = false;
 
     // 如果滑动超过阈值，卡住
     if (_dragExtent <= -_dismissThreshold) {
@@ -142,7 +134,6 @@ class _TodoItemState extends State<TodoItem>
   }
 
   void _resetPosition() {
-    _isDragging = false;
     _animateTo(0);
   }
 
@@ -210,12 +201,6 @@ class _TodoItemState extends State<TodoItem>
   }
 
   // 获取当前滑动偏移量（用于动画）
-  double get _currentOffset {
-    if (_isSwipedOut) {
-      return -_dismissThreshold;
-    }
-    return _dragExtent;
-  }
 
   @override
   Widget build(BuildContext context) {
