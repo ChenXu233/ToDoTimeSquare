@@ -152,9 +152,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       opacity: 0.1,
       child: SizedBox(
         width: 320,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             // Header with Close Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
@@ -162,9 +164,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 40,
+                      ),
+                      padding: EdgeInsets.zero,
                     icon: Icon(
                       Icons.playlist_add,
                       color: primaryColor,
+                        size: 20,
                     ),
                     onPressed: () {
                       showDialog(
@@ -219,6 +227,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                             color: primaryColor,
                           ),
                           overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                         ),
                         if (artist.isNotEmpty)
                           Text(
@@ -228,6 +237,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                                 color: isDark ? Colors.white60 : Colors.black54,
                               ),
                           overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                         ),
                       // 错误提示（紧凑模式）
                       if (provider.hasError)
@@ -248,7 +258,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, color: primaryColor),
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 40,
+                      ),
+                      padding: EdgeInsets.zero,
+                      icon: Icon(Icons.close, color: primaryColor, size: 20),
                   onPressed: () => collapse(),
                 ),
               ],
@@ -284,7 +299,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               _formatDuration(position),
@@ -313,9 +328,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
 
           // Controls
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
+                    constraints: const BoxConstraints.tightFor(
+                      width: 40,
+                      height: 40,
+                    ),
+                    padding: EdgeInsets.zero,
+                    iconSize: 20,
                 icon: Icon(
                   _getModeIcon(provider.playbackMode),
                   color: primaryColor,
@@ -324,10 +345,21 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 tooltip: _getModeTooltip(provider.playbackMode, i18n),
               ),
               IconButton(
+                    constraints: const BoxConstraints.tightFor(
+                      width: 40,
+                      height: 40,
+                    ),
+                    padding: EdgeInsets.zero,
+                    iconSize: 20,
                 icon: Icon(Icons.skip_previous, color: primaryColor),
                 onPressed: provider.playPrevious,
               ),
               IconButton(
+                    constraints: const BoxConstraints.tightFor(
+                      width: 56,
+                      height: 56,
+                    ),
+                    padding: EdgeInsets.zero,
                 icon: Icon(
                   provider.isBackgroundMusicPlaying
                       ? Icons.pause_circle_filled
@@ -338,14 +370,29 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                 iconSize: 48,
               ),
               IconButton(
+                    constraints: const BoxConstraints.tightFor(
+                      width: 40,
+                      height: 40,
+                    ),
+                    padding: EdgeInsets.zero,
+                    iconSize: 20,
                 icon: Icon(Icons.skip_next, color: primaryColor),
                 onPressed: provider.playNext,
               ),
               GestureDetector(
                 onTap: _toggleVolumeBar,
-                child: Icon(
-                  _getVolumeIcon(provider.backgroundMusicVolume),
-                  color: _showVolumeBar ? primaryColor : primaryColor.withOpacity(0.5),
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: Center(
+                        child: Icon(
+                          _getVolumeIcon(provider.backgroundMusicVolume),
+                          color: _showVolumeBar
+                              ? primaryColor
+                              : primaryColor.withOpacity(0.5),
+                          size: 20,
+                        ),
+                      ),
                 ),
               ),
             ],
@@ -406,7 +453,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
         ],
       ),
     ),
-  );
+      ),
+    );
 }
 
   String _formatDuration(Duration d) {

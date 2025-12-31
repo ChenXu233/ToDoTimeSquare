@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/background_music_provider.dart';
@@ -38,6 +39,11 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
             constraints.hasBoundedWidth && constraints.maxWidth > 0
             ? constraints.maxWidth
             : MediaQuery.of(context).size.width * 0.5;
+        final availableHeight =
+            constraints.hasBoundedHeight && constraints.maxHeight > 0
+            ? constraints.maxHeight
+            : MediaQuery.of(context).size.height * 0.85;
+
         return ConstrainedBox(
           constraints: BoxConstraints(maxWidth: availableWidth),
           child: GlassContainer(
@@ -103,7 +109,8 @@ class _MusicImportWidgetState extends State<MusicImportWidget> with SingleTicker
                   ],
                 ),
                 const SizedBox(height: 16),
-                Expanded(
+                SizedBox(
+                  height: math.min(availableHeight * 0.6, 600),
                   child: TabBarView(
                     controller: _tabController,
                     children: [

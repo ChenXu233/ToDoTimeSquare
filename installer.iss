@@ -17,4 +17,4 @@ Name: "{group}\ToDoTimeSquare"; Filename: "{app}\ToDoTimeSquare.exe"
 Name: "{group}\Uninstall ToDoTimeSquare"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\todo_time_square.exe"; Description: "Launch ToDoTimeSquare"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\ToDoTimeSquare.exe"; Description: "Launch ToDoTimeSquare"; Flags: nowait postinstall skipifsilent
