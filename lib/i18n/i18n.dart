@@ -678,6 +678,84 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Task Actions'**
   String get taskActions;
+
+  /// Label for today's focus time
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Focus'**
+  String get todayFocus;
+
+  /// Label for this week's focus time
+  ///
+  /// In en, this message translates to:
+  /// **'This Week\'s Focus'**
+  String get thisWeekFocus;
+
+  /// Label for total accumulated focus time
+  ///
+  /// In en, this message translates to:
+  /// **'Total Focus'**
+  String get totalFocus;
+
+  /// Suffix for number of sessions today
+  ///
+  /// In en, this message translates to:
+  /// **'sessions today'**
+  String get sessionsToday;
+
+  /// Label for task completion rate
+  ///
+  /// In en, this message translates to:
+  /// **'Task Completion Rate'**
+  String get taskCompletionRate;
+
+  /// Text showing number of completed tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count} completed'**
+  String tasksCompleted(int count);
+
+  /// Text showing total number of tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count} total'**
+  String tasksTotal(int count);
+
+  /// Title for weekly focus trend chart
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Focus Trend'**
+  String get weeklyFocusTrend;
+
+  /// Title for task focus ranking list
+  ///
+  /// In en, this message translates to:
+  /// **'Task Focus Ranking'**
+  String get taskFocusRanking;
+
+  /// Message shown when no focus data available
+  ///
+  /// In en, this message translates to:
+  /// **'Start focusing to see trends'**
+  String get noFocusDataYet;
+
+  /// Text showing number of focus sessions
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sessions'**
+  String focusSessions(int count);
+
+  /// Abbreviation for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minutes;
+
+  /// Prefix for top ranking
+  ///
+  /// In en, this message translates to:
+  /// **'Top {count}'**
+  String topRanking(int count);
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

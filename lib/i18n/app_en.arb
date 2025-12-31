@@ -360,5 +360,81 @@
   "taskActions": "Task Actions",
   "@taskActions": {
     "description": "Title for task actions menu"
+  },
+  "todayFocus": "Today's Focus",
+  "@todayFocus": {
+    "description": "Label for today's focus time"
+  },
+  "thisWeekFocus": "This Week's Focus",
+  "@thisWeekFocus": {
+    "description": "Label for this week's focus time"
+  },
+  "totalFocus": "Total Focus",
+  "@totalFocus": {
+    "description": "Label for total accumulated focus time"
+  },
+  "sessionsToday": "sessions today",
+  "@sessionsToday": {
+    "description": "Suffix for number of sessions today"
+  },
+  "taskCompletionRate": "Task Completion Rate",
+  "@taskCompletionRate": {
+    "description": "Label for task completion rate"
+  },
+  "tasksCompleted": "{count} completed",
+  "@tasksCompleted": {
+    "description": "Text showing number of completed tasks",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "tasksTotal": "{count} total",
+  "@tasksTotal": {
+    "description": "Text showing total number of tasks",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "weeklyFocusTrend": "Weekly Focus Trend",
+  "@weeklyFocusTrend": {
+    "description": "Title for weekly focus trend chart"
+  },
+  "taskFocusRanking": "Task Focus Ranking",
+  "@taskFocusRanking": {
+    "description": "Title for task focus ranking list"
+  },
+  "noFocusDataYet": "Start focusing to see trends",
+  "@noFocusDataYet": {
+    "description": "Message shown when no focus data available"
+  },
+  "focusSessions": "{count} sessions",
+  "@focusSessions": {
+    "description": "Text showing number of focus sessions",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "minutes": "min",
+  "@minutes": {
+    "description": "Abbreviation for minutes"
+  },
+  "topRanking": "Top {count}",
+  "@topRanking": {
+    "description": "Prefix for top ranking",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
   }
 }

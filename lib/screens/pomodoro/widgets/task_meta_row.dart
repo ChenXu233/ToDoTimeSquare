@@ -12,8 +12,9 @@ class TaskMetaRow extends StatelessWidget {
     if (minutes == null) return null;
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
-    if (hours > 0 && remainingMinutes > 0)
+    if (hours > 0 && remainingMinutes > 0) {
       return '${hours}h ${remainingMinutes}m';
+    }
     if (hours > 0) return '${hours}h';
     return '${remainingMinutes}m';
   }

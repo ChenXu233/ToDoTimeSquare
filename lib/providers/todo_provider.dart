@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/database/database_initializer.dart';
 import '../models/repositories/todo_repository.dart';
-import '../models/models.dart';
 
 class TodoProvider extends ChangeNotifier {
   List<TaskModel> _todos = [];

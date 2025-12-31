@@ -301,4 +301,51 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get taskActions => '任务操作';
+
+  @override
+  String get todayFocus => '今日专注';
+
+  @override
+  String get thisWeekFocus => '本周专注';
+
+  @override
+  String get totalFocus => '累计专注';
+
+  @override
+  String get sessionsToday => '次专注';
+
+  @override
+  String get taskCompletionRate => '任务完成率';
+
+  @override
+  String tasksCompleted(int count) {
+    return '$count 已完成';
+  }
+
+  @override
+  String tasksTotal(int count) {
+    return '$count 总计';
+  }
+
+  @override
+  String get weeklyFocusTrend => '本周专注趋势';
+
+  @override
+  String get taskFocusRanking => '任务专注排行';
+
+  @override
+  String get noFocusDataYet => '开始专注后即可查看趋势';
+
+  @override
+  String focusSessions(int count) {
+    return '$count 次专注';
+  }
+
+  @override
+  String get minutes => '分钟';
+
+  @override
+  String topRanking(int count) {
+    return 'Top $count';
+  }
 }

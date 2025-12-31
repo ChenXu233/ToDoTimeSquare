@@ -303,4 +303,51 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get taskActions => 'Task Actions';
+
+  @override
+  String get todayFocus => 'Today\'s Focus';
+
+  @override
+  String get thisWeekFocus => 'This Week\'s Focus';
+
+  @override
+  String get totalFocus => 'Total Focus';
+
+  @override
+  String get sessionsToday => 'sessions today';
+
+  @override
+  String get taskCompletionRate => 'Task Completion Rate';
+
+  @override
+  String tasksCompleted(int count) {
+    return '$count completed';
+  }
+
+  @override
+  String tasksTotal(int count) {
+    return '$count total';
+  }
+
+  @override
+  String get weeklyFocusTrend => 'Weekly Focus Trend';
+
+  @override
+  String get taskFocusRanking => 'Task Focus Ranking';
+
+  @override
+  String get noFocusDataYet => 'Start focusing to see trends';
+
+  @override
+  String focusSessions(int count) {
+    return '$count sessions';
+  }
+
+  @override
+  String get minutes => 'min';
+
+  @override
+  String topRanking(int count) {
+    return 'Top $count';
+  }
 }

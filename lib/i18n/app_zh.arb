@@ -144,5 +144,81 @@
   "taskActions": "任务操作",
   "@taskActions": {
     "description": "任务操作菜单标题"
+  },
+  "todayFocus": "今日专注",
+  "@todayFocus": {
+    "description": "今日专注时间标签"
+  },
+  "thisWeekFocus": "本周专注",
+  "@thisWeekFocus": {
+    "description": "本周专注时间标签"
+  },
+  "totalFocus": "累计专注",
+  "@totalFocus": {
+    "description": "累计专注时间标签"
+  },
+  "sessionsToday": "次专注",
+  "@sessionsToday": {
+    "description": "今日专注次数后缀"
+  },
+  "taskCompletionRate": "任务完成率",
+  "@taskCompletionRate": {
+    "description": "任务完成率标签"
+  },
+  "tasksCompleted": "{count} 已完成",
+  "@tasksCompleted": {
+    "description": "已完成任务数量文本",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "tasksTotal": "{count} 总计",
+  "@tasksTotal": {
+    "description": "任务总数文本",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "weeklyFocusTrend": "本周专注趋势",
+  "@weeklyFocusTrend": {
+    "description": "本周专注趋势图表标题"
+  },
+  "taskFocusRanking": "任务专注排行",
+  "@taskFocusRanking": {
+    "description": "任务专注排行列表标题"
+  },
+  "noFocusDataYet": "开始专注后即可查看趋势",
+  "@noFocusDataYet": {
+    "description": "无专注数据时显示的消息"
+  },
+  "focusSessions": "{count} 次专注",
+  "@focusSessions": {
+    "description": "专注次数文本",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "minutes": "分钟",
+  "@minutes": {
+    "description": "分钟单位"
+  },
+  "topRanking": "Top {count}",
+  "@topRanking": {
+    "description": "排行榜前缀",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
   }
 }
