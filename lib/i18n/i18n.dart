@@ -756,6 +756,84 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Top {count}'**
   String topRanking(int count);
+
+  /// Title for habit tracking section
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Tracking'**
+  String get habitTracking;
+
+  /// Status text for checked-in habits
+  ///
+  /// In en, this message translates to:
+  /// **'checked in'**
+  String get checkedIn;
+
+  /// Action text for check-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Check In'**
+  String get checkIn;
+
+  /// Message when habit check-in is successful
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! Keep it up!'**
+  String get checkInSuccess;
+
+  /// Text for habit streak days
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get streakDays;
+
+  /// Title for adding a new habit
+  ///
+  /// In en, this message translates to:
+  /// **'Add Habit'**
+  String get addHabit;
+
+  /// Title for editing an existing habit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Habit'**
+  String get editHabit;
+
+  /// Label for habit name input
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Name'**
+  String get habitName;
+
+  /// Placeholder for habit name input
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Read for 30 minutes'**
+  String get habitNamePlaceholder;
+
+  /// Label for habit description input
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get habitDescription;
+
+  /// Label for habit color selection
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get habitColor;
+
+  /// Message when no habits exist yet
+  ///
+  /// In en, this message translates to:
+  /// **'No habits yet'**
+  String get noHabitsYet;
+
+  /// Prompt to create the first habit
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the button below to create your first habit'**
+  String get createFirstHabit;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

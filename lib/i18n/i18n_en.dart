@@ -350,4 +350,44 @@ class APPi18nEn extends APPi18n {
   String topRanking(int count) {
     return 'Top $count';
   }
+
+  @override
+  String get habitTracking => 'Habit Tracking';
+
+  @override
+  String get checkedIn => 'checked in';
+
+  @override
+  String get checkIn => 'Check In';
+
+  @override
+  String get checkInSuccess => 'Great job! Keep it up!';
+
+  @override
+  String get streakDays => 'days';
+
+  @override
+  String get addHabit => 'Add Habit';
+
+  @override
+  String get editHabit => 'Edit Habit';
+
+  @override
+  String get habitName => 'Habit Name';
+
+  @override
+  String get habitNamePlaceholder => 'e.g., Read for 30 minutes';
+
+  @override
+  String get habitDescription => 'Description (optional)';
+
+  @override
+  String get habitColor => 'Color';
+
+  @override
+  String get noHabitsYet => 'No habits yet';
+
+  @override
+  String get createFirstHabit =>
+      'Tap the button below to create your first habit';
 }

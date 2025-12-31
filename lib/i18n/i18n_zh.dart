@@ -348,4 +348,43 @@ class APPi18nZh extends APPi18n {
   String topRanking(int count) {
     return 'Top $count';
   }
+
+  @override
+  String get habitTracking => '习惯追踪';
+
+  @override
+  String get checkedIn => '已打卡';
+
+  @override
+  String get checkIn => '打卡';
+
+  @override
+  String get checkInSuccess => '太棒了！继续保持！';
+
+  @override
+  String get streakDays => '天';
+
+  @override
+  String get addHabit => '添加习惯';
+
+  @override
+  String get editHabit => '编辑习惯';
+
+  @override
+  String get habitName => '习惯名称';
+
+  @override
+  String get habitNamePlaceholder => '例如：阅读 30 分钟';
+
+  @override
+  String get habitDescription => '描述（可选）';
+
+  @override
+  String get habitColor => '颜色';
+
+  @override
+  String get noHabitsYet => '暂无习惯';
+
+  @override
+  String get createFirstHabit => '点击下方按钮创建你的第一个习惯';
 }

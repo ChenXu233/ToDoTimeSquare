@@ -6,18 +6,20 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'schema/todos.dart';
 import 'schema/focus_records.dart';
+import 'schema/habits.dart';
+import 'schema/habit_logs.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [Todos, FocusRecords],
+  tables: [Todos, FocusRecords, Habits, HabitLogs],
 )
 class AppDatabase extends _$AppDatabase {
   static AppDatabase? _instance;
   static AppDatabase get instance => _instance!;
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   AppDatabase(super.executor);
 
