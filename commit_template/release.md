@@ -1,3 +1,132 @@
+# Release V0.7.2
+
+**发布日期:** 2026-01-01
+
+**版本号:** 0.7.1 → 0.7.2
+
+---
+
+## 🐛 Bug 修复
+
+- :bug: fix(web): 移除 sqlite3_flutter_libs 依赖以支持 Web 构建
+
+sqlite3_flutter_libs 是 native 库，不支持 Web 平台。
+通过移除该依赖并使用 dependency_overrides 指定 sqlite3 版本来解决 Web 构建问题。
+
+---
+
+## 🔧 其他变更
+
+- :wrench: 版本升级 0.7.1 → 0.7.2
+- :wrench: chore(deps): 更新各平台插件注册（移除 sqlite3_flutter_libs）
+
+---
+
+## 📝 提交记录
+
+| 提交 | 描述 |
+|:---:|------|
+| \`15beba1\` | :wrench: chore(deps): 更新各平台插件注册（移除 sqlite3_flutter_libs） |
+| \`e3063c8\` | :bug: fix(web): 移除 sqlite3_flutter_libs 依赖以支持 Web 构建 |
+
+---
+
+# Release V0.7.1
+
+**发布日期:** 2026-01-01
+
+**版本号:** 0.7.0 → 0.7.1
+
+---
+
+## ✨ 新功能
+
+### 习惯追踪功能
+- :sparkles: feat(habit): 实现习惯追踪功能
+- :sparkles: 添加习惯打卡记录和连续天数统计
+- :sparkles: 集成习惯追踪到统计页面
+- :sparkles: 支持习惯创建、编辑、打卡操作
+
+### 数据库支持
+- :sparkles: feat(database): 添加 Drift 数据库层与数据迁移支持
+- :sparkles: 添加 Habits 习惯数据表
+- :sparkles: 添加 HabitLogs 打卡记录表
+- :sparkles: 实现数据库版本迁移策略
+
+### 国际化
+- :sparkles: feat(statistics): 实现统计页面 i18n 国际化与桌面端适配
+- :sparkles: 添加习惯追踪相关国际化字段（中英文）
+- :sparkles: 支持中英文界面切换
+
+### 文档
+- :sparkles: feat(emoji): 添加 Git 提交表情使用指南及表情库
+- :sparkles: feat(docs): 添加 Git 提交指南和 emoji 使用模板
+- :sparkles: feat(release): 添加 V0.7.0 发布说明及新功能列表
+
+### 音乐播放器
+- :sparkles: feat(music): 优化音乐播放器对话框 UI 布局
+
+---
+
+## ♻️ 重构优化
+
+- :recycle: refactor: 重构项目目录结构，将数据库层统一到 lib/models/ 目录
+- :recycle: 分离数据库 schema、entity、repository 层
+
+---
+
+## 🐛 Bug 修复
+
+- :bug: fix(windows): 统一应用名称大小写为 ToDoTimeSquare
+- :bug: fix(habit): 修复习惯页面的 APPi18n Provider 问题
+
+---
+
+## 🔧 其他变更
+
+- :wrench: 版本升级 0.7.0 → 0.7.1
+- :fire: 删除无用代码
+
+---
+
+## 📦 新增文件
+
+- \`lib/models/database/schema/habits.dart\` - 习惯数据表定义
+- \`lib/models/database/schema/habit_logs.dart\` - 打卡记录表定义
+- \`lib/models/entities/habit_model.dart\` - 习惯实体类
+- \`lib/models/entities/habit_log_model.dart\` - 打卡记录实体类
+- \`lib/models/repositories/habit_repository.dart\` - 习惯数据仓库
+- \`lib/models/repositories/habit_log_repository.dart\` - 打卡记录数据仓库
+- \`lib/providers/statistics_provider.dart\` - 统计提供者（扩展支持习惯）
+- \`lib/screens/statistics/components/habit_tracking_section.dart\` - 习惯追踪组件
+- \`lib/screens/statistics/components/habit_form_dialog.dart\` - 习惯表单对话框
+- \`lib/i18n/app_en.arb\` - 英文国际化文件（习惯相关字段）
+- \`lib/i18n/app_zh.arb\` - 中文国际化文件（习惯相关字段）
+- \`commit_template/COMMIT提交指南.md\` - Git 提交规范指南
+- \`commit_template/emoji.md\` - Emoji 使用指南
+- \`commit_template/release.md\` - 发版模板
+
+---
+
+## 📝 提交记录
+
+| 提交 | 描述 |
+|:---:|------|
+| \`57d395e\` | :bug: fix(habit) 修复习惯页面的内容 |
+| \`95d80ce\` | :sparkles: feat(habit): 实现习惯追踪功能 |
+| \`910814f\` | :sparkles: feat(music): 优化音乐播放器对话框 UI 布局 |
+| \`921329a\` | :bug: fix(windows): 统一应用名称大小写为 ToDoTimeSquare |
+| \`66e9ea1\` | :sparkles: feat(statistics): 实现统计页面 i18n 国际化与桌面端适配 |
+| \`896ea8d\` | :memo: docs: 强调提交格式的重要性 |
+| \`84f56f1\` | :recycle: refactor: 重构项目目录结构，将数据库层统一到 lib/models/ 目录 |
+| \`d240466\` | :sparkles: feat(docs): 添加 Git 提交指南和 emoji 使用模板 |
+| \`01aa205\` | :sparkles: feat(database): 添加 Drift 数据库层与数据迁移支持 |
+| \`75c4eff\` | :sparkles: feat(emoji): 添加 Git 提交表情使用指南及表情库 |
+| \`68bd99a\` | :fire: 删除无用代码 |
+| \`76f7025\` | :sparkles: feat(release): 添加 V0.7.0 发布说明及新功能列表 |
+
+---
+
 # Release V0.7.0
 
 **发布日期:** 2025-12-30
