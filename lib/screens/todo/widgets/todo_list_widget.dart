@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../i18n/i18n.dart';
 import '../../../providers/todo_provider.dart';
-import '../../../models/todo.dart';
+import '../../../models/models.dart';
 import 'modal/add_todo/add_todo_modal.dart';
 import 'todo_item.dart';
 import '../../../widgets/glass/glass_popup_menu.dart';
@@ -17,7 +17,7 @@ class TodoListWidget extends StatefulWidget {
 }
 
 class _TodoListWidgetState extends State<TodoListWidget> {
-  void _showAddTodoModal(BuildContext context, {Todo? todo}) {
+  void _showAddTodoModal(BuildContext context, {TaskModel? todo}) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -37,7 +37,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
   }
 
   /// 显示操作菜单（长按/右键）
-  void _showContextMenu(BuildContext context, Todo todo, Offset position) {
+  void _showContextMenu(BuildContext context, TaskModel todo, Offset position) {
     final i18n = APPi18n.of(context)!;
     showGlassMenu(
       context: context,
@@ -103,7 +103,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
   /// 构建主任务项（带拖拽）
   Widget _buildReorderableTodoItem(
     BuildContext context,
-    Todo todo,
+    TaskModel todo,
     int index,
     TodoProvider provider,
   ) {

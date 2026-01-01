@@ -301,4 +301,90 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get taskActions => '任务操作';
+
+  @override
+  String get todayFocus => '今日专注';
+
+  @override
+  String get thisWeekFocus => '本周专注';
+
+  @override
+  String get totalFocus => '累计专注';
+
+  @override
+  String get sessionsToday => '次专注';
+
+  @override
+  String get taskCompletionRate => '任务完成率';
+
+  @override
+  String tasksCompleted(int count) {
+    return '$count 已完成';
+  }
+
+  @override
+  String tasksTotal(int count) {
+    return '$count 总计';
+  }
+
+  @override
+  String get weeklyFocusTrend => '本周专注趋势';
+
+  @override
+  String get taskFocusRanking => '任务专注排行';
+
+  @override
+  String get noFocusDataYet => '开始专注后即可查看趋势';
+
+  @override
+  String focusSessions(int count) {
+    return '$count 次专注';
+  }
+
+  @override
+  String get minutes => '分钟';
+
+  @override
+  String topRanking(int count) {
+    return 'Top $count';
+  }
+
+  @override
+  String get habitTracking => '习惯追踪';
+
+  @override
+  String get checkedIn => '已打卡';
+
+  @override
+  String get checkIn => '打卡';
+
+  @override
+  String get checkInSuccess => '太棒了！继续保持！';
+
+  @override
+  String get streakDays => '天';
+
+  @override
+  String get addHabit => '添加习惯';
+
+  @override
+  String get editHabit => '编辑习惯';
+
+  @override
+  String get habitName => '习惯名称';
+
+  @override
+  String get habitNamePlaceholder => '例如：阅读 30 分钟';
+
+  @override
+  String get habitDescription => '描述（可选）';
+
+  @override
+  String get habitColor => '颜色';
+
+  @override
+  String get noHabitsYet => '暂无习惯';
+
+  @override
+  String get createFirstHabit => '点击下方按钮创建你的第一个习惯';
 }

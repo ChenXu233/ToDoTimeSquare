@@ -144,5 +144,134 @@
   "taskActions": "任务操作",
   "@taskActions": {
     "description": "任务操作菜单标题"
+  },
+  "todayFocus": "今日专注",
+  "@todayFocus": {
+    "description": "今日专注时间标签"
+  },
+  "thisWeekFocus": "本周专注",
+  "@thisWeekFocus": {
+    "description": "本周专注时间标签"
+  },
+  "totalFocus": "累计专注",
+  "@totalFocus": {
+    "description": "累计专注时间标签"
+  },
+  "sessionsToday": "次专注",
+  "@sessionsToday": {
+    "description": "今日专注次数后缀"
+  },
+  "taskCompletionRate": "任务完成率",
+  "@taskCompletionRate": {
+    "description": "任务完成率标签"
+  },
+  "tasksCompleted": "{count} 已完成",
+  "@tasksCompleted": {
+    "description": "已完成任务数量文本",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "tasksTotal": "{count} 总计",
+  "@tasksTotal": {
+    "description": "任务总数文本",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "weeklyFocusTrend": "本周专注趋势",
+  "@weeklyFocusTrend": {
+    "description": "本周专注趋势图表标题"
+  },
+  "taskFocusRanking": "任务专注排行",
+  "@taskFocusRanking": {
+    "description": "任务专注排行列表标题"
+  },
+  "noFocusDataYet": "开始专注后即可查看趋势",
+  "@noFocusDataYet": {
+    "description": "无专注数据时显示的消息"
+  },
+  "focusSessions": "{count} 次专注",
+  "@focusSessions": {
+    "description": "专注次数文本",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "minutes": "分钟",
+  "@minutes": {
+    "description": "分钟单位"
+  },
+  "topRanking": "Top {count}",
+  "@topRanking": {
+    "description": "排行榜前缀",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+
+  "habitTracking": "习惯追踪",
+  "@habitTracking": {
+    "description": "习惯追踪部分标题"
+  },
+  "checkedIn": "已打卡",
+  "@checkedIn": {
+    "description": "已打卡状态文本"
+  },
+  "checkIn": "打卡",
+  "@checkIn": {
+    "description": "打卡按钮文本"
+  },
+  "checkInSuccess": "太棒了！继续保持！",
+  "@checkInSuccess": {
+    "description": "打卡成功消息"
+  },
+  "streakDays": "天",
+  "@streakDays": {
+    "description": "连续打卡天数文本"
+  },
+  "addHabit": "添加习惯",
+  "@addHabit": {
+    "description": "添加新习惯标题"
+  },
+  "editHabit": "编辑习惯",
+  "@editHabit": {
+    "description": "编辑现有习惯标题"
+  },
+  "habitName": "习惯名称",
+  "@habitName": {
+    "description": "习惯名称输入标签"
+  },
+  "habitNamePlaceholder": "例如：阅读 30 分钟",
+  "@habitNamePlaceholder": {
+    "description": "习惯名称输入占位符"
+  },
+  "habitDescription": "描述（可选）",
+  "@habitDescription": {
+    "description": "习惯描述输入标签"
+  },
+  "habitColor": "颜色",
+  "@habitColor": {
+    "description": "习惯颜色选择标签"
+  },
+  "noHabitsYet": "暂无习惯",
+  "@noHabitsYet": {
+    "description": "没有习惯时显示的消息"
+  },
+  "createFirstHabit": "点击下方按钮创建你的第一个习惯",
+  "@createFirstHabit": {
+    "description": "创建第一个习惯的提示"
   }
 }

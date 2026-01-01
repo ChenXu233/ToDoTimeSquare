@@ -5,7 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
 import 'background_music_provider.dart';
-import '../models/focus_record.dart';
+import '../models/repositories/focus_record_repository.dart';
 import 'statistics_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
@@ -262,7 +262,7 @@ class PomodoroProvider extends ChangeNotifier {
         // Record statistics if it was a focus session
         if (_status == PomodoroStatus.focus && _statisticsProvider != null) {
           _statisticsProvider!.addRecord(
-            FocusRecord(
+            FocusRecordModel(
               id: DateTime.now().toIso8601String(),
               startTime: DateTime.now().subtract(
                 Duration(seconds: _focusDuration),
@@ -270,6 +270,10 @@ class PomodoroProvider extends ChangeNotifier {
               durationSeconds: _focusDuration,
               taskId: _currentTaskId,
               taskTitle: _currentTaskTitle,
+              isCompleted: false,
+              interruptionCount: 0,
+              efficiencyScore: null,
+              createdAt: DateTime.now(),
             ),
           );
         }

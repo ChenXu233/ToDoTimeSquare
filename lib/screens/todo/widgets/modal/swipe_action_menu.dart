@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../i18n/i18n.dart';
-import '../../../../models/todo.dart';
+import '../../../../models/models.dart';
 
 /// 左滑操作菜单结果
 enum SwipeActionResult {
@@ -55,7 +55,7 @@ class SwipeActionButton extends StatelessWidget {
 
 /// 左滑操作菜单（显示在列表项右侧）
 class SwipeActionMenu extends StatelessWidget {
-  final Todo todo;
+  final TaskModel todo;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 

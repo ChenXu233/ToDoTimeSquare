@@ -1,16 +1,22 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../models/todo.dart';
+import '../models/database/database_initializer.dart';
+import '../models/repositories/todo_repository.dart';
 
 class TodoProvider extends ChangeNotifier {
-  List<Todo> _todos = [];
+  List<TaskModel> _todos = [];
+  late final TodoRepository _repository;
+
+  List<TaskModel> get todos => _todos;
 
   TodoProvider() {
-    _loadTodos();
+    _initialize();
   }
 
-  List<Todo> get todos => _todos;
+  Future<void> _initialize() async {
+    final db = DatabaseInitializer().database;
+    _repository = TodoRepository(db);
+    await _loadTodos();
+  }
 
   void _sortTodos() {
     _todos.sort((a, b) {
@@ -20,62 +26,61 @@ class TodoProvider extends ChangeNotifier {
   }
 
   Future<void> _loadTodos() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? todosString = prefs.getString('todos');
-    if (todosString != null) {
-      final List<dynamic> todosJson = jsonDecode(todosString);
-      _todos = todosJson.map((json) => Todo.fromJson(json)).toList();
-      _sortTodos();
-      notifyListeners();
-    }
-  }
-
-  Future<void> _saveTodos() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String todosString = jsonEncode(
-      _todos.map((todo) => todo.toJson()).toList(),
-    );
-    await prefs.setString('todos', todosString);
+    _todos = await _repository.getAllTasks();
+    _sortTodos();
+    notifyListeners();
   }
 
   String addTodo(
     String title, {
     String? description,
-    Duration? estimatedDuration,
+    int? estimatedDuration, // 分钟
     TodoImportance importance = TodoImportance.medium,
     DateTime? plannedStartTime,
     String? parentId,
   }) {
-    final newTodo = Todo(
-      id: DateTime.now().toString(),
+    final now = DateTime.now();
+    final newTodo = TaskModel(
+      id: now.millisecondsSinceEpoch.toString(),
       title: title,
       description: description,
       estimatedDuration: estimatedDuration,
-      importance: importance,
+      importance: importance.index + 1, // enum → int
       plannedStartTime: plannedStartTime,
+      isCompleted: false,
       parentId: parentId,
+      createdAt: now,
+      updatedAt: now,
+      completedAt: null,
     );
+
     _todos.add(newTodo);
     _sortTodos();
-    _saveTodos();
     notifyListeners();
+
+    // 保存到数据库
+    _repository.createTask(newTodo);
+
     return newTodo.id;
   }
 
-  List<Todo> getSubTasks(String parentId) {
+  List<TaskModel> getSubTasks(String parentId) {
     return _todos.where((todo) => todo.parentId == parentId).toList();
   }
 
-  void toggleTodo(String id) async {
+  Future<void> toggleTodo(String id) async {
     final index = _todos.indexWhere((todo) => todo.id == id);
     if (index != -1) {
-      _todos[index].isCompleted = !_todos[index].isCompleted;
-      _saveTodos();
-      notifyListeners();
-
-      await Future.delayed(const Duration(milliseconds: 500));
+      _todos[index] = _todos[index].copyWith(
+        isCompleted: !_todos[index].isCompleted,
+        updatedAt: DateTime.now(),
+        completedAt: !_todos[index].isCompleted ? DateTime.now() : null,
+      );
       _sortTodos();
       notifyListeners();
+
+      // 更新数据库
+      await _repository.updateTask(_todos[index]);
     }
   }
 
@@ -87,16 +92,19 @@ class TodoProvider extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    _todos[index].isCompleted = true;
-    await _saveTodos();
+    _todos[index] = _todos[index].copyWith(
+      isCompleted: true,
+      updatedAt: DateTime.now(),
+      completedAt: DateTime.now(),
+    );
+    await _repository.updateTask(_todos[index]);
     _sortTodos();
     notifyListeners();
   }
 
-  void removeTodo(String id) {
+  Future<void> removeTodo(String id) async {
     final idsToRemove = <String>{id};
 
-    // Find all descendants
     void addDescendants(String parentId) {
       final children = _todos.where((t) => t.parentId == parentId);
       for (var child in children) {
@@ -108,39 +116,41 @@ class TodoProvider extends ChangeNotifier {
     addDescendants(id);
 
     _todos.removeWhere((todo) => idsToRemove.contains(todo.id));
-    _saveTodos();
+    _sortTodos();
     notifyListeners();
-  }
 
-  void updateTodo(Todo updatedTodo) {
-    final index = _todos.indexWhere((todo) => todo.id == updatedTodo.id);
-    if (index != -1) {
-      _todos[index] = updatedTodo;
-      _sortTodos();
-      _saveTodos();
-      notifyListeners();
+    for (final todoId in idsToRemove) {
+      await _repository.deleteTaskWithDescendants(todoId);
     }
   }
 
-  /// 移动任务到指定位置（用于拖拽排序）
-  void moveTodo(String todoId, int newIndex) {
+  Future<void> updateTodo(TaskModel updatedTodo) async {
+    final index = _todos.indexWhere((todo) => todo.id == updatedTodo.id);
+    if (index != -1) {
+      updatedTodo = updatedTodo.copyWith(updatedAt: DateTime.now());
+      _todos[index] = updatedTodo;
+      _sortTodos();
+      notifyListeners();
+
+      await _repository.updateTask(updatedTodo);
+    }
+  }
+
+  Future<void> moveTodo(String todoId, int newIndex) async {
     final currentIndex = _todos.indexWhere((todo) => todo.id == todoId);
     if (currentIndex == -1) return;
 
     final todo = _todos.removeAt(currentIndex);
-    // 确保 newIndex 在有效范围内
     final adjustedIndex = newIndex.clamp(0, _todos.length);
     _todos.insert(adjustedIndex, todo);
-    _saveTodos();
+    _sortTodos();
     notifyListeners();
   }
 
-  /// 根据任务 ID 列表重新排序（用于持久化拖拽结果）
-  void reorderTodos(List<String> orderedIds) {
+  Future<void> reorderTodos(List<String> orderedIds) async {
     final idSet = orderedIds.toSet();
-    final reordered = <Todo>[];
+    final reordered = <TaskModel>[];
 
-    // 按 ID 列表顺序添加存在的任务
     for (final id in orderedIds) {
       final index = _todos.indexWhere((t) => t.id == id);
       if (index != -1) {
@@ -148,7 +158,6 @@ class TodoProvider extends ChangeNotifier {
       }
     }
 
-    // 添加不在列表中的任务（保持相对顺序）
     for (final todo in _todos) {
       if (!idSet.contains(todo.id)) {
         reordered.add(todo);
@@ -156,7 +165,7 @@ class TodoProvider extends ChangeNotifier {
     }
 
     _todos = reordered;
-    _saveTodos();
+    _sortTodos();
     notifyListeners();
   }
 }

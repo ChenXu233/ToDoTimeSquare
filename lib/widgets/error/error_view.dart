@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../models/music_track.dart';
+import '../../models/sample/music_track.dart';
 import 'error_icon.dart';
 
 /// 错误提示视图 - 可复用的错误展示组件（紧凑版）

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import '../../../models/todo.dart';
+import '../../../models/models.dart';
 
 class TaskMetaRow extends StatelessWidget {
-  final Todo task;
+  final TaskModel task;
   final Color fgColor;
 
   const TaskMetaRow({super.key, required this.task, required this.fgColor});
 
   String? get durationLabel {
-    final duration = task.estimatedDuration;
-    if (duration == null) return null;
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes % 60;
-    if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
+    final minutes = task.estimatedDuration;
+    if (minutes == null) return null;
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+    if (hours > 0 && remainingMinutes > 0) {
+      return '${hours}h ${remainingMinutes}m';
+    }
     if (hours > 0) return '${hours}h';
-    return '${minutes}m';
+    return '${remainingMinutes}m';
   }
 
   String? get startLabel {

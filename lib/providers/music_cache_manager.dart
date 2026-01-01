@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/music_track.dart';
+import '../models/sample/music_track.dart';
 
 /// 音乐缓存管理器 - 负责所有缓存相关的操作
 class MusicCacheManager {

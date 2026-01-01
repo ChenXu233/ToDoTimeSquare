@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../models/todo.dart';
 import '../../../../../providers/todo_provider.dart';
 import '../../../../../i18n/i18n.dart';
 import '../../../../../widgets/glass/glass_container.dart';
+import '../../../../../models/models.dart';
 import 'component/importance_segmented_button.dart';
 import 'component/parent_task_dropdown.dart';
 import 'component/duration_picker.dart';
 import 'component/start_time_picker.dart';
 
 class AddTodoModal extends StatefulWidget {
-  final Todo? todo;
+  final TaskModel? todo;
   const AddTodoModal({super.key, this.todo});
 
   @override
@@ -23,7 +23,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
   final _descriptionController = TextEditingController();
 
   TodoImportance _importance = TodoImportance.medium;
-  Duration? _estimatedDuration;
+  int? _estimatedDuration; // minutes
   DateTime? _plannedStartTime;
   String? _parentId;
 
@@ -33,7 +33,8 @@ class _AddTodoModalState extends State<AddTodoModal> {
     if (widget.todo != null) {
       _titleController.text = widget.todo!.title;
       _descriptionController.text = widget.todo!.description ?? '';
-      _importance = widget.todo!.importance;
+      _importance =
+          TodoImportance.values[(widget.todo!.importance - 1).clamp(0, 2)];
       _estimatedDuration = widget.todo!.estimatedDuration;
       _plannedStartTime = widget.todo!.plannedStartTime;
       _parentId = widget.todo!.parentId;
@@ -50,7 +51,10 @@ class _AddTodoModalState extends State<AddTodoModal> {
   void _onDurationChanged(Duration? duration) {
     if (!mounted) return;
     setState(() {
-      _estimatedDuration = duration;
+      // Convert Duration to minutes for storage
+      _estimatedDuration = duration != null
+          ? duration.inHours * 60 + duration.inMinutes
+          : null;
     });
   }
 
@@ -73,16 +77,14 @@ class _AddTodoModalState extends State<AddTodoModal> {
       final provider = Provider.of<TodoProvider>(context, listen: false);
 
       if (widget.todo != null) {
-        final updatedTodo = Todo(
-          id: widget.todo!.id,
+        final updatedTodo = widget.todo!.copyWith(
           title: _titleController.text,
           description: _descriptionController.text.isEmpty
               ? null
               : _descriptionController.text,
           estimatedDuration: _estimatedDuration,
-          importance: _importance,
+          importance: _importance.index + 1,
           plannedStartTime: _plannedStartTime,
-          isCompleted: widget.todo!.isCompleted,
           parentId: _parentId,
         );
         provider.updateTodo(updatedTodo);
@@ -238,7 +240,9 @@ class _AddTodoModalState extends State<AddTodoModal> {
                     children: [
                       Expanded(
                         child: DurationPicker(
-                          duration: _estimatedDuration,
+                          duration: _estimatedDuration != null
+                              ? Duration(minutes: _estimatedDuration!)
+                              : null,
                           onPick: () async {
                             final TimeOfDay? time = await showTimePicker(
                               context: context,

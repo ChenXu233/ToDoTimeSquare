@@ -1,0 +1,16 @@
+# emoji代码 type(scope): 主题（中文）
+#
+# 主体内容（可选）
+#
+# 页脚（可选）
+#
+# Types: ✨feat, 🐛fix, 📝docs, 💄style, ♻️refactor, ⚡️perf, ✅test, 🔧chore, 🚀ci, 🔖release
+# Scopes: core, db, ui, screen, widget, provider, repo, i18n, router, dep
+#
+# 示例:
+# ✨ feat(db): 添加批量删除待办功能
+# 🐛 fix(provider): 修复计时器后台恢复问题
+#
+# 发版格式: 🔖 V1.0.0: 发版标题
+#
+# 保存后 git 将使用此消息进行提交。

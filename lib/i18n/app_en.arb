@@ -360,5 +360,134 @@
   "taskActions": "Task Actions",
   "@taskActions": {
     "description": "Title for task actions menu"
+  },
+  "todayFocus": "Today's Focus",
+  "@todayFocus": {
+    "description": "Label for today's focus time"
+  },
+  "thisWeekFocus": "This Week's Focus",
+  "@thisWeekFocus": {
+    "description": "Label for this week's focus time"
+  },
+  "totalFocus": "Total Focus",
+  "@totalFocus": {
+    "description": "Label for total accumulated focus time"
+  },
+  "sessionsToday": "sessions today",
+  "@sessionsToday": {
+    "description": "Suffix for number of sessions today"
+  },
+  "taskCompletionRate": "Task Completion Rate",
+  "@taskCompletionRate": {
+    "description": "Label for task completion rate"
+  },
+  "tasksCompleted": "{count} completed",
+  "@tasksCompleted": {
+    "description": "Text showing number of completed tasks",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "tasksTotal": "{count} total",
+  "@tasksTotal": {
+    "description": "Text showing total number of tasks",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "weeklyFocusTrend": "Weekly Focus Trend",
+  "@weeklyFocusTrend": {
+    "description": "Title for weekly focus trend chart"
+  },
+  "taskFocusRanking": "Task Focus Ranking",
+  "@taskFocusRanking": {
+    "description": "Title for task focus ranking list"
+  },
+  "noFocusDataYet": "Start focusing to see trends",
+  "@noFocusDataYet": {
+    "description": "Message shown when no focus data available"
+  },
+  "focusSessions": "{count} sessions",
+  "@focusSessions": {
+    "description": "Text showing number of focus sessions",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "minutes": "min",
+  "@minutes": {
+    "description": "Abbreviation for minutes"
+  },
+  "topRanking": "Top {count}",
+  "@topRanking": {
+    "description": "Prefix for top ranking",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+
+  "habitTracking": "Habit Tracking",
+  "@habitTracking": {
+    "description": "Title for habit tracking section"
+  },
+  "checkedIn": "checked in",
+  "@checkedIn": {
+    "description": "Status text for checked-in habits"
+  },
+  "checkIn": "Check In",
+  "@checkIn": {
+    "description": "Action text for check-in button"
+  },
+  "checkInSuccess": "Great job! Keep it up!",
+  "@checkInSuccess": {
+    "description": "Message when habit check-in is successful"
+  },
+  "streakDays": "days",
+  "@streakDays": {
+    "description": "Text for habit streak days"
+  },
+  "addHabit": "Add Habit",
+  "@addHabit": {
+    "description": "Title for adding a new habit"
+  },
+  "editHabit": "Edit Habit",
+  "@editHabit": {
+    "description": "Title for editing an existing habit"
+  },
+  "habitName": "Habit Name",
+  "@habitName": {
+    "description": "Label for habit name input"
+  },
+  "habitNamePlaceholder": "e.g., Read for 30 minutes",
+  "@habitNamePlaceholder": {
+    "description": "Placeholder for habit name input"
+  },
+  "habitDescription": "Description (optional)",
+  "@habitDescription": {
+    "description": "Label for habit description input"
+  },
+  "habitColor": "Color",
+  "@habitColor": {
+    "description": "Label for habit color selection"
+  },
+  "noHabitsYet": "No habits yet",
+  "@noHabitsYet": {
+    "description": "Message when no habits exist yet"
+  },
+  "createFirstHabit": "Tap the button below to create your first habit",
+  "@createFirstHabit": {
+    "description": "Prompt to create the first habit"
   }
 }

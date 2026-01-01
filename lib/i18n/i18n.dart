@@ -678,6 +678,162 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Task Actions'**
   String get taskActions;
+
+  /// Label for today's focus time
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Focus'**
+  String get todayFocus;
+
+  /// Label for this week's focus time
+  ///
+  /// In en, this message translates to:
+  /// **'This Week\'s Focus'**
+  String get thisWeekFocus;
+
+  /// Label for total accumulated focus time
+  ///
+  /// In en, this message translates to:
+  /// **'Total Focus'**
+  String get totalFocus;
+
+  /// Suffix for number of sessions today
+  ///
+  /// In en, this message translates to:
+  /// **'sessions today'**
+  String get sessionsToday;
+
+  /// Label for task completion rate
+  ///
+  /// In en, this message translates to:
+  /// **'Task Completion Rate'**
+  String get taskCompletionRate;
+
+  /// Text showing number of completed tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count} completed'**
+  String tasksCompleted(int count);
+
+  /// Text showing total number of tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count} total'**
+  String tasksTotal(int count);
+
+  /// Title for weekly focus trend chart
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Focus Trend'**
+  String get weeklyFocusTrend;
+
+  /// Title for task focus ranking list
+  ///
+  /// In en, this message translates to:
+  /// **'Task Focus Ranking'**
+  String get taskFocusRanking;
+
+  /// Message shown when no focus data available
+  ///
+  /// In en, this message translates to:
+  /// **'Start focusing to see trends'**
+  String get noFocusDataYet;
+
+  /// Text showing number of focus sessions
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sessions'**
+  String focusSessions(int count);
+
+  /// Abbreviation for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minutes;
+
+  /// Prefix for top ranking
+  ///
+  /// In en, this message translates to:
+  /// **'Top {count}'**
+  String topRanking(int count);
+
+  /// Title for habit tracking section
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Tracking'**
+  String get habitTracking;
+
+  /// Status text for checked-in habits
+  ///
+  /// In en, this message translates to:
+  /// **'checked in'**
+  String get checkedIn;
+
+  /// Action text for check-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Check In'**
+  String get checkIn;
+
+  /// Message when habit check-in is successful
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! Keep it up!'**
+  String get checkInSuccess;
+
+  /// Text for habit streak days
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get streakDays;
+
+  /// Title for adding a new habit
+  ///
+  /// In en, this message translates to:
+  /// **'Add Habit'**
+  String get addHabit;
+
+  /// Title for editing an existing habit
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Habit'**
+  String get editHabit;
+
+  /// Label for habit name input
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Name'**
+  String get habitName;
+
+  /// Placeholder for habit name input
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Read for 30 minutes'**
+  String get habitNamePlaceholder;
+
+  /// Label for habit description input
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get habitDescription;
+
+  /// Label for habit color selection
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get habitColor;
+
+  /// Message when no habits exist yet
+  ///
+  /// In en, this message translates to:
+  /// **'No habits yet'**
+  String get noHabitsYet;
+
+  /// Prompt to create the first habit
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the button below to create your first habit'**
+  String get createFirstHabit;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
