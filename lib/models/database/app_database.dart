@@ -50,6 +50,13 @@ class AppDatabase extends _$AppDatabase {
       onCreate: (Migrator m) async {
         await m.createAll();
       },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from < 2) {
+          // 从版本 1 升级到版本 2：创建习惯相关表
+          await m.createTable(habits);
+          await m.createTable(habitLogs);
+        }
+      },
     );
   }
 

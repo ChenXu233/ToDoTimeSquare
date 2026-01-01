@@ -200,7 +200,6 @@ class _HabitTrackingSectionState extends State<HabitTrackingSection> {
     bool isCheckedIn,
   ) {
     final stats = context.read<StatisticsProvider>();
-    final i18n = context.read<APPi18n>();
 
     return InkWell(
       onTap: () async {
@@ -209,7 +208,7 @@ class _HabitTrackingSectionState extends State<HabitTrackingSection> {
         } else {
           await stats.checkInHabit(habit.id);
           if (mounted) {
-            _showCheckInSuccess(i18n);
+            _showCheckInSuccess(widget.i18n);
           }
         }
       },
@@ -252,7 +251,7 @@ class _HabitTrackingSectionState extends State<HabitTrackingSection> {
     showDialog(
       context: context,
       builder: (ctx) => HabitFormDialog(
-        i18n: context.read<APPi18n>(),
+        i18n: widget.i18n,
         onSave: (name, description, color) {
           context.read<StatisticsProvider>().createHabit(
                 name: name,
