@@ -1036,6 +1036,12 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Search parent task...'**
   String get searchParentTask;
+
+  /// Text shown when dragging a task to convert it to a subtask
+  ///
+  /// In en, this message translates to:
+  /// **'Release to convert to subtask'**
+  String get dropToSubtask;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

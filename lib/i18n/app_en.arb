@@ -588,5 +588,10 @@
   },
 
   "searchParentTask": "Search parent task...",
-  "@searchParentTask": { "description": "Hint text for parent task search" }
+  "@searchParentTask": { "description": "Hint text for parent task search" },
+
+  "dropToSubtask": "Release to convert to subtask",
+  "@dropToSubtask": {
+    "description": "Text shown when dragging a task to convert it to a subtask"
+  }
 }

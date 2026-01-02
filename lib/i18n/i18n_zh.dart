@@ -488,4 +488,7 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get searchParentTask => '搜索父任务...';
+
+  @override
+  String get dropToSubtask => '松手转为子任务';
 }

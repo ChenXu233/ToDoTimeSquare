@@ -372,5 +372,10 @@
   },
 
   "searchParentTask": "搜索父任务...",
-  "@searchParentTask": { "description": "父任务搜索提示文本" }
+  "@searchParentTask": { "description": "父任务搜索提示文本" },
+
+  "dropToSubtask": "松手转为子任务",
+  "@dropToSubtask": {
+    "description": "拖拽任务时显示的文本，用于转换为子任务"
+  }
 }

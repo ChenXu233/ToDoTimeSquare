@@ -488,4 +488,7 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get searchParentTask => 'Search parent task...';
+
+  @override
+  String get dropToSubtask => 'Release to convert to subtask';
 }
