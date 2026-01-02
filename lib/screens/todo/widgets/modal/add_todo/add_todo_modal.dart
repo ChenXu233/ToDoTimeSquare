@@ -284,13 +284,13 @@ class _AddTodoModalState extends State<AddTodoModal> {
                                 const Duration(days: 365),
                               ),
                             );
-                            if (!mounted) return;
+                            if (!context.mounted) return;
                             if (date != null) {
                               final TimeOfDay? time = await showTimePicker(
                                 context: context,
                                 initialTime: TimeOfDay.now(),
                               );
-                              if (!mounted) return;
+                              if (!context.mounted) return;
                               if (time != null) {
                                 _onStartTimeChanged(
                                   DateTime(

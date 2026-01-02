@@ -1,4 +1,4 @@
-/// Authentication service for API calls.
+// Authentication service for API calls.
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 

@@ -34,7 +34,7 @@ class TodoDragHandle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Icon(
       Icons.drag_indicator,
-      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
     );
   }
 }

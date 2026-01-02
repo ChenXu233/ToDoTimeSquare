@@ -11,6 +11,8 @@ import '../../providers/auth_provider.dart';
 import '../../i18n/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../widgets/glass/glass_container.dart';
+import '../../models/database/database_initializer.dart';
+import 'widgets/export_data_dialog.dart';
 import '../../widgets/glass/gradient_background.dart';
 import 'widgets/consistent_icon.dart';
 import 'widgets/duration_setting.dart';
@@ -285,6 +287,7 @@ class SettingsScreen extends StatelessWidget {
                                                 .setCacheMaxBytes(
                                                   mb * 1024 * 1024,
                                                 );
+                                            if (!context.mounted) return;
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
@@ -301,6 +304,7 @@ class SettingsScreen extends StatelessWidget {
                                       ElevatedButton(
                                         onPressed: () async {
                                           await musicProvider.clearCache();
+                                          if (!context.mounted) return;
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
@@ -534,6 +538,43 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  // Data Management Section
+                  GlassContainer(
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              ConsistentIcon(Icons.storage),
+                              const SizedBox(width: 12),
+                              Text(
+                                i18n.dataManagement,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          color: Theme.of(context).dividerColor.withAlpha(((0.1) * 255).round()),
+                        ),
+                        ListTile(
+                          leading: ConsistentIcon(Icons.download),
+                          title: Text(i18n.exportData),
+                          subtitle: Text(i18n.exportDataDescription),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            final db = DatabaseInitializer().database;
+                            showExportDataDialog(context, db);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   GlassContainer(
                     color: isDark ? Colors.black : Colors.white,
                     opacity: 0.1,
@@ -579,12 +620,14 @@ class SettingsScreen extends StatelessWidget {
                                 uri,
                                 mode: LaunchMode.externalApplication,
                               )) {
+                                if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(i18n.couldNotOpenUrl),
                                   ),
                                 );
                               }
                             } catch (e) {
+                              if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(i18n.couldNotOpenUrl),
                                 ),

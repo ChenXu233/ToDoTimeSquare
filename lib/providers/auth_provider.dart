@@ -1,10 +1,9 @@
-/// Authentication state provider using ChangeNotifier.
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/auth/user.dart';
-import '../models/auth/token.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {

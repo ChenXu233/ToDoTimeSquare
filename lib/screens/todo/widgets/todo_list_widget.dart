@@ -209,7 +209,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
-                                color: Colors.blue.withOpacity(0.1),
+                                color: Colors.blue.withValues(alpha: 0.1),
                               ),
                               child: const Center(
                                 child: Text(

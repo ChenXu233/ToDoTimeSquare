@@ -389,7 +389,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
                           _getVolumeIcon(provider.backgroundMusicVolume),
                           color: _showVolumeBar
                               ? primaryColor
-                              : primaryColor.withOpacity(0.5),
+                              : primaryColor.withValues(alpha: 0.5),
                           size: 20,
                         ),
                       ),

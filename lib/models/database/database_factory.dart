@@ -16,11 +16,11 @@ class DatabaseFactory {
               driftWorker: Uri.parse('drift_worker.js'),
               // 回调：显示选择了哪种存储实现
               onResult: (result) {
-                print('========================================');
-                print('Drift Web 数据库初始化结果:');
-                print('选择的实现: ${result.chosenImplementation}');
-                print('缺失的功能: ${result.missingFeatures}');
-                print('========================================');
+                debugPrint('========================================');
+                debugPrint('Drift Web 数据库初始化结果:');
+                debugPrint('选择的实现: ${result.chosenImplementation}');
+                debugPrint('缺失的功能: ${result.missingFeatures}');
+                debugPrint('========================================');
               },
             )
           : null,
