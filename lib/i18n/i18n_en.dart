@@ -123,7 +123,8 @@ class APPi18nEn extends APPi18n {
   String get taskCompletedDialogTitle => 'Task Completed';
 
   @override
-  String get taskCompletedDialogMessage => 'Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you\'re ready.';
+  String get taskCompletedDialogMessage =>
+      'Awesome focus! Your task is now complete. Celebrate the win or pick another mission when you\'re ready.';
 
   @override
   String get taskCompletedDialogButton => 'Keep Going';
@@ -162,7 +163,8 @@ class APPi18nEn extends APPi18n {
   String get pomodoroInfo => 'Pomodoro Technique';
 
   @override
-  String get pomodoroInfoContent => 'The Pomodoro Technique uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks. This app simplifies it to just Focus and Short Break cycles.';
+  String get pomodoroInfoContent =>
+      'The Pomodoro Technique uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short breaks. This app simplifies it to just Focus and Short Break cycles.';
 
   @override
   String get homeMessage => 'Focus. Organize. Achieve.';
@@ -174,7 +176,8 @@ class APPi18nEn extends APPi18n {
   String get version => 'Version';
 
   @override
-  String get somethingIWantToSay => 'This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!';
+  String get somethingIWantToSay =>
+      'This app is a project I had in mind when I was working on it. I hope it can help others better manage their time and tasks. If you have any suggestions or feedback, please feel free to contact me!';
 
   @override
   String get details => 'Details';
@@ -183,7 +186,8 @@ class APPi18nEn extends APPi18n {
   String get share => 'Share';
 
   @override
-  String get appdetails => 'ToDoTimeSquare is a productivity app designed specifically for those who prefer a flexible and open cognitive style (P type personality in MBTI). Its core innovation lies in deeply integrating an unstructured dynamic task pool with the standard Pomodoro Technique, forming a \'free choice, focused execution\' cycle system: The app provides an open to-do list as a \'task reserve pool\' without mandatory ordering, allowing users to add or delete tasks at any time. Users do not need to plan their entire day\'s schedule in advance; instead, they can instantly select a single task from the pool based on their current state and interests, then start a customized Pomodoro timer (e.g., 25 minutes of focus + 5 minutes of break) to enter a protected flow sprint phase. After each Pomodoro session, the system provides immediate visual feedback and data statistics, automatically marking the task as completed. Users can either continue with the same task for the next sprint or freely choose a new goal from the list without any burden. This design effectively reduces decision-making barriers and procrastination tendencies by breaking down macro planning pressure into micro autonomous action units, transforming a flexible and scattered thinking style into sustainable focused productivity. Time management is no longer a framework that restricts exploration but a tool that supports spontaneous creation.';
+  String get appdetails =>
+      'ToDoTimeSquare is a productivity app designed specifically for those who prefer a flexible and open cognitive style (P type personality in MBTI). Its core innovation lies in deeply integrating an unstructured dynamic task pool with the standard Pomodoro Technique, forming a \'free choice, focused execution\' cycle system: The app provides an open to-do list as a \'task reserve pool\' without mandatory ordering, allowing users to add or delete tasks at any time. Users do not need to plan their entire day\'s schedule in advance; instead, they can instantly select a single task from the pool based on their current state and interests, then start a customized Pomodoro timer (e.g., 25 minutes of focus + 5 minutes of break) to enter a protected flow sprint phase. After each Pomodoro session, the system provides immediate visual feedback and data statistics, automatically marking the task as completed. Users can either continue with the same task for the next sprint or freely choose a new goal from the list without any burden. This design effectively reduces decision-making barriers and procrastination tendencies by breaking down macro planning pressure into micro autonomous action units, transforming a flexible and scattered thinking style into sustainable focused productivity. Time management is no longer a framework that restricts exploration but a tool that supports spontaneous creation.';
 
   @override
   String get statistics => 'Statistics';
@@ -195,7 +199,8 @@ class APPi18nEn extends APPi18n {
   String get autoPlayBackgroundMusic => 'Auto-play background music';
 
   @override
-  String get autoPlayBackgroundMusicSubtitle => 'Resume/pause background music when timer starts or pauses';
+  String get autoPlayBackgroundMusicSubtitle =>
+      'Resume/pause background music when timer starts or pauses';
 
   @override
   String get reminderNone => 'None';
@@ -383,10 +388,12 @@ class APPi18nEn extends APPi18n {
   String get noHabitsYet => 'No habits yet';
 
   @override
-  String get createFirstHabit => 'Tap the button below to create your first habit';
+  String get createFirstHabit =>
+      'Tap the button below to create your first habit';
 
   @override
-  String get notificationServiceUnavailable => 'Notification service unavailable';
+  String get notificationServiceUnavailable =>
+      'Notification service unavailable';
 
   @override
   String get databaseInitSuccess => 'Database initialized successfully';
@@ -404,34 +411,41 @@ class APPi18nEn extends APPi18n {
   String get languageChinese => 'Chinese';
 
   @override
-  String get errorNetworkTimeout => 'Network connection timeout, please check your network settings';
+  String get errorNetworkTimeout =>
+      'Network connection timeout, please check your network settings';
 
   @override
-  String get errorNetworkConnection => 'Unable to connect to server, please check your network connection';
+  String get errorNetworkConnection =>
+      'Unable to connect to server, please check your network connection';
 
   @override
   String get errorNetworkRequest => 'Network request failed';
 
   @override
-  String get errorNetworkDomain => 'Unable to resolve domain name, please check your network connection';
+  String get errorNetworkDomain =>
+      'Unable to resolve domain name, please check your network connection';
 
   @override
   String get errorNetworkGeneric => 'Network error';
 
   @override
-  String get errorFileNotFound => 'File does not exist, it may have been moved or deleted';
+  String get errorFileNotFound =>
+      'File does not exist, it may have been moved or deleted';
 
   @override
-  String get errorFilePermission => 'No file access permission, please check app permission settings';
+  String get errorFilePermission =>
+      'No file access permission, please check app permission settings';
 
   @override
-  String get errorFileInUse => 'File is being used by another program, please close other apps and retry';
+  String get errorFileInUse =>
+      'File is being used by another program, please close other apps and retry';
 
   @override
   String get errorFileGeneric => 'File access error';
 
   @override
-  String get errorAudioFormat => 'Audio format not supported, unable to play this file';
+  String get errorAudioFormat =>
+      'Audio format not supported, unable to play this file';
 
   @override
   String get errorAudioDuration => 'Unable to get audio duration information';
@@ -476,7 +490,8 @@ class APPi18nEn extends APPi18n {
   String get databaseInitComplete => 'Database initialization complete';
 
   @override
-  String get databaseNotInitialized => 'Database not initialized, please call initialize() first';
+  String get databaseNotInitialized =>
+      'Database not initialized, please call initialize() first';
 
   @override
   String get unknownTask => 'Unknown task';
