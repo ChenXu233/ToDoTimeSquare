@@ -377,5 +377,98 @@
   "dropToSubtask": "松手转为子任务",
   "@dropToSubtask": {
     "description": "拖拽任务时显示的文本，用于转换为子任务"
+  },
+
+  "logoutConfirmTitle": "退出登录",
+  "@logoutConfirmTitle": {
+    "description": "退出登录确认对话框标题"
+  },
+
+  "logoutConfirmMessage": "确定要退出登录吗？",
+  "@logoutConfirmMessage": {
+    "description": "退出登录确认对话框消息"
+  },
+
+  "logout": "退出登录",
+  "@logout": {
+    "description": "退出登录按钮标签"
+  },
+
+  "tapToLogin": "点击登录",
+  "@tapToLogin": {
+    "description": "点击登录提示"
+  },
+
+  "loginTitle": "登录",
+  "@loginTitle": {
+    "description": "登录页面标题"
+  },
+  "registerTitle": "注册",
+  "@registerTitle": {
+    "description": "注册页面标题"
+  },
+  "usernamePlaceholder": "用户名",
+  "@usernamePlaceholder": {
+    "description": "用户名输入框占位符"
+  },
+  "emailPlaceholder": "邮箱",
+  "@emailPlaceholder": {
+    "description": "邮箱输入框占位符"
+  },
+  "passwordPlaceholder": "密码",
+  "@passwordPlaceholder": {
+    "description": "密码输入框占位符"
+  },
+  "confirmPasswordPlaceholder": "确认密码",
+  "@confirmPasswordPlaceholder": {
+    "description": "确认密码输入框占位符"
+  },
+  "loginButton": "登录",
+  "@loginButton": {
+    "description": "登录按钮标签"
+  },
+  "registerButton": "注册",
+  "@registerButton": {
+    "description": "注册按钮标签"
+  },
+  "noAccount": "没有账号？立即注册",
+  "@noAccount": {
+    "description": "没有账号的用户提示"
+  },
+  "hasAccount": "已有账号？立即登录",
+  "@hasAccount": {
+    "description": "已有账号的用户提示"
+  },
+  "loginSuccess": "登录成功",
+  "@loginSuccess": {
+    "description": "登录成功消息"
+  },
+  "loginFailed": "登录失败",
+  "@loginFailed": {
+    "description": "登录失败消息"
+  },
+  "registerSuccess": "注册成功",
+  "@registerSuccess": {
+    "description": "注册成功消息"
+  },
+  "registerFailed": "注册失败",
+  "@registerFailed": {
+    "description": "注册失败消息"
+  },
+  "passwordMismatch": "两次输入的密码不一致",
+  "@passwordMismatch": {
+    "description": "密码不匹配错误消息"
+  },
+  "usernameTooShort": "用户名至少需要3个字符",
+  "@usernameTooShort": {
+    "description": "用户名太短错误消息"
+  },
+  "passwordTooShort": "密码至少需要6个字符",
+  "@passwordTooShort": {
+    "description": "密码太短错误消息"
+  },
+  "invalidEmail": "请输入有效的邮箱地址",
+  "@invalidEmail": {
+    "description": "无效邮箱错误消息"
   }
 }

@@ -494,4 +494,70 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get dropToSubtask => '松手转为子任务';
+
+  @override
+  String get logoutConfirmTitle => '退出登录';
+
+  @override
+  String get logoutConfirmMessage => '确定要退出登录吗？';
+
+  @override
+  String get logout => '退出登录';
+
+  @override
+  String get tapToLogin => '点击登录';
+
+  @override
+  String get loginTitle => '登录';
+
+  @override
+  String get registerTitle => '注册';
+
+  @override
+  String get usernamePlaceholder => '用户名';
+
+  @override
+  String get emailPlaceholder => '邮箱';
+
+  @override
+  String get passwordPlaceholder => '密码';
+
+  @override
+  String get confirmPasswordPlaceholder => '确认密码';
+
+  @override
+  String get loginButton => '登录';
+
+  @override
+  String get registerButton => '注册';
+
+  @override
+  String get noAccount => '没有账号？立即注册';
+
+  @override
+  String get hasAccount => '已有账号？立即登录';
+
+  @override
+  String get loginSuccess => '登录成功';
+
+  @override
+  String get loginFailed => '登录失败';
+
+  @override
+  String get registerSuccess => '注册成功';
+
+  @override
+  String get registerFailed => '注册失败';
+
+  @override
+  String get passwordMismatch => '两次输入的密码不一致';
+
+  @override
+  String get usernameTooShort => '用户名至少需要3个字符';
+
+  @override
+  String get passwordTooShort => '密码至少需要6个字符';
+
+  @override
+  String get invalidEmail => '请输入有效的邮箱地址';
 }

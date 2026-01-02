@@ -506,4 +506,70 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get dropToSubtask => 'Release to convert to subtask';
+
+  @override
+  String get logoutConfirmTitle => 'Logout';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get tapToLogin => 'Tap to login';
+
+  @override
+  String get loginTitle => 'Login';
+
+  @override
+  String get registerTitle => 'Register';
+
+  @override
+  String get usernamePlaceholder => 'Username';
+
+  @override
+  String get emailPlaceholder => 'Email';
+
+  @override
+  String get passwordPlaceholder => 'Password';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Confirm Password';
+
+  @override
+  String get loginButton => 'Login';
+
+  @override
+  String get registerButton => 'Register';
+
+  @override
+  String get noAccount => 'Don\'t have an account? Register';
+
+  @override
+  String get hasAccount => 'Already have an account? Login';
+
+  @override
+  String get loginSuccess => 'Login successful';
+
+  @override
+  String get loginFailed => 'Login failed';
+
+  @override
+  String get registerSuccess => 'Registration successful';
+
+  @override
+  String get registerFailed => 'Registration failed';
+
+  @override
+  String get passwordMismatch => 'Passwords do not match';
+
+  @override
+  String get usernameTooShort => 'Username must be at least 3 characters';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email address';
 }

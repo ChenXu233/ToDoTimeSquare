@@ -593,5 +593,98 @@
   "dropToSubtask": "Release to convert to subtask",
   "@dropToSubtask": {
     "description": "Text shown when dragging a task to convert it to a subtask"
+  },
+
+  "logoutConfirmTitle": "Logout",
+  "@logoutConfirmTitle": {
+    "description": "Title for logout confirmation dialog"
+  },
+
+  "logoutConfirmMessage": "Are you sure you want to logout?",
+  "@logoutConfirmMessage": {
+    "description": "Message for logout confirmation dialog"
+  },
+
+  "logout": "Logout",
+  "@logout": {
+    "description": "Label for logout button"
+  },
+
+  "tapToLogin": "Tap to login",
+  "@tapToLogin": {
+    "description": "Prompt to tap to login"
+  },
+
+  "loginTitle": "Login",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
+  "registerTitle": "Register",
+  "@registerTitle": {
+    "description": "Register screen title"
+  },
+  "usernamePlaceholder": "Username",
+  "@usernamePlaceholder": {
+    "description": "Username input placeholder"
+  },
+  "emailPlaceholder": "Email",
+  "@emailPlaceholder": {
+    "description": "Email input placeholder"
+  },
+  "passwordPlaceholder": "Password",
+  "@passwordPlaceholder": {
+    "description": "Password input placeholder"
+  },
+  "confirmPasswordPlaceholder": "Confirm Password",
+  "@confirmPasswordPlaceholder": {
+    "description": "Confirm password input placeholder"
+  },
+  "loginButton": "Login",
+  "@loginButton": {
+    "description": "Login button label"
+  },
+  "registerButton": "Register",
+  "@registerButton": {
+    "description": "Register button label"
+  },
+  "noAccount": "Don't have an account? Register",
+  "@noAccount": {
+    "description": "Text for users without an account"
+  },
+  "hasAccount": "Already have an account? Login",
+  "@hasAccount": {
+    "description": "Text for users with an account"
+  },
+  "loginSuccess": "Login successful",
+  "@loginSuccess": {
+    "description": "Login success message"
+  },
+  "loginFailed": "Login failed",
+  "@loginFailed": {
+    "description": "Login failed message"
+  },
+  "registerSuccess": "Registration successful",
+  "@registerSuccess": {
+    "description": "Registration success message"
+  },
+  "registerFailed": "Registration failed",
+  "@registerFailed": {
+    "description": "Registration failed message"
+  },
+  "passwordMismatch": "Passwords do not match",
+  "@passwordMismatch": {
+    "description": "Error message when passwords don't match"
+  },
+  "usernameTooShort": "Username must be at least 3 characters",
+  "@usernameTooShort": {
+    "description": "Username too short error message"
+  },
+  "passwordTooShort": "Password must be at least 6 characters",
+  "@passwordTooShort": {
+    "description": "Password too short error message"
+  },
+  "invalidEmail": "Please enter a valid email address",
+  "@invalidEmail": {
+    "description": "Invalid email error message"
   }
 }

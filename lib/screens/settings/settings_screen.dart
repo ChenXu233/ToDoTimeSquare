@@ -7,6 +7,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../providers/background_music_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../i18n/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../widgets/glass/glass_container.dart';
@@ -14,6 +15,7 @@ import '../../widgets/glass/gradient_background.dart';
 import 'widgets/consistent_icon.dart';
 import 'widgets/duration_setting.dart';
 import '../../widgets/glass/glass_dropdown.dart';
+import 'login_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -42,6 +44,82 @@ class SettingsScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  // User avatar section
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      final isLoggedIn = authProvider.isLoggedIn;
+                      final user = authProvider.currentUser;
+
+                      return GlassContainer(
+                        color: isDark ? Colors.black : Colors.white,
+                        opacity: 0.1,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            child: Icon(
+                              isLoggedIn ? Icons.person : Icons.person_outline,
+                              color: Colors.white,
+                            ),
+                          ),
+                          title: Text(
+                            isLoggedIn && user != null
+                                ? user.username
+                                : i18n.tapToLogin,
+                          ),
+                          subtitle: Text(
+                            isLoggedIn && user != null
+                                ? user.email
+                                : '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: isLoggedIn
+                              ? IconButton(
+                                  icon: const Icon(Icons.logout),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text(i18n.logoutConfirmTitle),
+                                        content: Text(i18n.logoutConfirmMessage),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text(i18n.cancel),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              await authProvider.logout();
+                                              if (context.mounted) {
+                                                Navigator.pop(context);
+                                              }
+                                            },
+                                            child: Text(i18n.logout),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : null,
+                          onTap: isLoggedIn
+                              ? null
+                              : () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LoginScreen(),
+                                    ),
+                                  );
+                                },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   GlassContainer(
                     color: isDark ? Colors.black : Colors.white,
                     opacity: 0.1,
