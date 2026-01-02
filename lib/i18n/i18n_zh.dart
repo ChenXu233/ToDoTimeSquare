@@ -387,4 +387,111 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get createFirstHabit => '点击下方按钮创建你的第一个习惯';
+
+  @override
+  String get notificationServiceUnavailable => '通知服务不可用';
+
+  @override
+  String get databaseInitSuccess => '数据库初始化成功';
+
+  @override
+  String get databaseInitFailed => '数据库初始化失败';
+
+  @override
+  String get languageAuto => '自动';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageChinese => '中文';
+
+  @override
+  String get errorNetworkTimeout => '网络连接超时，请检查网络设置';
+
+  @override
+  String get errorNetworkConnection => '无法连接到服务器，请检查网络连接';
+
+  @override
+  String get errorNetworkRequest => '网络请求失败';
+
+  @override
+  String get errorNetworkDomain => '无法解析域名，请检查网络连接';
+
+  @override
+  String get errorNetworkGeneric => '网络错误';
+
+  @override
+  String get errorFileNotFound => '文件不存在，可能已被移动或删除';
+
+  @override
+  String get errorFilePermission => '没有文件访问权限，请检查应用权限设置';
+
+  @override
+  String get errorFileInUse => '文件被其他程序占用，请关闭其他应用后重试';
+
+  @override
+  String get errorFileGeneric => '文件访问错误';
+
+  @override
+  String get errorAudioFormat => '音频格式不支持，无法播放此文件';
+
+  @override
+  String get errorAudioDuration => '无法获取音频时长信息';
+
+  @override
+  String get errorAudioGeneric => '音频播放错误';
+
+  @override
+  String get errorPlaybackGeneric => '播放出错';
+
+  @override
+  String get errorCacheGeneric => '缓存错误';
+
+  @override
+  String get errorUnknown => '发生错误';
+
+  @override
+  String get retry => '重试';
+
+  @override
+  String get notificationFocusEnded => '专注结束';
+
+  @override
+  String get notificationBreakEnded => '休息结束';
+
+  @override
+  String get notificationTimeToBreak => '该休息了！';
+
+  @override
+  String get notificationTimeToFocus => '该专注了！';
+
+  @override
+  String get notificationSkip => '跳过';
+
+  @override
+  String get notificationReset => '重置';
+
+  @override
+  String get databaseAlreadyInitialized => '数据库已初始化';
+
+  @override
+  String get databaseInitComplete => '数据库初始化完成';
+
+  @override
+  String get databaseNotInitialized => '数据库未初始化，请先调用 initialize()';
+
+  @override
+  String get unknownTask => '未知任务';
+
+  @override
+  String migrationComplete(int todosMigrated, int focusRecordsMigrated) {
+    return '迁移完成：任务 $todosMigrated 条，记录 $focusRecordsMigrated 条';
+  }
+
+  @override
+  String get searchParentTask => '搜索父任务...';
+
+  @override
+  String get dropToSubtask => '松手转为子任务';
 }

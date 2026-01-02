@@ -6,6 +6,7 @@ import '../../../providers/todo_provider.dart';
 import '../../../models/models.dart';
 import 'modal/add_todo/add_todo_modal.dart';
 import 'todo_item.dart';
+import 'todo_drag_target.dart';
 import '../../../widgets/glass/glass_popup_menu.dart';
 
 class TodoListWidget extends StatefulWidget {
@@ -101,56 +102,62 @@ class _TodoListWidgetState extends State<TodoListWidget> {
   }
 
   /// 构建主任务项（带拖拽）
-  Widget _buildReorderableTodoItem(
+  Widget _buildTodoItem(
     BuildContext context,
     TaskModel todo,
-    int index,
     TodoProvider provider,
   ) {
     return Padding(
       key: Key(todo.id),
       padding: const EdgeInsets.only(bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 主任务（可拖拽）- 拖拽仅由项内的手柄触发
-          TodoItem(
-            todo: todo,
-            enableReorder: true,
-            reorderIndex: index,
-            onToggle: () => provider.toggleTodo(todo.id),
-            onShowMenu: (position) => _showContextMenu(context, todo, position),
-            onEdit: () => _showAddTodoModal(context, todo: todo),
-            onDelete: () => provider.removeTodo(todo.id),
-          ),
-          // 子任务（不可拖拽，但可操作）
-          Consumer<TodoProvider>(
-            builder: (context, subProvider, child) {
-              final subTasks = subProvider.getSubTasks(todo.id);
-              if (subTasks.isEmpty) return const SizedBox.shrink();
+      child: TodoDragTarget(
+        todo: todo,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 主任务（可拖拽）- 拖拽仅由项内的手柄触发
+            TodoItem(
+              todo: todo,
+              enableReorder: true,
+              onToggle: () => provider.toggleTodo(todo.id),
+              onShowMenu: (position) =>
+                  _showContextMenu(context, todo, position),
+              onEdit: () => _showAddTodoModal(context, todo: todo),
+              onDelete: () => provider.removeTodo(todo.id),
+            ),
+            // 子任务（不可拖拽，但可操作）
+            Consumer<TodoProvider>(
+              builder: (context, subProvider, child) {
+                final subTasks = subProvider.getSubTasks(todo.id);
+                if (subTasks.isEmpty) return const SizedBox.shrink();
 
-              return Padding(
-                padding: const EdgeInsets.only(left: 20.0, top: 8),
-                child: Column(
-                  children: subTasks.map((subTask) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: TodoItem(
-                        todo: subTask,
-                        enableReorder: false,
-                        onToggle: () => subProvider.toggleTodo(subTask.id),
-                        onShowMenu: (position) =>
-                            _showContextMenu(context, subTask, position),
-                        onEdit: () => _showAddTodoModal(context, todo: subTask),
-                        onDelete: () => subProvider.removeTodo(subTask.id),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              );
-            },
-          ),
-        ],
+                return Padding(
+                  padding: const EdgeInsets.only(left: 20.0, top: 8),
+                  child: Column(
+                    children: subTasks.map((subTask) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: TodoDragTarget(
+                          todo: subTask,
+                          child: TodoItem(
+                            todo: subTask,
+                            enableReorder: true,
+                            onToggle: () => subProvider.toggleTodo(subTask.id),
+                            onShowMenu: (position) =>
+                                _showContextMenu(context, subTask, position),
+                            onEdit: () =>
+                                _showAddTodoModal(context, todo: subTask),
+                            onDelete: () => subProvider.removeTodo(subTask.id),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -174,26 +181,58 @@ class _TodoListWidgetState extends State<TodoListWidget> {
                   ),
                 ),
               )
-            : ReorderableListView.builder(
+            : ListView.builder(
                 padding: const EdgeInsets.only(bottom: 80),
-                buildDefaultDragHandles: false,
-                itemCount: todos.length,
+                itemCount: todos.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == todos.length) {
+                    return DragTarget<TaskModel>(
+                      onWillAcceptWithDetails: (details) {
+                        return true;
+                      },
+                      onAcceptWithDetails: (details) {
+                        final data = details.data;
+                        if (data.parentId != null) {
+                          todoProvider.detachFromParent(data.id);
+                        }
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        if (candidateData.isNotEmpty) {
+                          final data = candidateData.first;
+                          if (data != null && data.parentId != null) {
+                            return Container(
+                              height: 80,
+                              margin: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.blue,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.blue.withOpacity(0.1),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  "松手转为主任务",
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                        return const SizedBox(height: 100);
+                      },
+                    );
+                  }
                   final todo = todos[index];
-                  return _buildReorderableTodoItem(
+                  return _buildTodoItem(
                     context,
                     todo,
-                    index,
                     todoProvider,
                   );
-                },
-                onReorder: (oldIndex, newIndex) {
-                  // 处理拖拽排序
-                  if (oldIndex < newIndex) {
-                    newIndex -= 1;
-                  }
-                  final todoId = todos[oldIndex].id;
-                  todoProvider.moveTodo(todoId, newIndex);
                 },
               ),
 

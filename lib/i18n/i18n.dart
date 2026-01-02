@@ -834,6 +834,216 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Tap the button below to create your first habit'**
   String get createFirstHabit;
+
+  /// Snackbar message when notification service fails to initialize
+  ///
+  /// In en, this message translates to:
+  /// **'Notification service unavailable'**
+  String get notificationServiceUnavailable;
+
+  /// Debug message for successful database initialization
+  ///
+  /// In en, this message translates to:
+  /// **'Database initialized successfully'**
+  String get databaseInitSuccess;
+
+  /// Debug message for failed database initialization
+  ///
+  /// In en, this message translates to:
+  /// **'Database initialization failed'**
+  String get databaseInitFailed;
+
+  /// Auto language selection option
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get languageAuto;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Chinese language option
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get languageChinese;
+
+  /// Network timeout error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network connection timeout, please check your network settings'**
+  String get errorNetworkTimeout;
+
+  /// Network connection error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to connect to server, please check your network connection'**
+  String get errorNetworkConnection;
+
+  /// Network request failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Network request failed'**
+  String get errorNetworkRequest;
+
+  /// Domain resolution error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to resolve domain name, please check your network connection'**
+  String get errorNetworkDomain;
+
+  /// Generic network error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network error'**
+  String get errorNetworkGeneric;
+
+  /// File not found error message
+  ///
+  /// In en, this message translates to:
+  /// **'File does not exist, it may have been moved or deleted'**
+  String get errorFileNotFound;
+
+  /// File permission error message
+  ///
+  /// In en, this message translates to:
+  /// **'No file access permission, please check app permission settings'**
+  String get errorFilePermission;
+
+  /// File in use error message
+  ///
+  /// In en, this message translates to:
+  /// **'File is being used by another program, please close other apps and retry'**
+  String get errorFileInUse;
+
+  /// Generic file error message
+  ///
+  /// In en, this message translates to:
+  /// **'File access error'**
+  String get errorFileGeneric;
+
+  /// Unsupported audio format message
+  ///
+  /// In en, this message translates to:
+  /// **'Audio format not supported, unable to play this file'**
+  String get errorAudioFormat;
+
+  /// Audio duration error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to get audio duration information'**
+  String get errorAudioDuration;
+
+  /// Generic audio error message
+  ///
+  /// In en, this message translates to:
+  /// **'Audio playback error'**
+  String get errorAudioGeneric;
+
+  /// Generic playback error message
+  ///
+  /// In en, this message translates to:
+  /// **'Playback error'**
+  String get errorPlaybackGeneric;
+
+  /// Generic cache error message
+  ///
+  /// In en, this message translates to:
+  /// **'Cache error'**
+  String get errorCacheGeneric;
+
+  /// Unknown error message
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorUnknown;
+
+  /// Retry button label
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Notification title when focus ends
+  ///
+  /// In en, this message translates to:
+  /// **'Focus ended'**
+  String get notificationFocusEnded;
+
+  /// Notification title when break ends
+  ///
+  /// In en, this message translates to:
+  /// **'Break ended'**
+  String get notificationBreakEnded;
+
+  /// Notification body when focus ends
+  ///
+  /// In en, this message translates to:
+  /// **'Time for a break!'**
+  String get notificationTimeToBreak;
+
+  /// Notification body when break ends
+  ///
+  /// In en, this message translates to:
+  /// **'Time to focus!'**
+  String get notificationTimeToFocus;
+
+  /// Notification skip button
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get notificationSkip;
+
+  /// Notification reset button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get notificationReset;
+
+  /// Message when database is already initialized
+  ///
+  /// In en, this message translates to:
+  /// **'Database already initialized'**
+  String get databaseAlreadyInitialized;
+
+  /// Message when database initialization is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Database initialization complete'**
+  String get databaseInitComplete;
+
+  /// Error when database not initialized
+  ///
+  /// In en, this message translates to:
+  /// **'Database not initialized, please call initialize() first'**
+  String get databaseNotInitialized;
+
+  /// Default task name when unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown task'**
+  String get unknownTask;
+
+  /// Message when migration is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Migration complete: {todosMigrated} tasks, {focusRecordsMigrated} records'**
+  String migrationComplete(int todosMigrated, int focusRecordsMigrated);
+
+  /// Hint text for parent task search
+  ///
+  /// In en, this message translates to:
+  /// **'Search parent task...'**
+  String get searchParentTask;
+
+  /// Text shown when dragging a task to convert it to a subtask
+  ///
+  /// In en, this message translates to:
+  /// **'Release to convert to subtask'**
+  String get dropToSubtask;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

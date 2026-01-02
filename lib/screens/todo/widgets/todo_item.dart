@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../i18n/i18n.dart';
 import '../../../models/models.dart';
 import '../../../widgets/glass/glass_container.dart';
+import 'todo_draggable.dart';
 
 class TodoItem extends StatefulWidget {
   final TaskModel todo;
@@ -249,87 +250,128 @@ class _TodoItemState extends State<TodoItem>
       ),
     );
 
-    // 任务内容
-    Widget content = GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: isDark ? Colors.black : Colors.white,
-      opacity: 0.05,
-      child: Row(
-        children: [
-          // 拖拽手柄（启用拖拽时显示）
-          if (widget.enableReorder)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: widget.reorderIndex != null
-                  ? ReorderableDragStartListener(
-                      index: widget.reorderIndex!,
-                      child: Icon(
-                        Icons.drag_indicator,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3),
-                        size: 20,
+    // 任务内容构建方法
+    Widget buildContent({bool isFeedback = false}) {
+      return GlassContainer(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        color: isDark ? Colors.black : Colors.white,
+        opacity: isFeedback
+            ? 0.6
+            : 0.05, // Feedback slightly less opaque to show background blur
+        border: isFeedback
+            ? Border.all(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                width: 1.5,
+              )
+            : null,
+        child: Row(
+          children: [
+            // 拖拽手柄（启用拖拽时显示）
+            if (widget.enableReorder)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: isFeedback
+                    ? const TodoDragHandle()
+                    : TodoDraggable(
+                        todo: widget.todo,
+                        feedback: Material(
+                          color: Colors.transparent,
+                          child: Transform.scale(
+                            scale: 1.02,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.5,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 8),
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: buildContent(isFeedback: true),
+                            ),
+                          ),
+                        ),
+                        child: const TodoDragHandle(),
                       ),
-                    )
-                  : Icon(
-                      Icons.drag_indicator,
+              ),
+            Checkbox(
+              value: widget.todo.isCompleted,
+              activeColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              onChanged: (value) => widget.onToggle(),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.todo.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      decoration: widget.todo.isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
+                      color: widget.todo.isCompleted
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.5)
+                          : Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    widget.todo.description ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.3),
-                      size: 20,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-            ),
-          Checkbox(
-            value: widget.todo.isCompleted,
-            activeColor: Theme.of(context).colorScheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-            onChanged: (value) => widget.onToggle(),
-          ),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.todo.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    decoration: widget.todo.isCompleted
-                        ? TextDecoration.lineThrough
-                        : null,
-                    color: widget.todo.isCompleted
-                        ? Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5)
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                Text(
-                  widget.todo.description ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Row(
-                    children: [
-                      if (widget.todo.plannedStartTime != null)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Row(
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        if (widget.todo.plannedStartTime != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today,
+                                  size: 12,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.5),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "${widget.todo.plannedStartTime!.month}/${widget.todo.plannedStartTime!.day} ${widget.todo.plannedStartTime!.hour}:${widget.todo.plannedStartTime!.minute.toString().padLeft(2, '0')}",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (widget.todo.estimatedDuration != null)
+                          Row(
                             children: [
                               Icon(
-                                Icons.calendar_today,
+                                Icons.timer,
                                 size: 12,
                                 color: Theme.of(
                                   context,
@@ -337,7 +379,7 @@ class _TodoItemState extends State<TodoItem>
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                "${widget.todo.plannedStartTime!.month}/${widget.todo.plannedStartTime!.day} ${widget.todo.plannedStartTime!.hour}:${widget.todo.plannedStartTime!.minute.toString().padLeft(2, '0')}",
+                                "${widget.todo.estimatedDuration! ~/ 60}h ${widget.todo.estimatedDuration! % 60}m",
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Theme.of(context).colorScheme.onSurface
@@ -346,46 +388,26 @@ class _TodoItemState extends State<TodoItem>
                               ),
                             ],
                           ),
-                        ),
-                      if (widget.todo.estimatedDuration != null)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.timer,
-                              size: 12,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.5),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              "${widget.todo.estimatedDuration! ~/ 60}h ${widget.todo.estimatedDuration! % 60}m",
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: _getImportanceColor(widget.todo.importance),
-              shape: BoxShape.circle,
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: _getImportanceColor(widget.todo.importance),
+                shape: BoxShape.circle,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }
+
+    final content = buildContent();
 
     return SizedBox(
       width: double.infinity,

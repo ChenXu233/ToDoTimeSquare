@@ -53,19 +53,19 @@ class SettingsScreen extends StatelessWidget {
                           trailing: ConstrainedBox(
                             constraints: const BoxConstraints(maxWidth: 150),
                             child: GlassDropdownFormField<Locale?>(
-                              items: const [
+                              items: [
                                 DropdownMenuItem(
                                   value:
                                       null, // Null represents the "Auto" option
-                                  child: Text('Auto'),
+                                  child: Text(i18n.languageAuto),
                                 ),
                                 DropdownMenuItem(
                                   value: Locale('en', ''),
-                                  child: Text('English'),
+                                  child: Text(i18n.languageEnglish),
                                 ),
                                 DropdownMenuItem(
                                   value: Locale('zh', ''),
-                                  child: Text('中文'),
+                                  child: Text(i18n.languageChinese),
                                 ),
                               ],
                               value: themeProvider.currentLocale,

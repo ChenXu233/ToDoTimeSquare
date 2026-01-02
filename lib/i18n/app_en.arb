@@ -489,5 +489,109 @@
   "createFirstHabit": "Tap the button below to create your first habit",
   "@createFirstHabit": {
     "description": "Prompt to create the first habit"
+  },
+  "notificationServiceUnavailable": "Notification service unavailable",
+  "@notificationServiceUnavailable": {
+    "description": "Snackbar message when notification service fails to initialize"
+  },
+  "databaseInitSuccess": "Database initialized successfully",
+  "@databaseInitSuccess": {
+    "description": "Debug message for successful database initialization"
+  },
+  "databaseInitFailed": "Database initialization failed",
+  "@databaseInitFailed": {
+    "description": "Debug message for failed database initialization"
+  },
+  "languageAuto": "Auto",
+  "@languageAuto": {
+    "description": "Auto language selection option"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "English language option"
+  },
+  "languageChinese": "Chinese",
+  "@languageChinese": {
+    "description": "Chinese language option"
+  },
+
+  "errorNetworkTimeout": "Network connection timeout, please check your network settings",
+  "@errorNetworkTimeout": { "description": "Network timeout error message" },
+  "errorNetworkConnection": "Unable to connect to server, please check your network connection",
+  "@errorNetworkConnection": { "description": "Network connection error message" },
+  "errorNetworkRequest": "Network request failed",
+  "@errorNetworkRequest": { "description": "Network request failed message" },
+  "errorNetworkDomain": "Unable to resolve domain name, please check your network connection",
+  "@errorNetworkDomain": { "description": "Domain resolution error message" },
+  "errorNetworkGeneric": "Network error",
+  "@errorNetworkGeneric": { "description": "Generic network error message" },
+
+  "errorFileNotFound": "File does not exist, it may have been moved or deleted",
+  "@errorFileNotFound": { "description": "File not found error message" },
+  "errorFilePermission": "No file access permission, please check app permission settings",
+  "@errorFilePermission": { "description": "File permission error message" },
+  "errorFileInUse": "File is being used by another program, please close other apps and retry",
+  "@errorFileInUse": { "description": "File in use error message" },
+  "errorFileGeneric": "File access error",
+  "@errorFileGeneric": { "description": "Generic file error message" },
+
+  "errorAudioFormat": "Audio format not supported, unable to play this file",
+  "@errorAudioFormat": { "description": "Unsupported audio format message" },
+  "errorAudioDuration": "Unable to get audio duration information",
+  "@errorAudioDuration": { "description": "Audio duration error message" },
+  "errorAudioGeneric": "Audio playback error",
+  "@errorAudioGeneric": { "description": "Generic audio error message" },
+
+  "errorPlaybackGeneric": "Playback error",
+  "@errorPlaybackGeneric": { "description": "Generic playback error message" },
+
+  "errorCacheGeneric": "Cache error",
+  "@errorCacheGeneric": { "description": "Generic cache error message" },
+
+  "errorUnknown": "An error occurred",
+  "@errorUnknown": { "description": "Unknown error message" },
+
+  "retry": "Retry",
+  "@retry": { "description": "Retry button label" },
+
+  "notificationFocusEnded": "Focus ended",
+  "@notificationFocusEnded": { "description": "Notification title when focus ends" },
+  "notificationBreakEnded": "Break ended",
+  "@notificationBreakEnded": { "description": "Notification title when break ends" },
+  "notificationTimeToBreak": "Time for a break!",
+  "@notificationTimeToBreak": { "description": "Notification body when focus ends" },
+  "notificationTimeToFocus": "Time to focus!",
+  "@notificationTimeToFocus": { "description": "Notification body when break ends" },
+
+  "notificationSkip": "Skip",
+  "@notificationSkip": { "description": "Notification skip button" },
+  "notificationReset": "Reset",
+  "@notificationReset": { "description": "Notification reset button" },
+
+  "databaseAlreadyInitialized": "Database already initialized",
+  "@databaseAlreadyInitialized": { "description": "Message when database is already initialized" },
+  "databaseInitComplete": "Database initialization complete",
+  "@databaseInitComplete": { "description": "Message when database initialization is complete" },
+  "databaseNotInitialized": "Database not initialized, please call initialize() first",
+  "@databaseNotInitialized": { "description": "Error when database not initialized" },
+
+  "unknownTask": "Unknown task",
+  "@unknownTask": { "description": "Default task name when unknown" },
+
+  "migrationComplete": "Migration complete: {todosMigrated} tasks, {focusRecordsMigrated} records",
+  "@migrationComplete": {
+    "description": "Message when migration is complete",
+    "placeholders": {
+      "todosMigrated": { "type": "int", "example": "10" },
+      "focusRecordsMigrated": { "type": "int", "example": "5" }
+    }
+  },
+
+  "searchParentTask": "Search parent task...",
+  "@searchParentTask": { "description": "Hint text for parent task search" },
+
+  "dropToSubtask": "Release to convert to subtask",
+  "@dropToSubtask": {
+    "description": "Text shown when dragging a task to convert it to a subtask"
   }
 }

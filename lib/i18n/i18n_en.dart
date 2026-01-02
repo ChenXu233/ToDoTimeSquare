@@ -390,4 +390,120 @@ class APPi18nEn extends APPi18n {
   @override
   String get createFirstHabit =>
       'Tap the button below to create your first habit';
+
+  @override
+  String get notificationServiceUnavailable =>
+      'Notification service unavailable';
+
+  @override
+  String get databaseInitSuccess => 'Database initialized successfully';
+
+  @override
+  String get databaseInitFailed => 'Database initialization failed';
+
+  @override
+  String get languageAuto => 'Auto';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageChinese => 'Chinese';
+
+  @override
+  String get errorNetworkTimeout =>
+      'Network connection timeout, please check your network settings';
+
+  @override
+  String get errorNetworkConnection =>
+      'Unable to connect to server, please check your network connection';
+
+  @override
+  String get errorNetworkRequest => 'Network request failed';
+
+  @override
+  String get errorNetworkDomain =>
+      'Unable to resolve domain name, please check your network connection';
+
+  @override
+  String get errorNetworkGeneric => 'Network error';
+
+  @override
+  String get errorFileNotFound =>
+      'File does not exist, it may have been moved or deleted';
+
+  @override
+  String get errorFilePermission =>
+      'No file access permission, please check app permission settings';
+
+  @override
+  String get errorFileInUse =>
+      'File is being used by another program, please close other apps and retry';
+
+  @override
+  String get errorFileGeneric => 'File access error';
+
+  @override
+  String get errorAudioFormat =>
+      'Audio format not supported, unable to play this file';
+
+  @override
+  String get errorAudioDuration => 'Unable to get audio duration information';
+
+  @override
+  String get errorAudioGeneric => 'Audio playback error';
+
+  @override
+  String get errorPlaybackGeneric => 'Playback error';
+
+  @override
+  String get errorCacheGeneric => 'Cache error';
+
+  @override
+  String get errorUnknown => 'An error occurred';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get notificationFocusEnded => 'Focus ended';
+
+  @override
+  String get notificationBreakEnded => 'Break ended';
+
+  @override
+  String get notificationTimeToBreak => 'Time for a break!';
+
+  @override
+  String get notificationTimeToFocus => 'Time to focus!';
+
+  @override
+  String get notificationSkip => 'Skip';
+
+  @override
+  String get notificationReset => 'Reset';
+
+  @override
+  String get databaseAlreadyInitialized => 'Database already initialized';
+
+  @override
+  String get databaseInitComplete => 'Database initialization complete';
+
+  @override
+  String get databaseNotInitialized =>
+      'Database not initialized, please call initialize() first';
+
+  @override
+  String get unknownTask => 'Unknown task';
+
+  @override
+  String migrationComplete(int todosMigrated, int focusRecordsMigrated) {
+    return 'Migration complete: $todosMigrated tasks, $focusRecordsMigrated records';
+  }
+
+  @override
+  String get searchParentTask => 'Search parent task...';
+
+  @override
+  String get dropToSubtask => 'Release to convert to subtask';
 }
