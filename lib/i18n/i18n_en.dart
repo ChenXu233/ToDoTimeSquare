@@ -616,4 +616,51 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get exportDataDescription => 'Export your data in JSON or CSV format';
+
+  @override
+  String get tags => 'Tags';
+
+  @override
+  String get addTags => 'Add Tags';
+
+  @override
+  String get searchTags => 'Search tags...';
+
+  @override
+  String get noTagsAvailable => 'No tags available';
+
+  @override
+  String get noTagsYet => 'No tags yet';
+
+  @override
+  String get tagManagement => 'Tag Management';
+
+  @override
+  String get createTag => 'Create Tag';
+
+  @override
+  String get editTag => 'Edit Tag';
+
+  @override
+  String get deleteTag => 'Delete Tag';
+
+  @override
+  String deleteTagConfirm(String tagName) {
+    return 'Are you sure you want to delete tag \"$tagName\"?';
+  }
+
+  @override
+  String get tagName => 'Tag Name';
+
+  @override
+  String get tagType => 'Tag Type';
+
+  @override
+  String get tagColor => 'Tag Color';
+
+  @override
+  String get usageCount => 'used';
+
+  @override
+  String get all => 'All';
 }

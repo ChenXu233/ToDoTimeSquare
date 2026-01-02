@@ -8,6 +8,7 @@ import 'component/importance_segmented_button.dart';
 import 'component/parent_task_dropdown.dart';
 import 'component/duration_picker.dart';
 import 'component/start_time_picker.dart';
+import 'component/tag_selector.dart';
 
 class AddTodoModal extends StatefulWidget {
   final TaskModel? todo;
@@ -26,6 +27,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
   int? _estimatedDuration; // minutes
   DateTime? _plannedStartTime;
   String? _parentId;
+  List<String> _selectedTagIds = [];
 
   @override
   void initState() {
@@ -38,6 +40,18 @@ class _AddTodoModalState extends State<AddTodoModal> {
       _estimatedDuration = widget.todo!.estimatedDuration;
       _plannedStartTime = widget.todo!.plannedStartTime;
       _parentId = widget.todo!.parentId;
+      _loadExistingTags();
+    }
+  }
+
+  Future<void> _loadExistingTags() async {
+    if (widget.todo == null) return;
+    final tags =
+        await context.read<TodoProvider>().getTagsForTask(widget.todo!.id);
+    if (mounted) {
+      setState(() {
+        _selectedTagIds = tags.map((t) => t.id).toList();
+      });
     }
   }
 
@@ -72,7 +86,14 @@ class _AddTodoModalState extends State<AddTodoModal> {
     });
   }
 
-  void _submit() {
+  void _onTagsChanged(List<String> tagIds) {
+    if (!mounted) return;
+    setState(() {
+      _selectedTagIds = tagIds;
+    });
+  }
+
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       final provider = Provider.of<TodoProvider>(context, listen: false);
 
@@ -87,9 +108,11 @@ class _AddTodoModalState extends State<AddTodoModal> {
           plannedStartTime: _plannedStartTime,
           parentId: _parentId,
         );
-        provider.updateTodo(updatedTodo);
+        await provider.updateTodo(updatedTodo);
+        // 更新标签
+        await provider.setTagsForTask(widget.todo!.id, _selectedTagIds);
       } else {
-        provider.addTodo(
+        final newTodoId = provider.addTodo(
           _titleController.text,
           description: _descriptionController.text.isEmpty
               ? null
@@ -99,8 +122,14 @@ class _AddTodoModalState extends State<AddTodoModal> {
           plannedStartTime: _plannedStartTime,
           parentId: _parentId,
         );
+        // 添加标签
+        if (_selectedTagIds.isNotEmpty) {
+          await provider.setTagsForTask(newTodoId, _selectedTagIds);
+        }
       }
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -325,6 +354,13 @@ class _AddTodoModalState extends State<AddTodoModal> {
                     parentId: _parentId,
                     onChanged: _onParentChanged,
                     currentTodoId: widget.todo?.id,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Tags
+                  TagSelector(
+                    selectedTagIds: _selectedTagIds,
+                    onTagsChanged: _onTagsChanged,
                   ),
                   const SizedBox(height: 32),
 

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/database/database_initializer.dart';
 import '../models/repositories/todo_repository.dart';
+import '../models/repositories/task_tag_repository.dart';
+import '../models/entities/task_tag_model.dart';
 
 class TodoProvider extends ChangeNotifier {
   List<TaskModel> _todos = [];
   late final TodoRepository _repository;
+  TaskTagRepository? _tagRepository;
 
   List<TaskModel> get todos => _todos;
 
@@ -15,7 +18,13 @@ class TodoProvider extends ChangeNotifier {
   Future<void> _initialize() async {
     final db = DatabaseInitializer().database;
     _repository = TodoRepository(db);
+    _tagRepository = TaskTagRepository(db);
     await _loadTodos();
+  }
+
+  TaskTagRepository get tagRepository {
+    _tagRepository ??= TaskTagRepository(DatabaseInitializer().database);
+    return _tagRepository!;
   }
 
   void _sortTodos() {
@@ -175,6 +184,9 @@ class TodoProvider extends ChangeNotifier {
     notifyListeners();
 
     for (final todoId in idsToRemove) {
+      // 先删除标签关联
+      await tagRepository.deleteTaskTagRelationsByTodoId(todoId);
+      // 再删除任务
       await _repository.deleteTaskWithDescendants(todoId);
     }
   }
@@ -299,5 +311,42 @@ class TodoProvider extends ChangeNotifier {
     _todos[childIndex] = newChild;
     await _repository.updateTask(newChild);
     notifyListeners();
+  }
+
+  // ========== 任务标签操作 ==========
+
+  /// 获取任务的标签
+  Future<List<TaskTagEntity>> getTagsForTask(String todoId) async {
+    return await tagRepository.getTagsForTask(todoId);
+  }
+
+  /// 为任务添加标签
+  Future<void> addTagToTask(String todoId, String tagId) async {
+    await tagRepository.addTagToTask(todoId, tagId);
+    notifyListeners();
+  }
+
+  /// 为任务移除标签
+  Future<void> removeTagFromTask(String todoId, String tagId) async {
+    await tagRepository.removeTagFromTask(todoId, tagId);
+    notifyListeners();
+  }
+
+  /// 设置任务的标签（覆盖）
+  Future<void> setTagsForTask(String todoId, List<String> tagIds) async {
+    await tagRepository.setTagsForTask(todoId, tagIds);
+    notifyListeners();
+  }
+
+  /// 删除任务的关联标签（任务删除时调用）
+  Future<void> deleteRelationsForTask(String todoId) async {
+    await tagRepository.deleteTaskTagRelationsByTodoId(todoId);
+  }
+
+  /// 删除任务的关联标签（批量）
+  Future<void> deleteRelationsForTasks(List<String> todoIds) async {
+    for (final todoId in todoIds) {
+      await tagRepository.deleteTaskTagRelationsByTodoId(todoId);
+    }
   }
 }

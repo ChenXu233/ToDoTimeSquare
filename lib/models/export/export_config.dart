@@ -10,6 +10,8 @@ enum ExportDataType {
   focusRecords,
   habits,
   habitLogs,
+  taskTags,        // 新增：任务标签
+  taskTagRelations, // 新增：标签关联
 }
 
 /// 导出配置类

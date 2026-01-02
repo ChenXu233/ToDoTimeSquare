@@ -1260,6 +1260,96 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Export your data in JSON or CSV format'**
   String get exportDataDescription;
+
+  /// Label for tags
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tags;
+
+  /// Button text to add tags
+  ///
+  /// In en, this message translates to:
+  /// **'Add Tags'**
+  String get addTags;
+
+  /// Placeholder text for tag search
+  ///
+  /// In en, this message translates to:
+  /// **'Search tags...'**
+  String get searchTags;
+
+  /// Message when no tags are available
+  ///
+  /// In en, this message translates to:
+  /// **'No tags available'**
+  String get noTagsAvailable;
+
+  /// Message when no tags exist yet
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet'**
+  String get noTagsYet;
+
+  /// Title for tag management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Management'**
+  String get tagManagement;
+
+  /// Button text to create a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Create Tag'**
+  String get createTag;
+
+  /// Title for edit tag dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Tag'**
+  String get editTag;
+
+  /// Title for delete tag dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Tag'**
+  String get deleteTag;
+
+  /// Confirmation message when deleting a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete tag \"{tagName}\"?'**
+  String deleteTagConfirm(String tagName);
+
+  /// Label for tag name input
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Name'**
+  String get tagName;
+
+  /// Label for tag type selection
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Type'**
+  String get tagType;
+
+  /// Label for tag color selection
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Color'**
+  String get tagColor;
+
+  /// Usage count label
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get usageCount;
+
+  /// All filter option
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

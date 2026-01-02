@@ -7,6 +7,7 @@ import '../models/repositories/todo_repository.dart';
 import '../models/repositories/focus_record_repository.dart';
 import '../models/repositories/habit_repository.dart';
 import '../models/repositories/habit_log_repository.dart';
+import '../models/repositories/task_tag_repository.dart';
 
 /// 数据导出服务
 /// 提供 JSON 和 CSV 格式的数据导出功能
@@ -90,31 +91,46 @@ class DataExportService {
         return await _exportHabits(config);
       case ExportDataType.habitLogs:
         return await _exportHabitLogs(config);
+      case ExportDataType.taskTags:
+        return await _exportTaskTags(config);
+      case ExportDataType.taskTagRelations:
+        return await _exportTaskTagRelations(config);
     }
   }
 
   /// 导出待办事项
   Future<List<Map<String, dynamic>>> _exportTodos(ExportConfig config) async {
     final repository = TodoRepository(db);
+    final tagRepository = TaskTagRepository(db);
     final allTasks = await repository.getAllTasks();
 
-    return allTasks
-        .map((task) => {
-              'id': task.id,
-              'title': task.title,
-              'description': task.description,
-              'estimatedDuration': task.estimatedDuration,
-              'importance': task.importance,
-              'importanceLabel': _getImportanceLabel(task.importance),
-              'plannedStartTime': task.plannedStartTime?.toIso8601String(),
-              'isCompleted': task.isCompleted,
-              'parentId': task.parentId,
-              'createdAt': task.createdAt.toIso8601String(),
-              'updatedAt': task.updatedAt.toIso8601String(),
-              'completedAt': task.completedAt?.toIso8601String(),
-            })
-        .where((task) => _isInDateRange(task['createdAt'], config))
-        .toList();
+    final results = <Map<String, dynamic>>[];
+    for (final task in allTasks) {
+      // 获取任务的标签
+      final relations = await tagRepository.getRelationsByTodoId(task.id);
+      final tagIds = relations.map((r) => r.tagId).toList();
+
+      final taskData = {
+        'id': task.id,
+        'title': task.title,
+        'description': task.description,
+        'estimatedDuration': task.estimatedDuration,
+        'importance': task.importance,
+        'importanceLabel': _getImportanceLabel(task.importance),
+        'plannedStartTime': task.plannedStartTime?.toIso8601String(),
+        'isCompleted': task.isCompleted,
+        'parentId': task.parentId,
+        'tagIds': tagIds,
+        'createdAt': task.createdAt.toIso8601String(),
+        'updatedAt': task.updatedAt.toIso8601String(),
+        'completedAt': task.completedAt?.toIso8601String(),
+      };
+
+      if (_isInDateRange(taskData['createdAt'], config)) {
+        results.add(taskData);
+      }
+    }
+    return results;
   }
 
   /// 导出专注记录
@@ -271,6 +287,77 @@ class DataExportService {
         return 'habits';
       case ExportDataType.habitLogs:
         return 'habitLogs';
+      case ExportDataType.taskTags:
+        return 'taskTags';
+      case ExportDataType.taskTagRelations:
+        return 'taskTagRelations';
+    }
+  }
+
+  /// 导出任务标签
+  Future<List<Map<String, dynamic>>> _exportTaskTags(
+    ExportConfig config,
+  ) async {
+    final repository = TaskTagRepository(db);
+    final allTags = await repository.getAllTags();
+
+    return allTags
+        .map((tag) => {
+              'id': tag.id,
+              'userId': tag.userId,
+              'name': tag.name,
+              'color': tag.color,
+              'type': tag.type.index,
+              'typeLabel': _getTagTypeLabel(tag.type.index),
+              'icon': tag.icon,
+              'isPreset': tag.isPreset,
+              'usageCount': tag.usageCount,
+              'createdAt': tag.createdAt.toIso8601String(),
+              'updatedAt': tag.updatedAt.toIso8601String(),
+            })
+        .where((tag) => _isInDateRange(tag['createdAt'], config))
+        .toList();
+  }
+
+  /// 导出任务标签关联
+  Future<List<Map<String, dynamic>>> _exportTaskTagRelations(
+    ExportConfig config,
+  ) async {
+    final repository = TaskTagRepository(db);
+    final tagRelations = <Map<String, dynamic>>[];
+
+    // 获取所有标签的关联
+    final allTags = await repository.getAllTags();
+    for (final tag in allTags) {
+      final relations = await repository.getRelationsByTagId(tag.id);
+      for (final relation in relations) {
+        tagRelations.add({
+          'id': relation.id,
+          'todoId': relation.todoId,
+          'tagId': relation.tagId,
+          'createdAt': relation.createdAt.toIso8601String(),
+        });
+      }
+    }
+
+    return tagRelations
+        .where((rel) => _isInDateRange(rel['createdAt'], config))
+        .toList();
+  }
+
+  /// 获取标签类型标签
+  String _getTagTypeLabel(int type) {
+    switch (type) {
+      case 0:
+        return 'color';
+      case 1:
+        return 'project';
+      case 2:
+        return 'context';
+      case 3:
+        return 'custom';
+      default:
+        return 'unknown';
     }
   }
 

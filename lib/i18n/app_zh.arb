@@ -531,5 +531,69 @@
   "exportDataDescription": "将数据导出为 JSON 或 CSV 格式",
   "@exportDataDescription": {
     "description": "数据导出功能说明"
+  },
+
+  "tags": "标签",
+  "@tags": {
+    "description": "标签标签"
+  },
+  "addTags": "添加标签",
+  "@addTags": {
+    "description": "添加标签按钮文本"
+  },
+  "searchTags": "搜索标签...",
+  "@searchTags": {
+    "description": "标签搜索占位符文本"
+  },
+  "noTagsAvailable": "暂无可用标签",
+  "@noTagsAvailable": {
+    "description": "没有可用标签时显示的消息"
+  },
+  "noTagsYet": "暂无标签",
+  "@noTagsYet": {
+    "description": "没有标签时显示的消息"
+  },
+  "tagManagement": "标签管理",
+  "@tagManagement": {
+    "description": "标签管理页面标题"
+  },
+  "createTag": "创建标签",
+  "@createTag": {
+    "description": "创建标签按钮文本"
+  },
+  "editTag": "编辑标签",
+  "@editTag": {
+    "description": "编辑标签对话框标题"
+  },
+  "deleteTag": "删除标签",
+  "@deleteTag": {
+    "description": "删除标签对话框标题"
+  },
+  "deleteTagConfirm": "确定要删除标签「{tagName}」吗？",
+  "@deleteTagConfirm": {
+    "description": "删除标签时的确认消息",
+    "placeholders": {
+      "tagName": { "type": "String", "example": "工作" }
+    }
+  },
+  "tagName": "标签名称",
+  "@tagName": {
+    "description": "标签名称输入标签"
+  },
+  "tagType": "标签类型",
+  "@tagType": {
+    "description": "标签类型选择标签"
+  },
+  "tagColor": "标签颜色",
+  "@tagColor": {
+    "description": "标签颜色选择标签"
+  },
+  "usageCount": "次使用",
+  "@usageCount": {
+    "description": "使用次数标签"
+  },
+  "all": "全部",
+  "@all": {
+    "description": "全部筛选选项"
   }
 }

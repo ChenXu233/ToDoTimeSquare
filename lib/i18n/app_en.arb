@@ -747,5 +747,69 @@
   "exportDataDescription": "Export your data in JSON or CSV format",
   "@exportDataDescription": {
     "description": "Description for data export feature"
+  },
+
+  "tags": "Tags",
+  "@tags": {
+    "description": "Label for tags"
+  },
+  "addTags": "Add Tags",
+  "@addTags": {
+    "description": "Button text to add tags"
+  },
+  "searchTags": "Search tags...",
+  "@searchTags": {
+    "description": "Placeholder text for tag search"
+  },
+  "noTagsAvailable": "No tags available",
+  "@noTagsAvailable": {
+    "description": "Message when no tags are available"
+  },
+  "noTagsYet": "No tags yet",
+  "@noTagsYet": {
+    "description": "Message when no tags exist yet"
+  },
+  "tagManagement": "Tag Management",
+  "@tagManagement": {
+    "description": "Title for tag management screen"
+  },
+  "createTag": "Create Tag",
+  "@createTag": {
+    "description": "Button text to create a tag"
+  },
+  "editTag": "Edit Tag",
+  "@editTag": {
+    "description": "Title for edit tag dialog"
+  },
+  "deleteTag": "Delete Tag",
+  "@deleteTag": {
+    "description": "Title for delete tag dialog"
+  },
+  "deleteTagConfirm": "Are you sure you want to delete tag \"{tagName}\"?",
+  "@deleteTagConfirm": {
+    "description": "Confirmation message when deleting a tag",
+    "placeholders": {
+      "tagName": { "type": "String", "example": "Work" }
+    }
+  },
+  "tagName": "Tag Name",
+  "@tagName": {
+    "description": "Label for tag name input"
+  },
+  "tagType": "Tag Type",
+  "@tagType": {
+    "description": "Label for tag type selection"
+  },
+  "tagColor": "Tag Color",
+  "@tagColor": {
+    "description": "Label for tag color selection"
+  },
+  "usageCount": "used",
+  "@usageCount": {
+    "description": "Usage count label"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All filter option"
   }
 }

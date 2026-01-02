@@ -604,4 +604,51 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get exportDataDescription => '将数据导出为 JSON 或 CSV 格式';
+
+  @override
+  String get tags => '标签';
+
+  @override
+  String get addTags => '添加标签';
+
+  @override
+  String get searchTags => '搜索标签...';
+
+  @override
+  String get noTagsAvailable => '暂无可用标签';
+
+  @override
+  String get noTagsYet => '暂无标签';
+
+  @override
+  String get tagManagement => '标签管理';
+
+  @override
+  String get createTag => '创建标签';
+
+  @override
+  String get editTag => '编辑标签';
+
+  @override
+  String get deleteTag => '删除标签';
+
+  @override
+  String deleteTagConfirm(String tagName) {
+    return '确定要删除标签「$tagName」吗？';
+  }
+
+  @override
+  String get tagName => '标签名称';
+
+  @override
+  String get tagType => '标签类型';
+
+  @override
+  String get tagColor => '标签颜色';
+
+  @override
+  String get usageCount => '次使用';
+
+  @override
+  String get all => '全部';
 }
