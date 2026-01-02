@@ -686,5 +686,66 @@
   "invalidEmail": "Please enter a valid email address",
   "@invalidEmail": {
     "description": "Invalid email error message"
+  },
+
+  "exportData": "Export Data",
+  "@exportData": {
+    "description": "Title for export data dialog"
+  },
+  "export": "Export",
+  "@export": {
+    "description": "Export button label"
+  },
+  "exportDataTypes": "Data Types",
+  "@exportDataTypes": {
+    "description": "Label for data type selection"
+  },
+  "exportFormat": "Format",
+  "@exportFormat": {
+    "description": "Label for export format selection"
+  },
+  "exportFormatJson": "Structured data, easy to restore",
+  "@exportFormatJson": {
+    "description": "Description for JSON format"
+  },
+  "exportFormatCsv": "Table data, compatible with Excel",
+  "@exportFormatCsv": {
+    "description": "Description for CSV format"
+  },
+  "exportDateRange": "Date Range",
+  "@exportDateRange": {
+    "description": "Label for date range selection"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Label for start date"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "Label for end date"
+  },
+  "exportPreparing": "Preparing export...",
+  "@exportPreparing": {
+    "description": "Status message when preparing export"
+  },
+  "exportSuccess": "Exported {count} records to {filePath}",
+  "@exportSuccess": {
+    "description": "Success message after export",
+    "placeholders": {
+      "count": { "type": "int", "example": "100" },
+      "filePath": { "type": "String", "example": "C:/Users/xxx/export.json" }
+    }
+  },
+  "exportNoDataTypeSelected": "Please select at least one data type",
+  "@exportNoDataTypeSelected": {
+    "description": "Error message when no data type selected"
+  },
+  "dataManagement": "Data Management",
+  "@dataManagement": {
+    "description": "Title for data management section"
+  },
+  "exportDataDescription": "Export your data in JSON or CSV format",
+  "@exportDataDescription": {
+    "description": "Description for data export feature"
   }
 }

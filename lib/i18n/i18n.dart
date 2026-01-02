@@ -1176,6 +1176,90 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Please enter a valid email address'**
   String get invalidEmail;
+
+  /// Title for export data dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// Export button label
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get export;
+
+  /// Label for data type selection
+  ///
+  /// In en, this message translates to:
+  /// **'Data Types'**
+  String get exportDataTypes;
+
+  /// Label for export format selection
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get exportFormat;
+
+  /// Description for JSON format
+  ///
+  /// In en, this message translates to:
+  /// **'Structured data, easy to restore'**
+  String get exportFormatJson;
+
+  /// Description for CSV format
+  ///
+  /// In en, this message translates to:
+  /// **'Table data, compatible with Excel'**
+  String get exportFormatCsv;
+
+  /// Label for date range selection
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get exportDateRange;
+
+  /// Label for start date
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// Label for end date
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// Status message when preparing export
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing export...'**
+  String get exportPreparing;
+
+  /// Success message after export
+  ///
+  /// In en, this message translates to:
+  /// **'Exported {count} records to {filePath}'**
+  String exportSuccess(int count, String filePath);
+
+  /// Error message when no data type selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one data type'**
+  String get exportNoDataTypeSelected;
+
+  /// Title for data management section
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// Description for data export feature
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data in JSON or CSV format'**
+  String get exportDataDescription;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

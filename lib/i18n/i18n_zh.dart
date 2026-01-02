@@ -560,4 +560,48 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get invalidEmail => '请输入有效的邮箱地址';
+
+  @override
+  String get exportData => '导出数据';
+
+  @override
+  String get export => '导出';
+
+  @override
+  String get exportDataTypes => '数据类型';
+
+  @override
+  String get exportFormat => '导出格式';
+
+  @override
+  String get exportFormatJson => '结构化数据，便于恢复';
+
+  @override
+  String get exportFormatCsv => '表格数据，兼容 Excel';
+
+  @override
+  String get exportDateRange => '时间范围';
+
+  @override
+  String get startDate => '开始日期';
+
+  @override
+  String get endDate => '结束日期';
+
+  @override
+  String get exportPreparing => '正在准备导出...';
+
+  @override
+  String exportSuccess(int count, String filePath) {
+    return '已导出 $count 条记录到 $filePath';
+  }
+
+  @override
+  String get exportNoDataTypeSelected => '请至少选择一种数据类型';
+
+  @override
+  String get dataManagement => '数据管理';
+
+  @override
+  String get exportDataDescription => '将数据导出为 JSON 或 CSV 格式';
 }

@@ -572,4 +572,48 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get invalidEmail => 'Please enter a valid email address';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get exportDataTypes => 'Data Types';
+
+  @override
+  String get exportFormat => 'Format';
+
+  @override
+  String get exportFormatJson => 'Structured data, easy to restore';
+
+  @override
+  String get exportFormatCsv => 'Table data, compatible with Excel';
+
+  @override
+  String get exportDateRange => 'Date Range';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get exportPreparing => 'Preparing export...';
+
+  @override
+  String exportSuccess(int count, String filePath) {
+    return 'Exported $count records to $filePath';
+  }
+
+  @override
+  String get exportNoDataTypeSelected => 'Please select at least one data type';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get exportDataDescription => 'Export your data in JSON or CSV format';
 }
