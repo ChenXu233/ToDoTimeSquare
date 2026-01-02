@@ -162,8 +162,7 @@ class APPi18nZh extends APPi18n {
   String get pomodoroInfo => '番茄工作法';
 
   @override
-  String get pomodoroInfoContent =>
-      '番茄工作法使用定时器将工作分解为间隔，通常为25分钟，中间有短暂的休息。本应用将其简化为专注和短休息的循环。';
+  String get pomodoroInfoContent => '番茄工作法使用定时器将工作分解为间隔，通常为25分钟，中间有短暂的休息。本应用将其简化为专注和短休息的循环。';
 
   @override
   String get homeMessage => '专注. 组织. 实现.';
@@ -175,8 +174,7 @@ class APPi18nZh extends APPi18n {
   String get version => '版本';
 
   @override
-  String get somethingIWantToSay =>
-      '这个应用是我突发奇想的一个项目，希望能帮助大家更好地管理时间和任务。如果你有任何建议或反馈，欢迎随时联系我！';
+  String get somethingIWantToSay => '这个应用是我突发奇想的一个项目，希望能帮助大家更好地管理时间和任务。如果你有任何建议或反馈，欢迎随时联系我！';
 
   @override
   String get details => '详情';
@@ -185,8 +183,7 @@ class APPi18nZh extends APPi18n {
   String get share => '分享';
 
   @override
-  String get appdetails =>
-      'ToDoTimeSquare是一款专为偏好灵活与开放的认知风格（MBTI中的P型人格）设计的生产力应用，其核心创新在于将非结构化的动态任务池与标准番茄工作法深度结合，形成一套“自由选择，专注执行”的循环系统：应用提供一个无强制性排序、可随时增删的开放式待办清单作为“任务储备库”，用户无需提前规划全天日程，而是根据当下状态与兴趣从中即时挑选单一任务，随即启动一个定制的番茄钟（如25分钟专注+5分钟休息），进入受保护的心流冲刺阶段；每个番茄钟完成后，系统提供即时视觉反馈与数据统计，任务自动标记完成，用户既可延续同一任务进行下一轮冲刺，也可毫无负担地返回清单自由选择新目标。这一设计通过将宏观的计划压力分解为微观的自主行动单元，有效降低了决策门槛与拖延倾向，使灵活散漫的思维方式转化为可持续的专注生产力，让时间管理不再是束缚探索的框架，而是支持即兴创造的工具。';
+  String get appdetails => 'ToDoTimeSquare是一款专为偏好灵活与开放的认知风格（MBTI中的P型人格）设计的生产力应用，其核心创新在于将非结构化的动态任务池与标准番茄工作法深度结合，形成一套“自由选择，专注执行”的循环系统：应用提供一个无强制性排序、可随时增删的开放式待办清单作为“任务储备库”，用户无需提前规划全天日程，而是根据当下状态与兴趣从中即时挑选单一任务，随即启动一个定制的番茄钟（如25分钟专注+5分钟休息），进入受保护的心流冲刺阶段；每个番茄钟完成后，系统提供即时视觉反馈与数据统计，任务自动标记完成，用户既可延续同一任务进行下一轮冲刺，也可毫无负担地返回清单自由选择新目标。这一设计通过将宏观的计划压力分解为微观的自主行动单元，有效降低了决策门槛与拖延倾向，使灵活散漫的思维方式转化为可持续的专注生产力，让时间管理不再是束缚探索的框架，而是支持即兴创造的工具。';
 
   @override
   String get statistics => '统计';
@@ -387,4 +384,108 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get createFirstHabit => '点击下方按钮创建你的第一个习惯';
+
+  @override
+  String get notificationServiceUnavailable => '通知服务不可用';
+
+  @override
+  String get databaseInitSuccess => '数据库初始化成功';
+
+  @override
+  String get databaseInitFailed => '数据库初始化失败';
+
+  @override
+  String get languageAuto => '自动';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageChinese => '中文';
+
+  @override
+  String get errorNetworkTimeout => '网络连接超时，请检查网络设置';
+
+  @override
+  String get errorNetworkConnection => '无法连接到服务器，请检查网络连接';
+
+  @override
+  String get errorNetworkRequest => '网络请求失败';
+
+  @override
+  String get errorNetworkDomain => '无法解析域名，请检查网络连接';
+
+  @override
+  String get errorNetworkGeneric => '网络错误';
+
+  @override
+  String get errorFileNotFound => '文件不存在，可能已被移动或删除';
+
+  @override
+  String get errorFilePermission => '没有文件访问权限，请检查应用权限设置';
+
+  @override
+  String get errorFileInUse => '文件被其他程序占用，请关闭其他应用后重试';
+
+  @override
+  String get errorFileGeneric => '文件访问错误';
+
+  @override
+  String get errorAudioFormat => '音频格式不支持，无法播放此文件';
+
+  @override
+  String get errorAudioDuration => '无法获取音频时长信息';
+
+  @override
+  String get errorAudioGeneric => '音频播放错误';
+
+  @override
+  String get errorPlaybackGeneric => '播放出错';
+
+  @override
+  String get errorCacheGeneric => '缓存错误';
+
+  @override
+  String get errorUnknown => '发生错误';
+
+  @override
+  String get retry => '重试';
+
+  @override
+  String get notificationFocusEnded => '专注结束';
+
+  @override
+  String get notificationBreakEnded => '休息结束';
+
+  @override
+  String get notificationTimeToBreak => '该休息了！';
+
+  @override
+  String get notificationTimeToFocus => '该专注了！';
+
+  @override
+  String get notificationSkip => '跳过';
+
+  @override
+  String get notificationReset => '重置';
+
+  @override
+  String get databaseAlreadyInitialized => '数据库已初始化';
+
+  @override
+  String get databaseInitComplete => '数据库初始化完成';
+
+  @override
+  String get databaseNotInitialized => '数据库未初始化，请先调用 initialize()';
+
+  @override
+  String get unknownTask => '未知任务';
+
+  @override
+  String migrationComplete(int todosMigrated, int focusRecordsMigrated) {
+    return '迁移完成：任务 $todosMigrated 条，记录 $focusRecordsMigrated 条';
+  }
+
+  @override
+  String get searchParentTask => '搜索父任务...';
 }

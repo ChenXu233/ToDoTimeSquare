@@ -273,5 +273,104 @@
   "createFirstHabit": "点击下方按钮创建你的第一个习惯",
   "@createFirstHabit": {
     "description": "创建第一个习惯的提示"
-  }
+  },
+  "notificationServiceUnavailable": "通知服务不可用",
+  "@notificationServiceUnavailable": {
+    "description": "通知服务初始化失败时显示的提示"
+  },
+  "databaseInitSuccess": "数据库初始化成功",
+  "@databaseInitSuccess": {
+    "description": "数据库初始化成功的调试信息"
+  },
+  "databaseInitFailed": "数据库初始化失败",
+  "@databaseInitFailed": {
+    "description": "数据库初始化失败的调试信息"
+  },
+  "languageAuto": "自动",
+  "@languageAuto": {
+    "description": "自动语言选择选项"
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "英语语言选项"
+  },
+  "languageChinese": "中文",
+  "@languageChinese": {
+    "description": "中文语言选项"
+  },
+
+  "errorNetworkTimeout": "网络连接超时，请检查网络设置",
+  "@errorNetworkTimeout": { "description": "网络超时错误消息" },
+  "errorNetworkConnection": "无法连接到服务器，请检查网络连接",
+  "@errorNetworkConnection": { "description": "网络连接错误消息" },
+  "errorNetworkRequest": "网络请求失败",
+  "@errorNetworkRequest": { "description": "网络请求失败消息" },
+  "errorNetworkDomain": "无法解析域名，请检查网络连接",
+  "@errorNetworkDomain": { "description": "域名解析错误消息" },
+  "errorNetworkGeneric": "网络错误",
+  "@errorNetworkGeneric": { "description": "通用网络错误消息" },
+
+  "errorFileNotFound": "文件不存在，可能已被移动或删除",
+  "@errorFileNotFound": { "description": "文件未找到错误消息" },
+  "errorFilePermission": "没有文件访问权限，请检查应用权限设置",
+  "@errorFilePermission": { "description": "文件权限错误消息" },
+  "errorFileInUse": "文件被其他程序占用，请关闭其他应用后重试",
+  "@errorFileInUse": { "description": "文件占用错误消息" },
+  "errorFileGeneric": "文件访问错误",
+  "@errorFileGeneric": { "description": "通用文件错误消息" },
+
+  "errorAudioFormat": "音频格式不支持，无法播放此文件",
+  "@errorAudioFormat": { "description": "不支持的音频格式消息" },
+  "errorAudioDuration": "无法获取音频时长信息",
+  "@errorAudioDuration": { "description": "音频时长错误消息" },
+  "errorAudioGeneric": "音频播放错误",
+  "@errorAudioGeneric": { "description": "通用音频错误消息" },
+
+  "errorPlaybackGeneric": "播放出错",
+  "@errorPlaybackGeneric": { "description": "通用播放错误消息" },
+
+  "errorCacheGeneric": "缓存错误",
+  "@errorCacheGeneric": { "description": "通用缓存错误消息" },
+
+  "errorUnknown": "发生错误",
+  "@errorUnknown": { "description": "未知错误消息" },
+
+  "retry": "重试",
+  "@retry": { "description": "重试按钮标签" },
+
+  "notificationFocusEnded": "专注结束",
+  "@notificationFocusEnded": { "description": "专注结束时的通知标题" },
+  "notificationBreakEnded": "休息结束",
+  "@notificationBreakEnded": { "description": "休息结束时的通知标题" },
+  "notificationTimeToBreak": "该休息了！",
+  "@notificationTimeToBreak": { "description": "专注结束时的通知内容" },
+  "notificationTimeToFocus": "该专注了！",
+  "@notificationTimeToFocus": { "description": "休息结束时的通知内容" },
+
+  "notificationSkip": "跳过",
+  "@notificationSkip": { "description": "通知跳过按钮" },
+  "notificationReset": "重置",
+  "@notificationReset": { "description": "通知重置按钮" },
+
+  "databaseAlreadyInitialized": "数据库已初始化",
+  "@databaseAlreadyInitialized": { "description": "数据库已初始化时的消息" },
+  "databaseInitComplete": "数据库初始化完成",
+  "@databaseInitComplete": { "description": "数据库初始化完成时的消息" },
+  "databaseNotInitialized": "数据库未初始化，请先调用 initialize()",
+  "@databaseNotInitialized": { "description": "数据库未初始化时的错误" },
+
+  "unknownTask": "未知任务",
+  "@unknownTask": { "description": "默认任务名称" },
+
+  "migrationComplete": "迁移完成：任务 {todosMigrated} 条，记录 {focusRecordsMigrated} 条",
+  "@migrationComplete": {
+    "description": "迁移完成时的消息",
+    "placeholders": {
+      "todosMigrated": { "type": "int", "example": "10" },
+      "focusRecordsMigrated": { "type": "int", "example": "5" }
+    }
+  },
+
+  "searchParentTask": "搜索父任务...",
+  "@searchParentTask": { "description": "父任务搜索提示文本" }
 }

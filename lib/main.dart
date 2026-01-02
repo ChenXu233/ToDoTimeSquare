@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,10 +31,12 @@ void main() async {
   final dbInitResult = await DatabaseInitializer().initialize(
     enableMigration: false,
   );
-  if (dbInitResult.success) {
-    debugPrint('数据库初始化成功：${dbInitResult.message}');
-  } else {
-    debugPrint('数据库初始化失败：${dbInitResult.message}');
+  if (kDebugMode) {
+    if (dbInitResult.success) {
+      debugPrint('Database initialized successfully: ${dbInitResult.message}');
+    } else {
+      debugPrint('Database initialization failed: ${dbInitResult.message}');
+    }
   }
 
   if (_isDesktopPlatform() && !_isTestEnvironment()) {
@@ -67,8 +69,13 @@ void main() async {
         await NotificationService().init();
       } catch (e, st) {
         debugPrint('NotificationService init failed: $e\n$st');
+        final i18n = APPi18n.of(scaffoldMessengerKey.currentContext!);
         scaffoldMessengerKey.currentState?.showSnackBar(
-          const SnackBar(content: Text('NotificationService不可用')),
+          SnackBar(
+            content: Text(
+              i18n?.notificationServiceUnavailable ?? 'Notification service unavailable',
+            ),
+          ),
         );
       }
     }();

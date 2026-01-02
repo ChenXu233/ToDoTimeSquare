@@ -62,8 +62,7 @@ import 'i18n_zh.dart';
 /// be consistent with the languages listed in the APPi18n.supportedLocales
 /// property.
 abstract class APPi18n {
-  APPi18n(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  APPi18n(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -83,18 +82,17 @@ abstract class APPi18n {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('zh'),
+    Locale('zh')
   ];
 
   /// The title of the application
@@ -834,6 +832,210 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Tap the button below to create your first habit'**
   String get createFirstHabit;
+
+  /// Snackbar message when notification service fails to initialize
+  ///
+  /// In en, this message translates to:
+  /// **'Notification service unavailable'**
+  String get notificationServiceUnavailable;
+
+  /// Debug message for successful database initialization
+  ///
+  /// In en, this message translates to:
+  /// **'Database initialized successfully'**
+  String get databaseInitSuccess;
+
+  /// Debug message for failed database initialization
+  ///
+  /// In en, this message translates to:
+  /// **'Database initialization failed'**
+  String get databaseInitFailed;
+
+  /// Auto language selection option
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get languageAuto;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// Chinese language option
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get languageChinese;
+
+  /// Network timeout error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network connection timeout, please check your network settings'**
+  String get errorNetworkTimeout;
+
+  /// Network connection error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to connect to server, please check your network connection'**
+  String get errorNetworkConnection;
+
+  /// Network request failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Network request failed'**
+  String get errorNetworkRequest;
+
+  /// Domain resolution error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to resolve domain name, please check your network connection'**
+  String get errorNetworkDomain;
+
+  /// Generic network error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network error'**
+  String get errorNetworkGeneric;
+
+  /// File not found error message
+  ///
+  /// In en, this message translates to:
+  /// **'File does not exist, it may have been moved or deleted'**
+  String get errorFileNotFound;
+
+  /// File permission error message
+  ///
+  /// In en, this message translates to:
+  /// **'No file access permission, please check app permission settings'**
+  String get errorFilePermission;
+
+  /// File in use error message
+  ///
+  /// In en, this message translates to:
+  /// **'File is being used by another program, please close other apps and retry'**
+  String get errorFileInUse;
+
+  /// Generic file error message
+  ///
+  /// In en, this message translates to:
+  /// **'File access error'**
+  String get errorFileGeneric;
+
+  /// Unsupported audio format message
+  ///
+  /// In en, this message translates to:
+  /// **'Audio format not supported, unable to play this file'**
+  String get errorAudioFormat;
+
+  /// Audio duration error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to get audio duration information'**
+  String get errorAudioDuration;
+
+  /// Generic audio error message
+  ///
+  /// In en, this message translates to:
+  /// **'Audio playback error'**
+  String get errorAudioGeneric;
+
+  /// Generic playback error message
+  ///
+  /// In en, this message translates to:
+  /// **'Playback error'**
+  String get errorPlaybackGeneric;
+
+  /// Generic cache error message
+  ///
+  /// In en, this message translates to:
+  /// **'Cache error'**
+  String get errorCacheGeneric;
+
+  /// Unknown error message
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorUnknown;
+
+  /// Retry button label
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Notification title when focus ends
+  ///
+  /// In en, this message translates to:
+  /// **'Focus ended'**
+  String get notificationFocusEnded;
+
+  /// Notification title when break ends
+  ///
+  /// In en, this message translates to:
+  /// **'Break ended'**
+  String get notificationBreakEnded;
+
+  /// Notification body when focus ends
+  ///
+  /// In en, this message translates to:
+  /// **'Time for a break!'**
+  String get notificationTimeToBreak;
+
+  /// Notification body when break ends
+  ///
+  /// In en, this message translates to:
+  /// **'Time to focus!'**
+  String get notificationTimeToFocus;
+
+  /// Notification skip button
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get notificationSkip;
+
+  /// Notification reset button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get notificationReset;
+
+  /// Message when database is already initialized
+  ///
+  /// In en, this message translates to:
+  /// **'Database already initialized'**
+  String get databaseAlreadyInitialized;
+
+  /// Message when database initialization is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Database initialization complete'**
+  String get databaseInitComplete;
+
+  /// Error when database not initialized
+  ///
+  /// In en, this message translates to:
+  /// **'Database not initialized, please call initialize() first'**
+  String get databaseNotInitialized;
+
+  /// Default task name when unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown task'**
+  String get unknownTask;
+
+  /// Message when migration is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Migration complete: {todosMigrated} tasks, {focusRecordsMigrated} records'**
+  String migrationComplete(int todosMigrated, int focusRecordsMigrated);
+
+  /// Hint text for parent task search
+  ///
+  /// In en, this message translates to:
+  /// **'Search parent task...'**
+  String get searchParentTask;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
@@ -845,26 +1047,25 @@ class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_APPi18nDelegate old) => false;
 }
 
 APPi18n lookupAPPi18n(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return APPi18nEn();
-    case 'zh':
-      return APPi18nZh();
+    case 'en': return APPi18nEn();
+    case 'zh': return APPi18nZh();
   }
 
   throw FlutterError(
     'APPi18n.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }
