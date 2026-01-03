@@ -153,9 +153,9 @@ class _AddTodoModalState extends State<AddTodoModal> {
           color: Colors.transparent,
           child: GlassContainer(
             margin: const EdgeInsets.all(24),
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.zero, // 移除内边距，由内部 Scroll 接管
             color: glassColor,
-            opacity: 0.1, // Increased opacity for better visibility
+            opacity: 0.1,
             blur: 20,
             border: Border.all(
               color: colorScheme.outlineVariant.withAlpha(
@@ -169,218 +169,263 @@ class _AddTodoModalState extends State<AddTodoModal> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        widget.todo != null ? "Edit Todo" : i18n.addTask,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(
-                              color: textColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(
-                          Icons.close,
-                          color: textColor.withAlpha(((0.5) * 255).round()),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Title
-                  TextFormField(
-                    controller: _titleController,
-                    style: TextStyle(color: textColor),
-                    decoration: InputDecoration(
-                      labelText: i18n.taskName,
-                      labelStyle: TextStyle(
-                        color: textColor.withAlpha(((0.7) * 255).round()),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: textColor.withAlpha(((0.3) * 255).round()),
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: colorScheme.primary),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerHighest.withAlpha(
-                        ((0.3) * 255).round(),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return i18n.pleaseEnterTitle;
-                      }
-                      return null;
-                    },
-                  ),
+                  // 标题栏（固定不滚动）
+                  _buildHeader(context, i18n, textColor),
                   const SizedBox(height: 16),
 
-                  // Description
-                  TextFormField(
-                    controller: _descriptionController,
-                    style: TextStyle(color: textColor),
-                    decoration: InputDecoration(
-                      labelText: i18n.taskDescription,
-                      labelStyle: TextStyle(
-                        color: textColor.withAlpha(((0.7) * 255).round()),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: textColor.withAlpha(((0.3) * 255).round()),
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: colorScheme.primary),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerHighest.withAlpha(
-                        ((0.3) * 255).round(),
+                  // 表单内容（可滚动）
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: _buildFormContent(
+                        context,
+                        i18n,
+                        colorScheme,
+                        textColor,
                       ),
                     ),
-                    maxLines: 3,
                   ),
-                  const SizedBox(height: 24),
 
-                  // Importance
-                  ImportanceSegmentedButton(
-                    importance: _importance,
-                    onChanged: (newImportance) {
-                      if (!mounted) return;
-                      setState(() {
-                        _importance = newImportance;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Duration & Start Time
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DurationPicker(
-                          duration: _estimatedDuration != null
-                              ? Duration(minutes: _estimatedDuration!)
-                              : null,
-                          onPick: () async {
-                            final TimeOfDay? time = await showTimePicker(
-                              context: context,
-                              initialTime: const TimeOfDay(hour: 0, minute: 30),
-                              helpText: "Select Duration (Hours : Minutes)",
-                              builder: (context, child) {
-                                return MediaQuery(
-                                  data: MediaQuery.of(
-                                    context,
-                                  ).copyWith(alwaysUse24HourFormat: true),
-                                  child: child!,
-                                );
-                              },
-                            );
-                            if (!mounted) return;
-                            if (time != null) {
-                              _onDurationChanged(
-                                Duration(
-                                  hours: time.hour,
-                                  minutes: time.minute,
-                                ),
-                              );
-                            }
-                          },
-                          label: i18n.duration,
-                          notSetText: i18n.notSet,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: StartTimePicker(
-                          startTime: _plannedStartTime,
-                          onPick: () async {
-                            final DateTime? date = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime.now().add(
-                                const Duration(days: 365),
-                              ),
-                            );
-                            if (!context.mounted) return;
-                            if (date != null) {
-                              final TimeOfDay? time = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              );
-                              if (!context.mounted) return;
-                              if (time != null) {
-                                _onStartTimeChanged(
-                                  DateTime(
-                                    date.year,
-                                    date.month,
-                                    date.day,
-                                    time.hour,
-                                    time.minute,
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          label: i18n.startTime,
-                          notSetText: i18n.notSet,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Parent Task
-                  Text(
-                    i18n.parentTask,
-                    style: TextStyle(
-                      color: textColor.withAlpha(((0.7) * 255).round()),
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ParentTaskDropdown(
-                    parentId: _parentId,
-                    onChanged: _onParentChanged,
-                    currentTodoId: widget.todo?.id,
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Tags
-                  TagSelector(
-                    selectedTagIds: _selectedTagIds,
-                    onTagsChanged: _onTagsChanged,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Actions
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(i18n.cancel),
-                      ),
-                      const SizedBox(width: 16),
-                      FilledButton(onPressed: _submit, child: Text(i18n.save)),
-                    ],
-                  ),
+                  // 底部按钮栏（固定不滚动）
+                  _buildFooter(context, i18n, textColor),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, APPi18n i18n, Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            widget.todo != null ? "Edit Todo" : i18n.addTask,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              Icons.close,
+              color: textColor.withAlpha(((0.5) * 255).round()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormContent(
+    BuildContext context,
+    APPi18n i18n,
+    ColorScheme colorScheme,
+    Color textColor,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title
+        TextFormField(
+          controller: _titleController,
+          style: TextStyle(color: textColor),
+          decoration: InputDecoration(
+            labelText: i18n.taskName,
+            labelStyle: TextStyle(
+              color: textColor.withAlpha(((0.7) * 255).round()),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: textColor.withAlpha(((0.3) * 255).round()),
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: colorScheme.primary),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerHighest.withAlpha(
+              ((0.3) * 255).round(),
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return i18n.pleaseEnterTitle;
+            }
+            return null;
+          },
+        ),
+        const SizedBox(height: 16),
+
+        // Description
+        TextFormField(
+          controller: _descriptionController,
+          style: TextStyle(color: textColor),
+          decoration: InputDecoration(
+            labelText: i18n.taskDescription,
+            labelStyle: TextStyle(
+              color: textColor.withAlpha(((0.7) * 255).round()),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: textColor.withAlpha(((0.3) * 255).round()),
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: colorScheme.primary),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            filled: true,
+            fillColor: colorScheme.surfaceContainerHighest.withAlpha(
+              ((0.3) * 255).round(),
+            ),
+          ),
+          maxLines: 3,
+        ),
+        const SizedBox(height: 16),
+
+        // Importance
+        ImportanceSegmentedButton(
+          importance: _importance,
+          onChanged: (newImportance) {
+            if (!mounted) return;
+            setState(() {
+              _importance = newImportance;
+            });
+          },
+        ),
+        const SizedBox(height: 16),
+
+        // Duration & Start Time
+        Row(
+          children: [
+            Expanded(
+              child: DurationPicker(
+                duration: _estimatedDuration != null
+                    ? Duration(minutes: _estimatedDuration!)
+                    : null,
+                onPick: () async {
+                  final TimeOfDay? time = await showTimePicker(
+                    context: context,
+                    initialTime: const TimeOfDay(hour: 0, minute: 30),
+                    helpText: "Select Duration (Hours : Minutes)",
+                    builder: (context, child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(alwaysUse24HourFormat: true),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (!mounted) return;
+                  if (time != null) {
+                    _onDurationChanged(
+                      Duration(
+                        hours: time.hour,
+                        minutes: time.minute,
+                      ),
+                    );
+                  }
+                },
+                label: i18n.duration,
+                notSetText: i18n.notSet,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: StartTimePicker(
+                startTime: _plannedStartTime,
+                onPick: () async {
+                  final DateTime? date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(
+                      const Duration(days: 365),
+                    ),
+                  );
+                  if (!context.mounted) return;
+                  if (date != null) {
+                    final TimeOfDay? time = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (!context.mounted) return;
+                    if (time != null) {
+                      _onStartTimeChanged(
+                        DateTime(
+                          date.year,
+                          date.month,
+                          date.day,
+                          time.hour,
+                          time.minute,
+                        ),
+                      );
+                    }
+                  }
+                },
+                label: i18n.startTime,
+                notSetText: i18n.notSet,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Parent Task
+        Text(
+          i18n.parentTask,
+          style: TextStyle(
+            color: textColor.withAlpha(((0.7) * 255).round()),
+            fontSize: 12,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ParentTaskDropdown(
+          parentId: _parentId,
+          onChanged: _onParentChanged,
+          currentTodoId: widget.todo?.id,
+        ),
+        const SizedBox(height: 16),
+
+        // Tags
+        TagSelector(
+          selectedTagIds: _selectedTagIds,
+          onTagsChanged: _onTagsChanged,
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _buildFooter(BuildContext context, APPi18n i18n, Color textColor) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: textColor.withAlpha(((0.1) * 255).round()),
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(i18n.cancel),
+          ),
+          const SizedBox(width: 16),
+          FilledButton(onPressed: _submit, child: Text(i18n.save)),
+        ],
       ),
     );
   }

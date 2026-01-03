@@ -595,5 +595,13 @@
   "all": "全部",
   "@all": {
     "description": "全部筛选选项"
+  },
+  "confirm": "确认",
+  "@confirm": {
+    "description": "确认按钮标签"
+  },
+  "cancel": "取消",
+  "@cancel": {
+    "description": "取消按钮标签"
   }
 }

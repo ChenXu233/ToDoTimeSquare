@@ -139,7 +139,7 @@ abstract class APPi18n {
   /// **'Save'**
   String get save;
 
-  /// The label for the cancel button
+  /// Cancel button label
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
@@ -1350,6 +1350,12 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'All'**
   String get all;
+
+  /// Confirm button label
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

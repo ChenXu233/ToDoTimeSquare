@@ -811,5 +811,13 @@
   "all": "All",
   "@all": {
     "description": "All filter option"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button label"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
   }
 }

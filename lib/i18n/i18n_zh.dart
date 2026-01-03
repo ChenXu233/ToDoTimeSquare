@@ -651,4 +651,7 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get all => '全部';
+
+  @override
+  String get confirm => '确认';
 }
