@@ -38,8 +38,8 @@ class _TodoItemState extends State<TodoItem>
   double _dragExtent = 0;
   bool _isSwipedOut = false;
 
-  // 滑动卡住的阈值（屏幕宽度的30%）
-  double get _dismissThreshold => MediaQuery.of(context).size.width * 0.20;
+  // 滑动卡住的阈值（固定值，保证跨屏幕一致性）
+  static const double _dismissThreshold = 230.0;
 
   @override
   void initState() {

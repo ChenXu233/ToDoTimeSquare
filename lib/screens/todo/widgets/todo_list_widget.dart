@@ -244,6 +244,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
             onPressed: () => _showAddTodoModal(context),
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            shape: const CircleBorder(),
             child: const Icon(Icons.add),
           ),
         ),
