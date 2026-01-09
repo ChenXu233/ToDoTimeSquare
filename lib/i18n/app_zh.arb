@@ -600,8 +600,128 @@
   "@confirm": {
     "description": "确认按钮标签"
   },
-  "cancel": "取消",
-  "@cancel": {
-    "description": "取消按钮标签"
+  "syncSettings": "同步设置",
+  "@syncSettings": {
+    "description": "同步设置区块标题"
+  },
+  "serverUrl": "服务器地址",
+  "@serverUrl": {
+    "description": "服务器地址输入框标签"
+  },
+  "startSync": "开始同步",
+  "@startSync": {
+    "description": "开始同步按钮文本"
+  },
+  "syncing": "同步中...",
+  "@syncing": {
+    "description": "同步中状态文本"
+  },
+  "resetSyncSettings": "重置同步",
+  "@resetSyncSettings": {
+    "description": "重置同步设置按钮文本"
+  },
+  "syncSettingsReset": "同步设置已重置",
+  "@syncSettingsReset": {
+    "description": "同步设置重置后显示的消息"
+  },
+  "lastSyncResult": "上次同步结果",
+  "@lastSyncResult": {
+    "description": "上次同步结果标签"
+  },
+  "resetAllSettings": "恢复所有设置",
+  "@resetAllSettings": {
+    "description": "恢复所有设置按钮标题"
+  },
+  "resetAllSettingsDescription": "将所有设置恢复为默认值",
+  "@resetAllSettingsDescription": {
+    "description": "恢复所有设置功能说明"
+  },
+  "resetAllSettingsConfirm": "确定要将所有设置恢复为默认值吗？此操作无法撤销。",
+  "@resetAllSettingsConfirm": {
+    "description": "恢复所有设置确认对话框消息"
+  },
+  "settingsResetSuccess": "所有设置已恢复为默认值",
+  "@settingsResetSuccess": {
+    "description": "设置恢复成功提示"
+  },
+  "autoSync": "自动同步",
+  "@autoSync": {
+    "description": "自动同步开关标题"
+  },
+  "autoSyncDescription": "应用启动时自动同步数据",
+  "@autoSyncDescription": {
+    "description": "自动同步功能说明"
+  },
+  "syncRequiresLogin": "请先登录后再同步",
+  "@syncRequiresLogin": {
+    "description": "未登录时同步提示"
+  },
+  "lastSync": "上次同步",
+  "@lastSync": {
+    "description": "上次同步时间标签"
+  },
+  "resolveConflict": "解决冲突",
+  "@resolveConflict": {
+    "description": "冲突解决对话框标题"
+  },
+  "entityType": "实体类型",
+  "@entityType": {
+    "description": "实体类型标签"
+  },
+  "localVersion": "本地版本",
+  "@localVersion": {
+    "description": "本地版本标签"
+  },
+  "serverVersion": "服务器版本",
+  "@serverVersion": {
+    "description": "服务器版本标签"
+  },
+  "localData": "本地数据",
+  "@localData": {
+    "description": "本地数据标签"
+  },
+  "serverData": "服务器数据",
+  "@serverData": {
+    "description": "服务器数据标签"
+  },
+  "modifiedAt": "修改时间",
+  "@modifiedAt": {
+    "description": "修改时间标签"
+  },
+  "resolveChoice": "您要保留哪个版本？",
+  "@resolveChoice": {
+    "description": "解决选择区域标题"
+  },
+  "keepLocalVersion": "保留本地版本",
+  "@keepLocalVersion": {
+    "description": "保留本地版本选项"
+  },
+  "keepLocalVersionDesc": "使用此设备上保存的版本",
+  "@keepLocalVersionDesc": {
+    "description": "保留本地版本说明"
+  },
+  "keepServerVersion": "保留服务器版本",
+  "@keepServerVersion": {
+    "description": "保留服务器版本选项"
+  },
+  "keepServerVersionDesc": "使用服务器上的版本",
+  "@keepServerVersionDesc": {
+    "description": "保留服务器版本说明"
+  },
+  "resolve": "解决",
+  "@resolve": {
+    "description": "解决冲突操作"
+  },
+  "largeDataWarningTitle": "数据量较大",
+  "@largeDataWarningTitle": {
+    "description": "Web端大量数据下载警告标题"
+  },
+  "largeDataWarningMessage": "同步了大量数据。为了更好的使用体验，请下载桌面端或移动端应用。",
+  "@largeDataWarningMessage": {
+    "description": "Web端大量数据下载警告消息"
+  },
+  "largeDataWarningConfirm": "我知道了",
+  "@largeDataWarningConfirm": {
+    "description": "关闭大量数据警告的按钮"
   }
 }
