@@ -6,18 +6,27 @@ import 'schema/habits.dart';
 import 'schema/habit_logs.dart';
 import 'schema/task_tags.dart';
 import 'schema/task_tag_relations.dart';
+import 'schema/sync_metadata.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [Todos, FocusRecords, Habits, HabitLogs, TaskTags, TaskTagRelations],
+  tables: [
+    Todos,
+    FocusRecords,
+    Habits,
+    HabitLogs,
+    TaskTags,
+    TaskTagRelations,
+    SyncMetadata,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   static AppDatabase? _instance;
   static AppDatabase get instance => _instance!;
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   AppDatabase(super.executor);
 
@@ -46,13 +55,16 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(taskTags);
           await m.createTable(taskTagRelations);
         }
+        if (from < 4) {
+          await m.createTable(syncMetadata);
+        }
       },
     );
   }
 
   static Future<void> closeDatabase() async {
     if (_instance != null) {
-      await _instance!.close();
+      await AppDatabase.closeDatabase();
       _instance = null;
     }
   }

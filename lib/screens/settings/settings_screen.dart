@@ -8,6 +8,10 @@ import '../../providers/theme_provider.dart';
 import '../../providers/pomodoro_provider.dart';
 import '../../providers/background_music_provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/sync_settings_provider.dart';
+import '../../services/sync_service.dart';
+import '../../services/auth_service.dart';
+import 'widgets/conflict_resolve_dialog.dart';
 import '../../i18n/i18n.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../widgets/glass/glass_container.dart';
@@ -575,6 +579,348 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  // Sync Settings Section
+                  Consumer<SyncSettingsProvider>(
+                    builder: (context, syncProvider, child) {
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+                      return GlassContainer(
+                        color: isDark ? Colors.black : Colors.white,
+                        opacity: 0.1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: [
+                                  ConsistentIcon(Icons.sync),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    i18n.syncSettings,
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Divider(
+                              color: Theme.of(context).dividerColor.withAlpha(((0.1) * 255).round()),
+                            ),
+                            // Server URL input
+                            ListTile(
+                              leading: ConsistentIcon(Icons.link),
+                              title: Text(i18n.serverUrl),
+                              subtitle: Text(syncProvider.serverUrl),
+                              trailing: SizedBox(
+                                width: 200,
+                                child: TextFormField(
+                                  initialValue: syncProvider.serverUrl,
+                                  decoration: InputDecoration(
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: (isDark ? Colors.white : Colors.black)
+                                            .withAlpha(((0.3) * 255).round()),
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    errorText: syncProvider.errorMessage,
+                                  ),
+                                  onChanged: (value) {
+                                    syncProvider.setServerUrl(value);
+                                    AuthServiceConfig.updateBaseUrl(value);
+                                  },
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              color: Theme.of(context).dividerColor.withAlpha(((0.1) * 255).round()),
+                            ),
+                            // Auto sync toggle
+                            ListTile(
+                              leading: ConsistentIcon(Icons.autorenew),
+                              title: Text(i18n.autoSync),
+                              subtitle: Text(i18n.autoSyncDescription),
+                              trailing: Switch(
+                                value: syncProvider.autoSync,
+                                onChanged: (value) =>
+                                    syncProvider.setAutoSync(value),
+                              ),
+                            ),
+                            Divider(
+                              color: Theme.of(context).dividerColor.withAlpha(((0.1) * 255).round()),
+                            ),
+                            // Start sync button (style like other buttons)
+                            Consumer2<AuthProvider, SyncService>(
+                              builder: (context, authProvider, syncService, child) {
+                                final isLoggedIn = authProvider.isLoggedIn;
+                                return ListTile(
+                                  leading: ConsistentIcon(Icons.sync),
+                                  title: Text(
+                                    isLoggedIn
+                                        ? i18n.startSync
+                                        : i18n.syncRequiresLogin,
+                                  ),
+                                  subtitle: syncService.progressState == SyncProgressState.uploading ||
+                                          syncService.progressState == SyncProgressState.downloading
+                                      ? Text(syncService.totalRecords > 0
+                                          ? '${i18n.syncing} ${syncService.processedRecords}/${syncService.totalRecords}'
+                                          : i18n.syncing)
+                                      : syncProvider.lastSyncTimeFormatted != null
+                                          ? Text('${i18n.lastSync}: ${syncProvider.lastSyncTimeFormatted}')
+                                          : null,
+                                  trailing: syncProvider.isSyncing
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : syncProvider.hasConflicts
+                                          ? const Icon(Icons.warning, color: Colors.orange)
+                                          : const Icon(Icons.chevron_right),
+                                  onTap: syncProvider.isSyncing
+                                      ? null
+                                      : () async {
+                                          if (!isLoggedIn) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(i18n.syncRequiresLogin),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          await syncProvider.startSync(context);
+                                        },
+                                );
+                              },
+                            ),
+                            // Last sync result
+                            if (syncProvider.lastSyncResult != null)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: Text(
+                                  '${i18n.lastSyncResult}: ${syncProvider.lastSyncResult}',
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white70 : Colors.black87,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            // Conflicts list
+                            if (syncProvider.hasConflicts)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Divider(
+                                    color: Theme.of(context).dividerColor.withAlpha(((0.1) * 255).round()),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${syncProvider.conflictCount} ${i18n.resolveConflict}',
+                                          style: TextStyle(
+                                            color: isDark ? Colors.orange[200] : Colors.orange[800],
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  ...syncProvider.conflicts.map((conflict) {
+                                    return ListTile(
+                                      dense: true,
+                                      leading: const Icon(Icons.compare_arrows, size: 20),
+                                      title: Text('${_getEntityTypeName(conflict.entityType)} (${conflict.entityId.substring(0, 8)}...)'),
+                                      subtitle: Text('v${conflict.localVersion} vs v${conflict.serverVersion}'),
+                                      trailing: const Icon(Icons.chevron_right, size: 20),
+                                      onTap: () async {
+                                        final auth = Provider.of<AuthProvider>(context, listen: false);
+                                        if (!auth.isLoggedIn || auth.accessToken == null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text(i18n.syncRequiresLogin)),
+                                          );
+                                          return;
+                                        }
+                                        final resolved = await showConflictResolveDialog(
+                                          context,
+                                          conflict,
+                                          auth.accessToken!,
+                                        );
+                                        if (resolved == true) {
+                                          syncProvider.clearConflicts();
+                                        }
+                                      },
+                                    );
+                                  }),
+                                ],
+                              ),
+                            // Large data warning (Web only)
+                            if (syncProvider.showLargeDataWarning)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withAlpha(50),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.blue.withAlpha(100),
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(12),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.info_outline, color: Colors.blue[700]),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              i18n.largeDataWarningTitle,
+                                              style: TextStyle(
+                                                color: Colors.blue[700],
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              i18n.largeDataWarningMessage,
+                                              style: TextStyle(
+                                                color: Colors.blue[700],
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            // Full sync button
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: OutlinedButton.icon(
+                                onPressed: syncProvider.isSyncing
+                                    ? null
+                                    : () async {
+                                        await syncProvider.resetSyncTimestamp();
+                                        if (context.mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('同步时间戳已重置，下次同步将执行全量同步'),
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                icon: const Icon(Icons.refresh, size: 18),
+                                label: const Text('全量同步'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  GlassContainer(
+                    color: isDark ? Colors.black : Colors.white,
+                    opacity: 0.1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Reset all settings button
+                        ListTile(
+                          leading: ConsistentIcon(Icons.restore),
+                          title: Text(i18n.resetAllSettings),
+                          subtitle: Text(i18n.resetAllSettingsDescription),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(i18n.resetAllSettings),
+                                content: Text(i18n.resetAllSettingsConfirm),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(i18n.cancel),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      final navigatorContext = context;
+                                      if (!navigatorContext.mounted) return;
+
+                                      // Save providers before async operations
+                                      final themeProvider =
+                                          Provider.of<ThemeProvider>(navigatorContext,
+                                              listen: false);
+                                      final pomodoroProvider =
+                                          Provider.of<PomodoroProvider>(navigatorContext,
+                                              listen: false);
+                                      final syncProvider =
+                                          Provider.of<SyncSettingsProvider>(navigatorContext,
+                                              listen: false);
+
+                                      // Reset theme
+                                      await themeProvider.setThemeMode(ThemeMode.system);
+                                      await themeProvider.changeLanguage(null);
+
+                                      // Reset pomodoro
+                                      pomodoroProvider.updateSettings(
+                                        focus: 25 * 60,
+                                        shortBreak: 5 * 60,
+                                      );
+
+                                      // Reset sync
+                                      await syncProvider.resetSyncSettings();
+                                      AuthServiceConfig.resetBaseUrl();
+
+                                      if (!navigatorContext.mounted) return;
+                                      Navigator.pop(navigatorContext);
+                                      ScaffoldMessenger.of(navigatorContext).showSnackBar(
+                                        SnackBar(
+                                          content: Text(i18n.settingsResetSuccess),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      i18n.confirm,
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.error,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   GlassContainer(
                     color: isDark ? Colors.black : Colors.white,
                     opacity: 0.1,
@@ -664,6 +1010,25 @@ class SettingsScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getEntityTypeName(String entityType) {
+    switch (entityType) {
+      case 'todo':
+        return 'Todo';
+      case 'focus_record':
+        return 'Focus Record';
+      case 'habit':
+        return 'Habit';
+      case 'habit_log':
+        return 'Habit Log';
+      case 'tag':
+        return 'Tag';
+      case 'tag_relation':
+        return 'Tag Relation';
+      default:
+        return entityType;
+    }
   }
 }
 

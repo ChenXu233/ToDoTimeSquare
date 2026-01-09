@@ -5,9 +5,28 @@ import 'package:http/http.dart' as http;
 import '../models/auth/token.dart';
 import '../models/auth/user.dart';
 
-class AuthService {
-  static const String baseUrl = 'http://localhost:8000';
+/// 可配置的服务器地址
+class AuthServiceConfig {
+  static String baseUrl = 'http://localhost:8000';
   static const Duration timeout = Duration(seconds: 30);
+
+  /// 更新服务器地址
+  static void updateBaseUrl(String url) {
+    baseUrl = url;
+  }
+
+  /// 重置为默认地址
+  static void resetBaseUrl() {
+    baseUrl = 'http://localhost:8000';
+  }
+}
+
+class AuthService {
+  /// 获取当前配置的 baseUrl
+  String get baseUrl => AuthServiceConfig.baseUrl;
+
+  /// 获取超时时间
+  Duration get timeout => AuthServiceConfig.timeout;
 
   /// Login with username and password
   Future<Token> login(String username, String password) async {
