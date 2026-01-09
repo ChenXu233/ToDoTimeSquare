@@ -32,7 +32,7 @@ async def get_current_user(
         payload = jwt.decode(
             token, settings.secret_key, algorithms=[settings.algorithm]
         )
-        user_id: str = payload.get("sub")
+        user_id: Optional[str] = payload.get("sub")
         if user_id is None:
             raise credentials_exception
         token_data = TokenData(user_id=int(user_id))
@@ -74,7 +74,7 @@ async def verify_refresh_token(
             settings.secret_key,
             algorithms=[settings.algorithm],
         )
-        user_id: str = payload.get("sub")
+        user_id: Optional[str] = payload.get("sub")
         token_type: str = payload.get("type", "")
 
         if user_id is None or token_type != "refresh":
