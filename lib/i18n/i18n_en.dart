@@ -666,4 +666,100 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get confirm => 'Confirm';
+
+  @override
+  String get syncSettings => 'Sync Settings';
+
+  @override
+  String get serverUrl => 'Server URL';
+
+  @override
+  String get startSync => 'Start Sync';
+
+  @override
+  String get syncing => 'Syncing...';
+
+  @override
+  String get resetSyncSettings => 'Reset Sync';
+
+  @override
+  String get syncSettingsReset => 'Sync settings have been reset';
+
+  @override
+  String get lastSyncResult => 'Last Sync Result';
+
+  @override
+  String get resetAllSettings => 'Reset All Settings';
+
+  @override
+  String get resetAllSettingsDescription =>
+      'Restore all settings to default values';
+
+  @override
+  String get resetAllSettingsConfirm =>
+      'Are you sure you want to reset all settings to default values? This action cannot be undone.';
+
+  @override
+  String get settingsResetSuccess => 'All settings have been reset to default';
+
+  @override
+  String get autoSync => 'Auto Sync';
+
+  @override
+  String get autoSyncDescription => 'Automatically sync data when app starts';
+
+  @override
+  String get syncRequiresLogin => 'Please login first to sync';
+
+  @override
+  String get lastSync => 'Last Sync';
+
+  @override
+  String get resolveConflict => 'Resolve Conflict';
+
+  @override
+  String get entityType => 'Entity Type';
+
+  @override
+  String get localVersion => 'Local Version';
+
+  @override
+  String get serverVersion => 'Server Version';
+
+  @override
+  String get localData => 'Local Data';
+
+  @override
+  String get serverData => 'Server Data';
+
+  @override
+  String get modifiedAt => 'Modified At';
+
+  @override
+  String get resolveChoice => 'Which version would you like to keep?';
+
+  @override
+  String get keepLocalVersion => 'Keep Local Version';
+
+  @override
+  String get keepLocalVersionDesc => 'Use the version saved on this device';
+
+  @override
+  String get keepServerVersion => 'Keep Server Version';
+
+  @override
+  String get keepServerVersionDesc => 'Use the version from the server';
+
+  @override
+  String get resolve => 'Resolve';
+
+  @override
+  String get largeDataWarningTitle => 'Large Amount of Data';
+
+  @override
+  String get largeDataWarningMessage =>
+      'A large amount of data was synced. For a better experience, please download the desktop or mobile app.';
+
+  @override
+  String get largeDataWarningConfirm => 'I Understand';
 }

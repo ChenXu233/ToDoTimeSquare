@@ -654,4 +654,97 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get confirm => '确认';
+
+  @override
+  String get syncSettings => '同步设置';
+
+  @override
+  String get serverUrl => '服务器地址';
+
+  @override
+  String get startSync => '开始同步';
+
+  @override
+  String get syncing => '同步中...';
+
+  @override
+  String get resetSyncSettings => '重置同步';
+
+  @override
+  String get syncSettingsReset => '同步设置已重置';
+
+  @override
+  String get lastSyncResult => '上次同步结果';
+
+  @override
+  String get resetAllSettings => '恢复所有设置';
+
+  @override
+  String get resetAllSettingsDescription => '将所有设置恢复为默认值';
+
+  @override
+  String get resetAllSettingsConfirm => '确定要将所有设置恢复为默认值吗？此操作无法撤销。';
+
+  @override
+  String get settingsResetSuccess => '所有设置已恢复为默认值';
+
+  @override
+  String get autoSync => '自动同步';
+
+  @override
+  String get autoSyncDescription => '应用启动时自动同步数据';
+
+  @override
+  String get syncRequiresLogin => '请先登录后再同步';
+
+  @override
+  String get lastSync => '上次同步';
+
+  @override
+  String get resolveConflict => '解决冲突';
+
+  @override
+  String get entityType => '实体类型';
+
+  @override
+  String get localVersion => '本地版本';
+
+  @override
+  String get serverVersion => '服务器版本';
+
+  @override
+  String get localData => '本地数据';
+
+  @override
+  String get serverData => '服务器数据';
+
+  @override
+  String get modifiedAt => '修改时间';
+
+  @override
+  String get resolveChoice => '您要保留哪个版本？';
+
+  @override
+  String get keepLocalVersion => '保留本地版本';
+
+  @override
+  String get keepLocalVersionDesc => '使用此设备上保存的版本';
+
+  @override
+  String get keepServerVersion => '保留服务器版本';
+
+  @override
+  String get keepServerVersionDesc => '使用服务器上的版本';
+
+  @override
+  String get resolve => '解决';
+
+  @override
+  String get largeDataWarningTitle => '数据量较大';
+
+  @override
+  String get largeDataWarningMessage => '同步了大量数据。为了更好的使用体验，请下载桌面端或移动端应用。';
+
+  @override
+  String get largeDataWarningConfirm => '我知道了';
 }

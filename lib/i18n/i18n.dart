@@ -139,7 +139,7 @@ abstract class APPi18n {
   /// **'Save'**
   String get save;
 
-  /// Cancel button label
+  /// The label for the cancel button
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
@@ -1356,6 +1356,192 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Confirm'**
   String get confirm;
+
+  /// Title for sync settings section
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Settings'**
+  String get syncSettings;
+
+  /// Label for server URL input
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get serverUrl;
+
+  /// Button text to start sync
+  ///
+  /// In en, this message translates to:
+  /// **'Start Sync'**
+  String get startSync;
+
+  /// Label showing sync is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncing;
+
+  /// Button text to reset sync settings
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Sync'**
+  String get resetSyncSettings;
+
+  /// Message shown when sync settings are reset
+  ///
+  /// In en, this message translates to:
+  /// **'Sync settings have been reset'**
+  String get syncSettingsReset;
+
+  /// Label for last sync result
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync Result'**
+  String get lastSyncResult;
+
+  /// Title for reset all settings section
+  ///
+  /// In en, this message translates to:
+  /// **'Reset All Settings'**
+  String get resetAllSettings;
+
+  /// Description for reset all settings
+  ///
+  /// In en, this message translates to:
+  /// **'Restore all settings to default values'**
+  String get resetAllSettingsDescription;
+
+  /// Confirmation message when resetting all settings
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to reset all settings to default values? This action cannot be undone.'**
+  String get resetAllSettingsConfirm;
+
+  /// Success message when settings are reset
+  ///
+  /// In en, this message translates to:
+  /// **'All settings have been reset to default'**
+  String get settingsResetSuccess;
+
+  /// Title for auto sync toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Sync'**
+  String get autoSync;
+
+  /// Description for auto sync feature
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically sync data when app starts'**
+  String get autoSyncDescription;
+
+  /// Prompt when user tries to sync without logging in
+  ///
+  /// In en, this message translates to:
+  /// **'Please login first to sync'**
+  String get syncRequiresLogin;
+
+  /// Label for last sync time
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync'**
+  String get lastSync;
+
+  /// Title for conflict resolution dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve Conflict'**
+  String get resolveConflict;
+
+  /// Label for entity type
+  ///
+  /// In en, this message translates to:
+  /// **'Entity Type'**
+  String get entityType;
+
+  /// Label for local version
+  ///
+  /// In en, this message translates to:
+  /// **'Local Version'**
+  String get localVersion;
+
+  /// Label for server version
+  ///
+  /// In en, this message translates to:
+  /// **'Server Version'**
+  String get serverVersion;
+
+  /// Label for local data
+  ///
+  /// In en, this message translates to:
+  /// **'Local Data'**
+  String get localData;
+
+  /// Label for server data
+  ///
+  /// In en, this message translates to:
+  /// **'Server Data'**
+  String get serverData;
+
+  /// Label for modified time
+  ///
+  /// In en, this message translates to:
+  /// **'Modified At'**
+  String get modifiedAt;
+
+  /// Title for resolve choice section
+  ///
+  /// In en, this message translates to:
+  /// **'Which version would you like to keep?'**
+  String get resolveChoice;
+
+  /// Option to keep local version
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Local Version'**
+  String get keepLocalVersion;
+
+  /// Description for keeping local version
+  ///
+  /// In en, this message translates to:
+  /// **'Use the version saved on this device'**
+  String get keepLocalVersionDesc;
+
+  /// Option to keep server version
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Server Version'**
+  String get keepServerVersion;
+
+  /// Description for keeping server version
+  ///
+  /// In en, this message translates to:
+  /// **'Use the version from the server'**
+  String get keepServerVersionDesc;
+
+  /// Action to resolve conflict
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get resolve;
+
+  /// Warning title when too much data downloaded on web
+  ///
+  /// In en, this message translates to:
+  /// **'Large Amount of Data'**
+  String get largeDataWarningTitle;
+
+  /// Warning message when too much data downloaded on web
+  ///
+  /// In en, this message translates to:
+  /// **'A large amount of data was synced. For a better experience, please download the desktop or mobile app.'**
+  String get largeDataWarningMessage;
+
+  /// Button to dismiss large data warning
+  ///
+  /// In en, this message translates to:
+  /// **'I Understand'**
+  String get largeDataWarningConfirm;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
