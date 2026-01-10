@@ -117,6 +117,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
       _isTaskExpanded = false;
     });
     _confettiController.play();
+    if (!context.mounted) return;
     await showPomodoroCompletionDialog(context);
   }
 

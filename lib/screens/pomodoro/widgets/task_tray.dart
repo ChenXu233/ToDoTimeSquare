@@ -52,23 +52,39 @@ class _TaskTrayState extends State<TaskTray>
             widget.isExpanded ? expandedMargin : collapsedMargin,
             16,
           ),
-          child: ConstrainedBox(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutCubic,
             constraints: const BoxConstraints(maxWidth: 600),
-            child: AnimatedSize(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOutCubic,
-              alignment: Alignment.bottomCenter,
-              child: GlassContainer(
-                color: widget.isDark ? Colors.white : Colors.black,
-                opacity: 0.08,
-                borderRadius: BorderRadius.circular(24),
-                padding: EdgeInsets.zero,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(24),
-                    onTap: widget.onExpand,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(widget.isExpanded ? 24 : 24),
+            ),
+            child: GlassContainer(
+              color: widget.isDark ? Colors.white : Colors.black,
+              opacity: 0.08,
+              borderRadius: BorderRadius.circular(24),
+              padding: EdgeInsets.zero,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(24),
+                  onTap: widget.onExpand,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeInOut,
+                    switchOutCurve: Curves.easeInOut,
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SizeTransition(
+                          sizeFactor: animation,
+                          axisAlignment: -1.0,
+                          child: child,
+                        ),
+                      );
+                    },
                     child: Padding(
+                      key: ValueKey(widget.isExpanded),
                       padding: EdgeInsets.all(widget.isExpanded ? 24.0 : 20.0),
                       child: widget.isExpanded
                           ? _ExpandedContent(

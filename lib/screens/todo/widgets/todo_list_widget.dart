@@ -209,7 +209,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
-                                color: Colors.blue.withOpacity(0.1),
+                                color: Colors.blue.withValues(alpha: 0.1),
                               ),
                               child: const Center(
                                 child: Text(
@@ -244,6 +244,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
             onPressed: () => _showAddTodoModal(context),
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            shape: const CircleBorder(),
             child: const Icon(Icons.add),
           ),
         ),

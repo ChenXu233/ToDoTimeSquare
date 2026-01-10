@@ -38,8 +38,8 @@ class _TodoItemState extends State<TodoItem>
   double _dragExtent = 0;
   bool _isSwipedOut = false;
 
-  // 滑动卡住的阈值（屏幕宽度的30%）
-  double get _dismissThreshold => MediaQuery.of(context).size.width * 0.20;
+  // 滑动卡住的阈值（固定值，保证跨屏幕一致性）
+  static const double _dismissThreshold = 230.0;
 
   @override
   void initState() {
@@ -260,7 +260,7 @@ class _TodoItemState extends State<TodoItem>
             : 0.05, // Feedback slightly less opaque to show background blur
         border: isFeedback
             ? Border.all(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                 width: 1.5,
               )
             : null,
@@ -284,7 +284,7 @@ class _TodoItemState extends State<TodoItem>
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
+                                    color: Colors.black.withValues(alpha: 0.2),
                                     blurRadius: 15,
                                     offset: const Offset(0, 8),
                                     spreadRadius: 2,

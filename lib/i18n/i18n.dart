@@ -1044,6 +1044,504 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'Release to convert to subtask'**
   String get dropToSubtask;
+
+  /// Title for logout confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logoutConfirmTitle;
+
+  /// Message for logout confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmMessage;
+
+  /// Label for logout button
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// Prompt to tap to login
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to login'**
+  String get tapToLogin;
+
+  /// Login screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get loginTitle;
+
+  /// Register screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerTitle;
+
+  /// Username input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernamePlaceholder;
+
+  /// Email input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailPlaceholder;
+
+  /// Password input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordPlaceholder;
+
+  /// Confirm password input placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPasswordPlaceholder;
+
+  /// Login button label
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get loginButton;
+
+  /// Register button label
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get registerButton;
+
+  /// Text for users without an account
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Register'**
+  String get noAccount;
+
+  /// Text for users with an account
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Login'**
+  String get hasAccount;
+
+  /// Login success message
+  ///
+  /// In en, this message translates to:
+  /// **'Login successful'**
+  String get loginSuccess;
+
+  /// Login failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Login failed'**
+  String get loginFailed;
+
+  /// Registration success message
+  ///
+  /// In en, this message translates to:
+  /// **'Registration successful'**
+  String get registerSuccess;
+
+  /// Registration failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed'**
+  String get registerFailed;
+
+  /// Error message when passwords don't match
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordMismatch;
+
+  /// Username too short error message
+  ///
+  /// In en, this message translates to:
+  /// **'Username must be at least 3 characters'**
+  String get usernameTooShort;
+
+  /// Password too short error message
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// Invalid email error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get invalidEmail;
+
+  /// Title for export data dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Export Data'**
+  String get exportData;
+
+  /// Export button label
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get export;
+
+  /// Label for data type selection
+  ///
+  /// In en, this message translates to:
+  /// **'Data Types'**
+  String get exportDataTypes;
+
+  /// Label for export format selection
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get exportFormat;
+
+  /// Description for JSON format
+  ///
+  /// In en, this message translates to:
+  /// **'Structured data, easy to restore'**
+  String get exportFormatJson;
+
+  /// Description for CSV format
+  ///
+  /// In en, this message translates to:
+  /// **'Table data, compatible with Excel'**
+  String get exportFormatCsv;
+
+  /// Label for date range selection
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get exportDateRange;
+
+  /// Label for start date
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDate;
+
+  /// Label for end date
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDate;
+
+  /// Status message when preparing export
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing export...'**
+  String get exportPreparing;
+
+  /// Success message after export
+  ///
+  /// In en, this message translates to:
+  /// **'Exported {count} records to {filePath}'**
+  String exportSuccess(int count, String filePath);
+
+  /// Error message when no data type selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one data type'**
+  String get exportNoDataTypeSelected;
+
+  /// Title for data management section
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// Description for data export feature
+  ///
+  /// In en, this message translates to:
+  /// **'Export your data in JSON or CSV format'**
+  String get exportDataDescription;
+
+  /// Label for tags
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tags;
+
+  /// Button text to add tags
+  ///
+  /// In en, this message translates to:
+  /// **'Add Tags'**
+  String get addTags;
+
+  /// Placeholder text for tag search
+  ///
+  /// In en, this message translates to:
+  /// **'Search tags...'**
+  String get searchTags;
+
+  /// Message when no tags are available
+  ///
+  /// In en, this message translates to:
+  /// **'No tags available'**
+  String get noTagsAvailable;
+
+  /// Message when no tags exist yet
+  ///
+  /// In en, this message translates to:
+  /// **'No tags yet'**
+  String get noTagsYet;
+
+  /// Title for tag management screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Management'**
+  String get tagManagement;
+
+  /// Button text to create a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Create Tag'**
+  String get createTag;
+
+  /// Title for edit tag dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Tag'**
+  String get editTag;
+
+  /// Title for delete tag dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Tag'**
+  String get deleteTag;
+
+  /// Confirmation message when deleting a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete tag \"{tagName}\"?'**
+  String deleteTagConfirm(String tagName);
+
+  /// Label for tag name input
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Name'**
+  String get tagName;
+
+  /// Label for tag type selection
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Type'**
+  String get tagType;
+
+  /// Label for tag color selection
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Color'**
+  String get tagColor;
+
+  /// Usage count label
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get usageCount;
+
+  /// All filter option
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// Confirm button label
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// Title for sync settings section
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Settings'**
+  String get syncSettings;
+
+  /// Label for server URL input
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get serverUrl;
+
+  /// Button text to start sync
+  ///
+  /// In en, this message translates to:
+  /// **'Start Sync'**
+  String get startSync;
+
+  /// Label showing sync is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing...'**
+  String get syncing;
+
+  /// Button text to reset sync settings
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Sync'**
+  String get resetSyncSettings;
+
+  /// Message shown when sync settings are reset
+  ///
+  /// In en, this message translates to:
+  /// **'Sync settings have been reset'**
+  String get syncSettingsReset;
+
+  /// Label for last sync result
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync Result'**
+  String get lastSyncResult;
+
+  /// Title for reset all settings section
+  ///
+  /// In en, this message translates to:
+  /// **'Reset All Settings'**
+  String get resetAllSettings;
+
+  /// Description for reset all settings
+  ///
+  /// In en, this message translates to:
+  /// **'Restore all settings to default values'**
+  String get resetAllSettingsDescription;
+
+  /// Confirmation message when resetting all settings
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to reset all settings to default values? This action cannot be undone.'**
+  String get resetAllSettingsConfirm;
+
+  /// Success message when settings are reset
+  ///
+  /// In en, this message translates to:
+  /// **'All settings have been reset to default'**
+  String get settingsResetSuccess;
+
+  /// Title for auto sync toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Sync'**
+  String get autoSync;
+
+  /// Description for auto sync feature
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically sync data when app starts'**
+  String get autoSyncDescription;
+
+  /// Prompt when user tries to sync without logging in
+  ///
+  /// In en, this message translates to:
+  /// **'Please login first to sync'**
+  String get syncRequiresLogin;
+
+  /// Label for last sync time
+  ///
+  /// In en, this message translates to:
+  /// **'Last Sync'**
+  String get lastSync;
+
+  /// Title for conflict resolution dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve Conflict'**
+  String get resolveConflict;
+
+  /// Label for entity type
+  ///
+  /// In en, this message translates to:
+  /// **'Entity Type'**
+  String get entityType;
+
+  /// Label for local version
+  ///
+  /// In en, this message translates to:
+  /// **'Local Version'**
+  String get localVersion;
+
+  /// Label for server version
+  ///
+  /// In en, this message translates to:
+  /// **'Server Version'**
+  String get serverVersion;
+
+  /// Label for local data
+  ///
+  /// In en, this message translates to:
+  /// **'Local Data'**
+  String get localData;
+
+  /// Label for server data
+  ///
+  /// In en, this message translates to:
+  /// **'Server Data'**
+  String get serverData;
+
+  /// Label for modified time
+  ///
+  /// In en, this message translates to:
+  /// **'Modified At'**
+  String get modifiedAt;
+
+  /// Title for resolve choice section
+  ///
+  /// In en, this message translates to:
+  /// **'Which version would you like to keep?'**
+  String get resolveChoice;
+
+  /// Option to keep local version
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Local Version'**
+  String get keepLocalVersion;
+
+  /// Description for keeping local version
+  ///
+  /// In en, this message translates to:
+  /// **'Use the version saved on this device'**
+  String get keepLocalVersionDesc;
+
+  /// Option to keep server version
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Server Version'**
+  String get keepServerVersion;
+
+  /// Description for keeping server version
+  ///
+  /// In en, this message translates to:
+  /// **'Use the version from the server'**
+  String get keepServerVersionDesc;
+
+  /// Action to resolve conflict
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get resolve;
+
+  /// Warning title when too much data downloaded on web
+  ///
+  /// In en, this message translates to:
+  /// **'Large Amount of Data'**
+  String get largeDataWarningTitle;
+
+  /// Warning message when too much data downloaded on web
+  ///
+  /// In en, this message translates to:
+  /// **'A large amount of data was synced. For a better experience, please download the desktop or mobile app.'**
+  String get largeDataWarningMessage;
+
+  /// Button to dismiss large data warning
+  ///
+  /// In en, this message translates to:
+  /// **'I Understand'**
+  String get largeDataWarningConfirm;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {

@@ -494,4 +494,257 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get dropToSubtask => '松手转为子任务';
+
+  @override
+  String get logoutConfirmTitle => '退出登录';
+
+  @override
+  String get logoutConfirmMessage => '确定要退出登录吗？';
+
+  @override
+  String get logout => '退出登录';
+
+  @override
+  String get tapToLogin => '点击登录';
+
+  @override
+  String get loginTitle => '登录';
+
+  @override
+  String get registerTitle => '注册';
+
+  @override
+  String get usernamePlaceholder => '用户名';
+
+  @override
+  String get emailPlaceholder => '邮箱';
+
+  @override
+  String get passwordPlaceholder => '密码';
+
+  @override
+  String get confirmPasswordPlaceholder => '确认密码';
+
+  @override
+  String get loginButton => '登录';
+
+  @override
+  String get registerButton => '注册';
+
+  @override
+  String get noAccount => '没有账号？立即注册';
+
+  @override
+  String get hasAccount => '已有账号？立即登录';
+
+  @override
+  String get loginSuccess => '登录成功';
+
+  @override
+  String get loginFailed => '登录失败';
+
+  @override
+  String get registerSuccess => '注册成功';
+
+  @override
+  String get registerFailed => '注册失败';
+
+  @override
+  String get passwordMismatch => '两次输入的密码不一致';
+
+  @override
+  String get usernameTooShort => '用户名至少需要3个字符';
+
+  @override
+  String get passwordTooShort => '密码至少需要6个字符';
+
+  @override
+  String get invalidEmail => '请输入有效的邮箱地址';
+
+  @override
+  String get exportData => '导出数据';
+
+  @override
+  String get export => '导出';
+
+  @override
+  String get exportDataTypes => '数据类型';
+
+  @override
+  String get exportFormat => '导出格式';
+
+  @override
+  String get exportFormatJson => '结构化数据，便于恢复';
+
+  @override
+  String get exportFormatCsv => '表格数据，兼容 Excel';
+
+  @override
+  String get exportDateRange => '时间范围';
+
+  @override
+  String get startDate => '开始日期';
+
+  @override
+  String get endDate => '结束日期';
+
+  @override
+  String get exportPreparing => '正在准备导出...';
+
+  @override
+  String exportSuccess(int count, String filePath) {
+    return '已导出 $count 条记录到 $filePath';
+  }
+
+  @override
+  String get exportNoDataTypeSelected => '请至少选择一种数据类型';
+
+  @override
+  String get dataManagement => '数据管理';
+
+  @override
+  String get exportDataDescription => '将数据导出为 JSON 或 CSV 格式';
+
+  @override
+  String get tags => '标签';
+
+  @override
+  String get addTags => '添加标签';
+
+  @override
+  String get searchTags => '搜索标签...';
+
+  @override
+  String get noTagsAvailable => '暂无可用标签';
+
+  @override
+  String get noTagsYet => '暂无标签';
+
+  @override
+  String get tagManagement => '标签管理';
+
+  @override
+  String get createTag => '创建标签';
+
+  @override
+  String get editTag => '编辑标签';
+
+  @override
+  String get deleteTag => '删除标签';
+
+  @override
+  String deleteTagConfirm(String tagName) {
+    return '确定要删除标签「$tagName」吗？';
+  }
+
+  @override
+  String get tagName => '标签名称';
+
+  @override
+  String get tagType => '标签类型';
+
+  @override
+  String get tagColor => '标签颜色';
+
+  @override
+  String get usageCount => '次使用';
+
+  @override
+  String get all => '全部';
+
+  @override
+  String get confirm => '确认';
+
+  @override
+  String get syncSettings => '同步设置';
+
+  @override
+  String get serverUrl => '服务器地址';
+
+  @override
+  String get startSync => '开始同步';
+
+  @override
+  String get syncing => '同步中...';
+
+  @override
+  String get resetSyncSettings => '重置同步';
+
+  @override
+  String get syncSettingsReset => '同步设置已重置';
+
+  @override
+  String get lastSyncResult => '上次同步结果';
+
+  @override
+  String get resetAllSettings => '恢复所有设置';
+
+  @override
+  String get resetAllSettingsDescription => '将所有设置恢复为默认值';
+
+  @override
+  String get resetAllSettingsConfirm => '确定要将所有设置恢复为默认值吗？此操作无法撤销。';
+
+  @override
+  String get settingsResetSuccess => '所有设置已恢复为默认值';
+
+  @override
+  String get autoSync => '自动同步';
+
+  @override
+  String get autoSyncDescription => '应用启动时自动同步数据';
+
+  @override
+  String get syncRequiresLogin => '请先登录后再同步';
+
+  @override
+  String get lastSync => '上次同步';
+
+  @override
+  String get resolveConflict => '解决冲突';
+
+  @override
+  String get entityType => '实体类型';
+
+  @override
+  String get localVersion => '本地版本';
+
+  @override
+  String get serverVersion => '服务器版本';
+
+  @override
+  String get localData => '本地数据';
+
+  @override
+  String get serverData => '服务器数据';
+
+  @override
+  String get modifiedAt => '修改时间';
+
+  @override
+  String get resolveChoice => '您要保留哪个版本？';
+
+  @override
+  String get keepLocalVersion => '保留本地版本';
+
+  @override
+  String get keepLocalVersionDesc => '使用此设备上保存的版本';
+
+  @override
+  String get keepServerVersion => '保留服务器版本';
+
+  @override
+  String get keepServerVersionDesc => '使用服务器上的版本';
+
+  @override
+  String get resolve => '解决';
+
+  @override
+  String get largeDataWarningTitle => '数据量较大';
+
+  @override
+  String get largeDataWarningMessage => '同步了大量数据。为了更好的使用体验，请下载桌面端或移动端应用。';
+
+  @override
+  String get largeDataWarningConfirm => '我知道了';
 }

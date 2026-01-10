@@ -506,4 +506,260 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get dropToSubtask => 'Release to convert to subtask';
+
+  @override
+  String get logoutConfirmTitle => 'Logout';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get tapToLogin => 'Tap to login';
+
+  @override
+  String get loginTitle => 'Login';
+
+  @override
+  String get registerTitle => 'Register';
+
+  @override
+  String get usernamePlaceholder => 'Username';
+
+  @override
+  String get emailPlaceholder => 'Email';
+
+  @override
+  String get passwordPlaceholder => 'Password';
+
+  @override
+  String get confirmPasswordPlaceholder => 'Confirm Password';
+
+  @override
+  String get loginButton => 'Login';
+
+  @override
+  String get registerButton => 'Register';
+
+  @override
+  String get noAccount => 'Don\'t have an account? Register';
+
+  @override
+  String get hasAccount => 'Already have an account? Login';
+
+  @override
+  String get loginSuccess => 'Login successful';
+
+  @override
+  String get loginFailed => 'Login failed';
+
+  @override
+  String get registerSuccess => 'Registration successful';
+
+  @override
+  String get registerFailed => 'Registration failed';
+
+  @override
+  String get passwordMismatch => 'Passwords do not match';
+
+  @override
+  String get usernameTooShort => 'Username must be at least 3 characters';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email address';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get exportDataTypes => 'Data Types';
+
+  @override
+  String get exportFormat => 'Format';
+
+  @override
+  String get exportFormatJson => 'Structured data, easy to restore';
+
+  @override
+  String get exportFormatCsv => 'Table data, compatible with Excel';
+
+  @override
+  String get exportDateRange => 'Date Range';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get exportPreparing => 'Preparing export...';
+
+  @override
+  String exportSuccess(int count, String filePath) {
+    return 'Exported $count records to $filePath';
+  }
+
+  @override
+  String get exportNoDataTypeSelected => 'Please select at least one data type';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get exportDataDescription => 'Export your data in JSON or CSV format';
+
+  @override
+  String get tags => 'Tags';
+
+  @override
+  String get addTags => 'Add Tags';
+
+  @override
+  String get searchTags => 'Search tags...';
+
+  @override
+  String get noTagsAvailable => 'No tags available';
+
+  @override
+  String get noTagsYet => 'No tags yet';
+
+  @override
+  String get tagManagement => 'Tag Management';
+
+  @override
+  String get createTag => 'Create Tag';
+
+  @override
+  String get editTag => 'Edit Tag';
+
+  @override
+  String get deleteTag => 'Delete Tag';
+
+  @override
+  String deleteTagConfirm(String tagName) {
+    return 'Are you sure you want to delete tag \"$tagName\"?';
+  }
+
+  @override
+  String get tagName => 'Tag Name';
+
+  @override
+  String get tagType => 'Tag Type';
+
+  @override
+  String get tagColor => 'Tag Color';
+
+  @override
+  String get usageCount => 'used';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get syncSettings => 'Sync Settings';
+
+  @override
+  String get serverUrl => 'Server URL';
+
+  @override
+  String get startSync => 'Start Sync';
+
+  @override
+  String get syncing => 'Syncing...';
+
+  @override
+  String get resetSyncSettings => 'Reset Sync';
+
+  @override
+  String get syncSettingsReset => 'Sync settings have been reset';
+
+  @override
+  String get lastSyncResult => 'Last Sync Result';
+
+  @override
+  String get resetAllSettings => 'Reset All Settings';
+
+  @override
+  String get resetAllSettingsDescription =>
+      'Restore all settings to default values';
+
+  @override
+  String get resetAllSettingsConfirm =>
+      'Are you sure you want to reset all settings to default values? This action cannot be undone.';
+
+  @override
+  String get settingsResetSuccess => 'All settings have been reset to default';
+
+  @override
+  String get autoSync => 'Auto Sync';
+
+  @override
+  String get autoSyncDescription => 'Automatically sync data when app starts';
+
+  @override
+  String get syncRequiresLogin => 'Please login first to sync';
+
+  @override
+  String get lastSync => 'Last Sync';
+
+  @override
+  String get resolveConflict => 'Resolve Conflict';
+
+  @override
+  String get entityType => 'Entity Type';
+
+  @override
+  String get localVersion => 'Local Version';
+
+  @override
+  String get serverVersion => 'Server Version';
+
+  @override
+  String get localData => 'Local Data';
+
+  @override
+  String get serverData => 'Server Data';
+
+  @override
+  String get modifiedAt => 'Modified At';
+
+  @override
+  String get resolveChoice => 'Which version would you like to keep?';
+
+  @override
+  String get keepLocalVersion => 'Keep Local Version';
+
+  @override
+  String get keepLocalVersionDesc => 'Use the version saved on this device';
+
+  @override
+  String get keepServerVersion => 'Keep Server Version';
+
+  @override
+  String get keepServerVersionDesc => 'Use the version from the server';
+
+  @override
+  String get resolve => 'Resolve';
+
+  @override
+  String get largeDataWarningTitle => 'Large Amount of Data';
+
+  @override
+  String get largeDataWarningMessage =>
+      'A large amount of data was synced. For a better experience, please download the desktop or mobile app.';
+
+  @override
+  String get largeDataWarningConfirm => 'I Understand';
 }

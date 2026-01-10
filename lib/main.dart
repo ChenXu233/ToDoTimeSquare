@@ -13,6 +13,11 @@ import 'providers/pomodoro_provider.dart';
 import 'providers/background_music_provider.dart';
 import 'providers/todo_provider.dart';
 import 'providers/statistics_provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/tag_provider.dart';
+import 'providers/sync_settings_provider.dart';
+import 'services/sync_service.dart';
+import 'services/auth_service.dart';
 import 'widgets/window/window_title_bar.dart';
 import 'services/notification_service.dart';
 import 'models/database/database_initializer.dart'; // 导入数据库初始化
@@ -92,7 +97,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider(create: (_) => TodoProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => BackgroundMusicProvider()),
+        ChangeNotifierProvider(create: (_) => TagProvider()),
+        ChangeNotifierProvider(create: (_) => SyncSettingsProvider()),
+        Provider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (context) => SyncService(
+          authService: context.read<AuthService>(),
+          syncSettings: context.read<SyncSettingsProvider>(),
+        )),
         ChangeNotifierProxyProvider2<
           StatisticsProvider,
           BackgroundMusicProvider,

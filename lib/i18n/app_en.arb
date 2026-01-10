@@ -593,5 +593,351 @@
   "dropToSubtask": "Release to convert to subtask",
   "@dropToSubtask": {
     "description": "Text shown when dragging a task to convert it to a subtask"
+  },
+
+  "logoutConfirmTitle": "Logout",
+  "@logoutConfirmTitle": {
+    "description": "Title for logout confirmation dialog"
+  },
+
+  "logoutConfirmMessage": "Are you sure you want to logout?",
+  "@logoutConfirmMessage": {
+    "description": "Message for logout confirmation dialog"
+  },
+
+  "logout": "Logout",
+  "@logout": {
+    "description": "Label for logout button"
+  },
+
+  "tapToLogin": "Tap to login",
+  "@tapToLogin": {
+    "description": "Prompt to tap to login"
+  },
+
+  "loginTitle": "Login",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
+  "registerTitle": "Register",
+  "@registerTitle": {
+    "description": "Register screen title"
+  },
+  "usernamePlaceholder": "Username",
+  "@usernamePlaceholder": {
+    "description": "Username input placeholder"
+  },
+  "emailPlaceholder": "Email",
+  "@emailPlaceholder": {
+    "description": "Email input placeholder"
+  },
+  "passwordPlaceholder": "Password",
+  "@passwordPlaceholder": {
+    "description": "Password input placeholder"
+  },
+  "confirmPasswordPlaceholder": "Confirm Password",
+  "@confirmPasswordPlaceholder": {
+    "description": "Confirm password input placeholder"
+  },
+  "loginButton": "Login",
+  "@loginButton": {
+    "description": "Login button label"
+  },
+  "registerButton": "Register",
+  "@registerButton": {
+    "description": "Register button label"
+  },
+  "noAccount": "Don't have an account? Register",
+  "@noAccount": {
+    "description": "Text for users without an account"
+  },
+  "hasAccount": "Already have an account? Login",
+  "@hasAccount": {
+    "description": "Text for users with an account"
+  },
+  "loginSuccess": "Login successful",
+  "@loginSuccess": {
+    "description": "Login success message"
+  },
+  "loginFailed": "Login failed",
+  "@loginFailed": {
+    "description": "Login failed message"
+  },
+  "registerSuccess": "Registration successful",
+  "@registerSuccess": {
+    "description": "Registration success message"
+  },
+  "registerFailed": "Registration failed",
+  "@registerFailed": {
+    "description": "Registration failed message"
+  },
+  "passwordMismatch": "Passwords do not match",
+  "@passwordMismatch": {
+    "description": "Error message when passwords don't match"
+  },
+  "usernameTooShort": "Username must be at least 3 characters",
+  "@usernameTooShort": {
+    "description": "Username too short error message"
+  },
+  "passwordTooShort": "Password must be at least 6 characters",
+  "@passwordTooShort": {
+    "description": "Password too short error message"
+  },
+  "invalidEmail": "Please enter a valid email address",
+  "@invalidEmail": {
+    "description": "Invalid email error message"
+  },
+
+  "exportData": "Export Data",
+  "@exportData": {
+    "description": "Title for export data dialog"
+  },
+  "export": "Export",
+  "@export": {
+    "description": "Export button label"
+  },
+  "exportDataTypes": "Data Types",
+  "@exportDataTypes": {
+    "description": "Label for data type selection"
+  },
+  "exportFormat": "Format",
+  "@exportFormat": {
+    "description": "Label for export format selection"
+  },
+  "exportFormatJson": "Structured data, easy to restore",
+  "@exportFormatJson": {
+    "description": "Description for JSON format"
+  },
+  "exportFormatCsv": "Table data, compatible with Excel",
+  "@exportFormatCsv": {
+    "description": "Description for CSV format"
+  },
+  "exportDateRange": "Date Range",
+  "@exportDateRange": {
+    "description": "Label for date range selection"
+  },
+  "startDate": "Start Date",
+  "@startDate": {
+    "description": "Label for start date"
+  },
+  "endDate": "End Date",
+  "@endDate": {
+    "description": "Label for end date"
+  },
+  "exportPreparing": "Preparing export...",
+  "@exportPreparing": {
+    "description": "Status message when preparing export"
+  },
+  "exportSuccess": "Exported {count} records to {filePath}",
+  "@exportSuccess": {
+    "description": "Success message after export",
+    "placeholders": {
+      "count": { "type": "int", "example": "100" },
+      "filePath": { "type": "String", "example": "C:/Users/xxx/export.json" }
+    }
+  },
+  "exportNoDataTypeSelected": "Please select at least one data type",
+  "@exportNoDataTypeSelected": {
+    "description": "Error message when no data type selected"
+  },
+  "dataManagement": "Data Management",
+  "@dataManagement": {
+    "description": "Title for data management section"
+  },
+  "exportDataDescription": "Export your data in JSON or CSV format",
+  "@exportDataDescription": {
+    "description": "Description for data export feature"
+  },
+
+  "tags": "Tags",
+  "@tags": {
+    "description": "Label for tags"
+  },
+  "addTags": "Add Tags",
+  "@addTags": {
+    "description": "Button text to add tags"
+  },
+  "searchTags": "Search tags...",
+  "@searchTags": {
+    "description": "Placeholder text for tag search"
+  },
+  "noTagsAvailable": "No tags available",
+  "@noTagsAvailable": {
+    "description": "Message when no tags are available"
+  },
+  "noTagsYet": "No tags yet",
+  "@noTagsYet": {
+    "description": "Message when no tags exist yet"
+  },
+  "tagManagement": "Tag Management",
+  "@tagManagement": {
+    "description": "Title for tag management screen"
+  },
+  "createTag": "Create Tag",
+  "@createTag": {
+    "description": "Button text to create a tag"
+  },
+  "editTag": "Edit Tag",
+  "@editTag": {
+    "description": "Title for edit tag dialog"
+  },
+  "deleteTag": "Delete Tag",
+  "@deleteTag": {
+    "description": "Title for delete tag dialog"
+  },
+  "deleteTagConfirm": "Are you sure you want to delete tag \"{tagName}\"?",
+  "@deleteTagConfirm": {
+    "description": "Confirmation message when deleting a tag",
+    "placeholders": {
+      "tagName": { "type": "String", "example": "Work" }
+    }
+  },
+  "tagName": "Tag Name",
+  "@tagName": {
+    "description": "Label for tag name input"
+  },
+  "tagType": "Tag Type",
+  "@tagType": {
+    "description": "Label for tag type selection"
+  },
+  "tagColor": "Tag Color",
+  "@tagColor": {
+    "description": "Label for tag color selection"
+  },
+  "usageCount": "used",
+  "@usageCount": {
+    "description": "Usage count label"
+  },
+  "all": "All",
+  "@all": {
+    "description": "All filter option"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button label"
+  },
+  "syncSettings": "Sync Settings",
+  "@syncSettings": {
+    "description": "Title for sync settings section"
+  },
+  "serverUrl": "Server URL",
+  "@serverUrl": {
+    "description": "Label for server URL input"
+  },
+  "startSync": "Start Sync",
+  "@startSync": {
+    "description": "Button text to start sync"
+  },
+  "syncing": "Syncing...",
+  "@syncing": {
+    "description": "Label showing sync is in progress"
+  },
+  "resetSyncSettings": "Reset Sync",
+  "@resetSyncSettings": {
+    "description": "Button text to reset sync settings"
+  },
+  "syncSettingsReset": "Sync settings have been reset",
+  "@syncSettingsReset": {
+    "description": "Message shown when sync settings are reset"
+  },
+  "lastSyncResult": "Last Sync Result",
+  "@lastSyncResult": {
+    "description": "Label for last sync result"
+  },
+  "resetAllSettings": "Reset All Settings",
+  "@resetAllSettings": {
+    "description": "Title for reset all settings section"
+  },
+  "resetAllSettingsDescription": "Restore all settings to default values",
+  "@resetAllSettingsDescription": {
+    "description": "Description for reset all settings"
+  },
+  "resetAllSettingsConfirm": "Are you sure you want to reset all settings to default values? This action cannot be undone.",
+  "@resetAllSettingsConfirm": {
+    "description": "Confirmation message when resetting all settings"
+  },
+  "settingsResetSuccess": "All settings have been reset to default",
+  "@settingsResetSuccess": {
+    "description": "Success message when settings are reset"
+  },
+  "autoSync": "Auto Sync",
+  "@autoSync": {
+    "description": "Title for auto sync toggle"
+  },
+  "autoSyncDescription": "Automatically sync data when app starts",
+  "@autoSyncDescription": {
+    "description": "Description for auto sync feature"
+  },
+  "syncRequiresLogin": "Please login first to sync",
+  "@syncRequiresLogin": {
+    "description": "Prompt when user tries to sync without logging in"
+  },
+  "lastSync": "Last Sync",
+  "@lastSync": {
+    "description": "Label for last sync time"
+  },
+  "resolveConflict": "Resolve Conflict",
+  "@resolveConflict": {
+    "description": "Title for conflict resolution dialog"
+  },
+  "entityType": "Entity Type",
+  "@entityType": {
+    "description": "Label for entity type"
+  },
+  "localVersion": "Local Version",
+  "@localVersion": {
+    "description": "Label for local version"
+  },
+  "serverVersion": "Server Version",
+  "@serverVersion": {
+    "description": "Label for server version"
+  },
+  "localData": "Local Data",
+  "@localData": {
+    "description": "Label for local data"
+  },
+  "serverData": "Server Data",
+  "@serverData": {
+    "description": "Label for server data"
+  },
+  "modifiedAt": "Modified At",
+  "@modifiedAt": {
+    "description": "Label for modified time"
+  },
+  "resolveChoice": "Which version would you like to keep?",
+  "@resolveChoice": {
+    "description": "Title for resolve choice section"
+  },
+  "keepLocalVersion": "Keep Local Version",
+  "@keepLocalVersion": {
+    "description": "Option to keep local version"
+  },
+  "keepLocalVersionDesc": "Use the version saved on this device",
+  "@keepLocalVersionDesc": {
+    "description": "Description for keeping local version"
+  },
+  "keepServerVersion": "Keep Server Version",
+  "@keepServerVersion": {
+    "description": "Option to keep server version"
+  },
+  "keepServerVersionDesc": "Use the version from the server",
+  "@keepServerVersionDesc": {
+    "description": "Description for keeping server version"
+  },
+  "resolve": "Resolve",
+  "@resolve": {
+    "description": "Action to resolve conflict"
+  },
+  "largeDataWarningTitle": "Large Amount of Data",
+  "@largeDataWarningTitle": {
+    "description": "Warning title when too much data downloaded on web"
+  },
+  "largeDataWarningMessage": "A large amount of data was synced. For a better experience, please download the desktop or mobile app.",
+  "@largeDataWarningMessage": {
+    "description": "Warning message when too much data downloaded on web"
+  },
+  "largeDataWarningConfirm": "I Understand",
+  "@largeDataWarningConfirm": {
+    "description": "Button to dismiss large data warning"
   }
 }
