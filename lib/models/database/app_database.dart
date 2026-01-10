@@ -18,7 +18,7 @@ part 'app_database.g.dart';
     HabitLogs,
     TaskTags,
     TaskTagRelations,
-    SyncMetadata,
+    SyncMetadataTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -56,7 +56,7 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(taskTagRelations);
         }
         if (from < 4) {
-          await m.createTable(syncMetadata);
+          await m.createTable(syncMetadataTable);
         }
       },
     );

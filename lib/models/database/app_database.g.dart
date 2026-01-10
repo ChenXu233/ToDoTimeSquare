@@ -3197,12 +3197,12 @@ class TaskTagRelationsCompanion extends UpdateCompanion<TaskTagRelation> {
   }
 }
 
-class $SyncMetadataTable extends SyncMetadata
-    with TableInfo<$SyncMetadataTable, SyncMetadataData> {
+class $SyncMetadataTableTable extends SyncMetadataTable
+    with TableInfo<$SyncMetadataTableTable, SyncMetadataTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $SyncMetadataTable(this.attachedDatabase, [this._alias]);
+  $SyncMetadataTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _entityTypeMeta = const VerificationMeta(
     'entityType',
   );
@@ -3272,10 +3272,10 @@ class $SyncMetadataTable extends SyncMetadata
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'sync_metadata';
+  static const String $name = 'sync_metadata_table';
   @override
   VerificationContext validateIntegrity(
-    Insertable<SyncMetadataData> instance, {
+    Insertable<SyncMetadataTableData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -3320,9 +3320,9 @@ class $SyncMetadataTable extends SyncMetadata
   @override
   Set<GeneratedColumn> get $primaryKey => {entityType, entityId};
   @override
-  SyncMetadataData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  SyncMetadataTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SyncMetadataData(
+    return SyncMetadataTableData(
       entityType: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}entity_type'],
@@ -3347,19 +3347,19 @@ class $SyncMetadataTable extends SyncMetadata
   }
 
   @override
-  $SyncMetadataTable createAlias(String alias) {
-    return $SyncMetadataTable(attachedDatabase, alias);
+  $SyncMetadataTableTable createAlias(String alias) {
+    return $SyncMetadataTableTable(attachedDatabase, alias);
   }
 }
 
-class SyncMetadataData extends DataClass
-    implements Insertable<SyncMetadataData> {
+class SyncMetadataTableData extends DataClass
+    implements Insertable<SyncMetadataTableData> {
   final String entityType;
   final String entityId;
   final String syncStatus;
   final DateTime updatedAt;
   final DateTime? deletedAt;
-  const SyncMetadataData({
+  const SyncMetadataTableData({
     required this.entityType,
     required this.entityId,
     required this.syncStatus,
@@ -3379,8 +3379,8 @@ class SyncMetadataData extends DataClass
     return map;
   }
 
-  SyncMetadataCompanion toCompanion(bool nullToAbsent) {
-    return SyncMetadataCompanion(
+  SyncMetadataTableCompanion toCompanion(bool nullToAbsent) {
+    return SyncMetadataTableCompanion(
       entityType: Value(entityType),
       entityId: Value(entityId),
       syncStatus: Value(syncStatus),
@@ -3391,12 +3391,12 @@ class SyncMetadataData extends DataClass
     );
   }
 
-  factory SyncMetadataData.fromJson(
+  factory SyncMetadataTableData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return SyncMetadataData(
+    return SyncMetadataTableData(
       entityType: serializer.fromJson<String>(json['entityType']),
       entityId: serializer.fromJson<String>(json['entityId']),
       syncStatus: serializer.fromJson<String>(json['syncStatus']),
@@ -3416,21 +3416,21 @@ class SyncMetadataData extends DataClass
     };
   }
 
-  SyncMetadataData copyWith({
+  SyncMetadataTableData copyWith({
     String? entityType,
     String? entityId,
     String? syncStatus,
     DateTime? updatedAt,
     Value<DateTime?> deletedAt = const Value.absent(),
-  }) => SyncMetadataData(
+  }) => SyncMetadataTableData(
     entityType: entityType ?? this.entityType,
     entityId: entityId ?? this.entityId,
     syncStatus: syncStatus ?? this.syncStatus,
     updatedAt: updatedAt ?? this.updatedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
-  SyncMetadataData copyWithCompanion(SyncMetadataCompanion data) {
-    return SyncMetadataData(
+  SyncMetadataTableData copyWithCompanion(SyncMetadataTableCompanion data) {
+    return SyncMetadataTableData(
       entityType: data.entityType.present
           ? data.entityType.value
           : this.entityType,
@@ -3445,7 +3445,7 @@ class SyncMetadataData extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('SyncMetadataData(')
+    return (StringBuffer('SyncMetadataTableData(')
           ..write('entityType: $entityType, ')
           ..write('entityId: $entityId, ')
           ..write('syncStatus: $syncStatus, ')
@@ -3461,7 +3461,7 @@ class SyncMetadataData extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is SyncMetadataData &&
+      (other is SyncMetadataTableData &&
           other.entityType == this.entityType &&
           other.entityId == this.entityId &&
           other.syncStatus == this.syncStatus &&
@@ -3469,14 +3469,15 @@ class SyncMetadataData extends DataClass
           other.deletedAt == this.deletedAt);
 }
 
-class SyncMetadataCompanion extends UpdateCompanion<SyncMetadataData> {
+class SyncMetadataTableCompanion
+    extends UpdateCompanion<SyncMetadataTableData> {
   final Value<String> entityType;
   final Value<String> entityId;
   final Value<String> syncStatus;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> deletedAt;
   final Value<int> rowid;
-  const SyncMetadataCompanion({
+  const SyncMetadataTableCompanion({
     this.entityType = const Value.absent(),
     this.entityId = const Value.absent(),
     this.syncStatus = const Value.absent(),
@@ -3484,7 +3485,7 @@ class SyncMetadataCompanion extends UpdateCompanion<SyncMetadataData> {
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  SyncMetadataCompanion.insert({
+  SyncMetadataTableCompanion.insert({
     required String entityType,
     required String entityId,
     this.syncStatus = const Value.absent(),
@@ -3493,7 +3494,7 @@ class SyncMetadataCompanion extends UpdateCompanion<SyncMetadataData> {
     this.rowid = const Value.absent(),
   }) : entityType = Value(entityType),
        entityId = Value(entityId);
-  static Insertable<SyncMetadataData> custom({
+  static Insertable<SyncMetadataTableData> custom({
     Expression<String>? entityType,
     Expression<String>? entityId,
     Expression<String>? syncStatus,
@@ -3511,7 +3512,7 @@ class SyncMetadataCompanion extends UpdateCompanion<SyncMetadataData> {
     });
   }
 
-  SyncMetadataCompanion copyWith({
+  SyncMetadataTableCompanion copyWith({
     Value<String>? entityType,
     Value<String>? entityId,
     Value<String>? syncStatus,
@@ -3519,7 +3520,7 @@ class SyncMetadataCompanion extends UpdateCompanion<SyncMetadataData> {
     Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
-    return SyncMetadataCompanion(
+    return SyncMetadataTableCompanion(
       entityType: entityType ?? this.entityType,
       entityId: entityId ?? this.entityId,
       syncStatus: syncStatus ?? this.syncStatus,
@@ -3555,7 +3556,7 @@ class SyncMetadataCompanion extends UpdateCompanion<SyncMetadataData> {
 
   @override
   String toString() {
-    return (StringBuffer('SyncMetadataCompanion(')
+    return (StringBuffer('SyncMetadataTableCompanion(')
           ..write('entityType: $entityType, ')
           ..write('entityId: $entityId, ')
           ..write('syncStatus: $syncStatus, ')
@@ -3578,7 +3579,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TaskTagRelationsTable taskTagRelations = $TaskTagRelationsTable(
     this,
   );
-  late final $SyncMetadataTable syncMetadata = $SyncMetadataTable(this);
+  late final $SyncMetadataTableTable syncMetadataTable =
+      $SyncMetadataTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3590,7 +3592,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     habitLogs,
     taskTags,
     taskTagRelations,
-    syncMetadata,
+    syncMetadataTable,
   ];
 }
 
@@ -5187,8 +5189,8 @@ typedef $$TaskTagRelationsTableProcessedTableManager =
       TaskTagRelation,
       PrefetchHooks Function()
     >;
-typedef $$SyncMetadataTableCreateCompanionBuilder =
-    SyncMetadataCompanion Function({
+typedef $$SyncMetadataTableTableCreateCompanionBuilder =
+    SyncMetadataTableCompanion Function({
       required String entityType,
       required String entityId,
       Value<String> syncStatus,
@@ -5196,8 +5198,8 @@ typedef $$SyncMetadataTableCreateCompanionBuilder =
       Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
-typedef $$SyncMetadataTableUpdateCompanionBuilder =
-    SyncMetadataCompanion Function({
+typedef $$SyncMetadataTableTableUpdateCompanionBuilder =
+    SyncMetadataTableCompanion Function({
       Value<String> entityType,
       Value<String> entityId,
       Value<String> syncStatus,
@@ -5206,9 +5208,9 @@ typedef $$SyncMetadataTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
-class $$SyncMetadataTableFilterComposer
-    extends Composer<_$AppDatabase, $SyncMetadataTable> {
-  $$SyncMetadataTableFilterComposer({
+class $$SyncMetadataTableTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncMetadataTableTable> {
+  $$SyncMetadataTableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5241,9 +5243,9 @@ class $$SyncMetadataTableFilterComposer
   );
 }
 
-class $$SyncMetadataTableOrderingComposer
-    extends Composer<_$AppDatabase, $SyncMetadataTable> {
-  $$SyncMetadataTableOrderingComposer({
+class $$SyncMetadataTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncMetadataTableTable> {
+  $$SyncMetadataTableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5276,9 +5278,9 @@ class $$SyncMetadataTableOrderingComposer
   );
 }
 
-class $$SyncMetadataTableAnnotationComposer
-    extends Composer<_$AppDatabase, $SyncMetadataTable> {
-  $$SyncMetadataTableAnnotationComposer({
+class $$SyncMetadataTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncMetadataTableTable> {
+  $$SyncMetadataTableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5305,35 +5307,44 @@ class $$SyncMetadataTableAnnotationComposer
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
-class $$SyncMetadataTableTableManager
+class $$SyncMetadataTableTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $SyncMetadataTable,
-          SyncMetadataData,
-          $$SyncMetadataTableFilterComposer,
-          $$SyncMetadataTableOrderingComposer,
-          $$SyncMetadataTableAnnotationComposer,
-          $$SyncMetadataTableCreateCompanionBuilder,
-          $$SyncMetadataTableUpdateCompanionBuilder,
+          $SyncMetadataTableTable,
+          SyncMetadataTableData,
+          $$SyncMetadataTableTableFilterComposer,
+          $$SyncMetadataTableTableOrderingComposer,
+          $$SyncMetadataTableTableAnnotationComposer,
+          $$SyncMetadataTableTableCreateCompanionBuilder,
+          $$SyncMetadataTableTableUpdateCompanionBuilder,
           (
-            SyncMetadataData,
-            BaseReferences<_$AppDatabase, $SyncMetadataTable, SyncMetadataData>,
+            SyncMetadataTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $SyncMetadataTableTable,
+              SyncMetadataTableData
+            >,
           ),
-          SyncMetadataData,
+          SyncMetadataTableData,
           PrefetchHooks Function()
         > {
-  $$SyncMetadataTableTableManager(_$AppDatabase db, $SyncMetadataTable table)
-    : super(
+  $$SyncMetadataTableTableTableManager(
+    _$AppDatabase db,
+    $SyncMetadataTableTable table,
+  ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$SyncMetadataTableFilterComposer($db: db, $table: table),
+              $$SyncMetadataTableTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$SyncMetadataTableOrderingComposer($db: db, $table: table),
+              $$SyncMetadataTableTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$SyncMetadataTableAnnotationComposer($db: db, $table: table),
+              $$SyncMetadataTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
           updateCompanionCallback:
               ({
                 Value<String> entityType = const Value.absent(),
@@ -5342,7 +5353,7 @@ class $$SyncMetadataTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => SyncMetadataCompanion(
+              }) => SyncMetadataTableCompanion(
                 entityType: entityType,
                 entityId: entityId,
                 syncStatus: syncStatus,
@@ -5358,7 +5369,7 @@ class $$SyncMetadataTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => SyncMetadataCompanion.insert(
+              }) => SyncMetadataTableCompanion.insert(
                 entityType: entityType,
                 entityId: entityId,
                 syncStatus: syncStatus,
@@ -5374,21 +5385,25 @@ class $$SyncMetadataTableTableManager
       );
 }
 
-typedef $$SyncMetadataTableProcessedTableManager =
+typedef $$SyncMetadataTableTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $SyncMetadataTable,
-      SyncMetadataData,
-      $$SyncMetadataTableFilterComposer,
-      $$SyncMetadataTableOrderingComposer,
-      $$SyncMetadataTableAnnotationComposer,
-      $$SyncMetadataTableCreateCompanionBuilder,
-      $$SyncMetadataTableUpdateCompanionBuilder,
+      $SyncMetadataTableTable,
+      SyncMetadataTableData,
+      $$SyncMetadataTableTableFilterComposer,
+      $$SyncMetadataTableTableOrderingComposer,
+      $$SyncMetadataTableTableAnnotationComposer,
+      $$SyncMetadataTableTableCreateCompanionBuilder,
+      $$SyncMetadataTableTableUpdateCompanionBuilder,
       (
-        SyncMetadataData,
-        BaseReferences<_$AppDatabase, $SyncMetadataTable, SyncMetadataData>,
+        SyncMetadataTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $SyncMetadataTableTable,
+          SyncMetadataTableData
+        >,
       ),
-      SyncMetadataData,
+      SyncMetadataTableData,
       PrefetchHooks Function()
     >;
 
@@ -5407,6 +5422,6 @@ class $AppDatabaseManager {
       $$TaskTagsTableTableManager(_db, _db.taskTags);
   $$TaskTagRelationsTableTableManager get taskTagRelations =>
       $$TaskTagRelationsTableTableManager(_db, _db.taskTagRelations);
-  $$SyncMetadataTableTableManager get syncMetadata =>
-      $$SyncMetadataTableTableManager(_db, _db.syncMetadata);
+  $$SyncMetadataTableTableTableManager get syncMetadataTable =>
+      $$SyncMetadataTableTableTableManager(_db, _db.syncMetadataTable);
 }
