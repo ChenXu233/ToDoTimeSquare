@@ -46,8 +46,7 @@ app.*.map.json
 
 .spec-workflow/
 .claude/
-
-database
+backend/database
 
 .py[cod]
 __pycache__
