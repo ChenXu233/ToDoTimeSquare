@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../i18n/i18n.dart';
-import '../../../models/sync_record.dart';
+import '../../../models/dtos/sync_dto.dart';
 import '../../../services/sync_service.dart';
 
 /// 冲突解决对话框
@@ -79,7 +79,7 @@ class _ConflictResolveDialogState extends State<ConflictResolveDialog> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.blue.withOpacity(0.2) : Colors.blue[50],
+                        color: isDark ? Colors.blue.withValues(alpha: 0.2) : Colors.blue[50],
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isDark ? Colors.blue : Colors.blue[200]!,
@@ -121,7 +121,7 @@ class _ConflictResolveDialogState extends State<ConflictResolveDialog> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.green.withOpacity(0.2) : Colors.green[50],
+                        color: isDark ? Colors.green.withValues(alpha: 0.2) : Colors.green[50],
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: isDark ? Colors.green : Colors.green[200]!,
@@ -172,27 +172,27 @@ class _ConflictResolveDialogState extends State<ConflictResolveDialog> {
                   children: [
                     Text(i18n.resolveChoice, style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    RadioListTile<bool>(
-                      title: Text(i18n.keepLocalVersion),
-                      subtitle: Text(i18n.keepLocalVersionDesc),
-                      value: true,
+                    RadioGroup<bool>(
                       groupValue: _keepLocal,
                       onChanged: (value) {
                         setState(() {
                           _keepLocal = value ?? true;
                         });
                       },
-                    ),
-                    RadioListTile<bool>(
-                      title: Text(i18n.keepServerVersion),
-                      subtitle: Text(i18n.keepServerVersionDesc),
-                      value: false,
-                      groupValue: _keepLocal,
-                      onChanged: (value) {
-                        setState(() {
-                          _keepLocal = value ?? false;
-                        });
-                      },
+                      child: Column(
+                        children: [
+                          RadioListTile<bool>(
+                            title: Text(i18n.keepLocalVersion),
+                            subtitle: Text(i18n.keepLocalVersionDesc),
+                            value: true,
+                          ),
+                          RadioListTile<bool>(
+                            title: Text(i18n.keepServerVersion),
+                            subtitle: Text(i18n.keepServerVersionDesc),
+                            value: false,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

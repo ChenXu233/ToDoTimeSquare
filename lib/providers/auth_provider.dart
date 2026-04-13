@@ -11,7 +11,7 @@ class AuthProvider with ChangeNotifier {
   static const String _refreshTokenKey = 'auth_refresh_token';
   static const String _userKey = 'auth_user';
 
-  final AuthService _authService = AuthService();
+  final AuthService _authService;
 
   bool _isLoading = false;
   bool _isLoggedIn = false;
@@ -28,7 +28,8 @@ class AuthProvider with ChangeNotifier {
   User? get currentUser => _currentUser;
   String? get errorMessage => _errorMessage;
 
-  AuthProvider() {
+  AuthProvider({required AuthService authService})
+      : _authService = authService {
     _loadSavedAuth();
   }
 

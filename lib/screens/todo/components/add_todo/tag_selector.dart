@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:ToDoTimeSquare/providers/tag_provider.dart';
 import 'package:ToDoTimeSquare/models/entities/task_tag_model.dart';
@@ -366,7 +367,7 @@ class _TagSelectorState extends State<TagSelector> {
                       FilledButton.icon(
                         onPressed: () {
                           Navigator.pop(context);
-                          // TODO: 跳转到标签管理页面
+                          context.push('/settings/tags');
                         },
                         icon: const Icon(Icons.add),
                         label: Text(i18n.createTag),
@@ -543,7 +544,7 @@ class _TagSelectorState extends State<TagSelector> {
                     const SizedBox(height: 8),
                     TextButton(
                       onPressed: () {
-                        // TODO: 跳转到标签管理页面
+                        context.push('/settings/tags');
                       },
                       child: Text(i18n.createTag),
                     ),

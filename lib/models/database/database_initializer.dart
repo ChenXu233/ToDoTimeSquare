@@ -1,5 +1,4 @@
 import 'app_database.dart';
-import 'migration/migration_service.dart';
 
 /// 数据库初始化服务
 /// 管理数据库的创建、迁移和初始化
@@ -10,11 +9,9 @@ class DatabaseInitializer {
 
   AppDatabase? _database;
   bool _isInitialized = false;
-  bool _migrationCompleted = false;
 
   /// 初始化数据库
-  /// [enableMigration] 是否启用数据迁移（首次安装时启用）
-  Future<InitializationResult> initialize({bool enableMigration = true}) async {
+  Future<InitializationResult> initialize() async {
     if (_isInitialized) {
       return InitializationResult(
         success: true,
@@ -25,22 +22,6 @@ class DatabaseInitializer {
     try {
       _database = await AppDatabase.getInstance();
       _isInitialized = true;
-
-      // 检查并执行迁移
-      if (enableMigration && !_migrationCompleted) {
-        final migrationService = MigrationService(_database!);
-        final needsMigration = await migrationService.needsMigration();
-
-        if (needsMigration) {
-          final result = await migrationService.migrateAll();
-          _migrationCompleted = true;
-          return InitializationResult(
-            success: true,
-            message: result.toString(),
-            migrationResult: result,
-          );
-        }
-      }
 
       return InitializationResult(
         success: true,
@@ -66,9 +47,6 @@ class DatabaseInitializer {
   /// 检查是否已初始化
   bool get isInitialized => _isInitialized;
 
-  /// 检查迁移是否已完成
-  bool get isMigrationCompleted => _migrationCompleted;
-
   /// 关闭数据库
   Future<void> close() async {
     if (_database != null) {
@@ -83,13 +61,11 @@ class DatabaseInitializer {
 class InitializationResult {
   final bool success;
   final String message;
-  final MigrationResult? migrationResult;
   final dynamic error;
 
   InitializationResult({
     required this.success,
     required this.message,
-    this.migrationResult,
     this.error,
   });
 

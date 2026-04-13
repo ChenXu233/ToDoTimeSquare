@@ -400,6 +400,7 @@ class _TagManagementScreenState extends State<TagManagementScreen> {
                 if (nameController.text.isEmpty) return;
 
                 final tagProvider = context.read<TagProvider>();
+                final navigator = Navigator.of(context);
 
                 if (tag != null) {
                   // 更新
@@ -420,7 +421,7 @@ class _TagManagementScreenState extends State<TagManagementScreen> {
                 }
 
                 if (mounted) {
-                  Navigator.pop(context);
+                  navigator.pop();
                 }
               },
               child: Text(i18n.save),
@@ -450,9 +451,10 @@ class _TagManagementScreenState extends State<TagManagementScreen> {
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
               onPressed: () async {
+                final navigator = Navigator.of(context);
                 await context.read<TagProvider>().deleteTag(tag.id);
                 if (mounted) {
-                  Navigator.pop(context);
+                  navigator.pop();
                 }
               },
               child: Text(i18n.delete),

@@ -17,7 +17,9 @@ import 'providers/auth_provider.dart';
 import 'providers/tag_provider.dart';
 import 'providers/sync_settings_provider.dart';
 import 'services/sync_service.dart';
+import 'models/dtos/sync_settings.dart';
 import 'services/auth_service.dart';
+import 'services/focus_record_service.dart';
 import 'widgets/window/window_title_bar.dart';
 import 'services/notification_service.dart';
 import 'models/database/database_initializer.dart'; // 导入数据库初始化
@@ -34,7 +36,6 @@ void main() async {
 
   // 初始化数据库（包含数据迁移）
   final dbInitResult = await DatabaseInitializer().initialize(
-    enableMigration: false,
   );
   if (kDebugMode) {
     if (dbInitResult.success) {
@@ -97,25 +98,19 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider(create: (_) => TodoProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider(
+          authService: context.read<AuthService>(),
+        )),
         ChangeNotifierProvider(create: (_) => BackgroundMusicProvider()),
         ChangeNotifierProvider(create: (_) => TagProvider()),
         ChangeNotifierProvider(create: (_) => SyncSettingsProvider()),
         Provider(create: (_) => AuthService()),
+        Provider(create: (_) => FocusRecordService()),
         ChangeNotifierProvider(create: (context) => SyncService(
           authService: context.read<AuthService>(),
-          syncSettings: context.read<SyncSettingsProvider>(),
+          syncSettings: SyncSettings(baseUrl: context.read<SyncSettingsProvider>().serverUrl),
         )),
-        ChangeNotifierProxyProvider2<
-          StatisticsProvider,
-          BackgroundMusicProvider,
-          PomodoroProvider
-        >(
-          create: (_) => PomodoroProvider(),
-          update: (_, stats, bgMusic, pomodoro) => pomodoro!
-            ..setStatisticsProvider(stats)
-            ..setBackgroundMusicProvider(bgMusic),
-        ),
+        ChangeNotifierProvider(create: (_) => PomodoroProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

@@ -4,6 +4,7 @@ import '../screens/home.dart' as home_screen;
 import '../screens/pomodoro/pomodoro_screen.dart';
 import '../models/models.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/settings/tag_management_screen.dart';
 import '../screens/todo/todo_list_screen.dart';
 import '../screens/statistics/statistics.dart';
 
@@ -29,6 +30,14 @@ final GoRouter appRouter = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return const SettingsScreen();
           },
+          routes: [
+            GoRoute(
+              path: 'tags',
+              builder: (BuildContext context, GoRouterState state) {
+                return const TagManagementScreen();
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: 'todo',

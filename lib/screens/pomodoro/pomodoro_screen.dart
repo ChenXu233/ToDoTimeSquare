@@ -6,11 +6,11 @@ import '../../providers/pomodoro_provider.dart';
 import '../../providers/todo_provider.dart';
 import '../../i18n/i18n.dart';
 import '../../models/models.dart' show TaskModel;
-import 'widgets/task_tray.dart';
-import 'widgets/settings_dialog.dart';
-import 'widgets/info_dialog.dart';
-import 'widgets/completion_dialog.dart';
-import 'widgets/music_player_dialog.dart';
+import 'components/task_tray.dart';
+import 'components/settings_dialog.dart';
+import 'components/info_dialog.dart';
+import 'components/completion_dialog.dart';
+import 'components/music_player_dialog.dart';
 
 class PomodoroScreen extends StatefulWidget {
   final TaskModel? initialTask;
@@ -44,7 +44,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
           title: widget.initialTask!.title,
         );
         if (changed) {
-          provider.startTimer();
+          provider.startTimer(context);
         }
       }
     });
@@ -61,7 +61,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
           title: widget.initialTask!.title,
         );
         if (changed) {
-          provider.startTimer();
+          provider.startTimer(context);
         }
       }
     }
@@ -110,9 +110,11 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
     if (taskId == null) return;
 
     await context.read<TodoProvider>().markTodoCompleted(taskId);
+    if (!context.mounted) return;
+
+    provider.resetTimer(context, clearTask: true);
     if (!mounted) return;
 
-    provider.resetTimer(clearTask: true);
     setState(() {
       _isTaskExpanded = false;
     });
@@ -230,7 +232,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     // Minimal Controls
                     if (provider.isRinging)
                       ElevatedButton(
-                        onPressed: provider.stopAlarm,
+                        onPressed: () => provider.stopAlarm(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.red,
@@ -252,7 +254,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                             children: [
                               IconButton(
                                 onPressed: () =>
-                                    provider.resetTimer(clearTask: true),
+                                    provider.resetTimer(context, clearTask: true),
                                 icon: const Icon(Icons.refresh),
                                 color: fgColor.withAlpha(((0.5) * 255).round()),
                                 iconSize: 24,
@@ -260,8 +262,8 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                               const SizedBox(width: 40),
                               IconButton(
                                 onPressed: provider.isRunning
-                                    ? provider.pauseTimer
-                                    : provider.startTimer,
+                                    ? () => provider.pauseTimer(context)
+                                    : () => provider.startTimer(context),
                                 icon: Icon(
                                   provider.isRunning
                                       ? Icons.pause
@@ -272,7 +274,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                               ),
                               const SizedBox(width: 40),
                               IconButton(
-                                onPressed: provider.skipPhase,
+                                onPressed: () => provider.skipPhase(context),
                                 icon: const Icon(Icons.skip_next),
                                 color: fgColor.withAlpha(((0.5) * 255).round()),
                                 iconSize: 24,

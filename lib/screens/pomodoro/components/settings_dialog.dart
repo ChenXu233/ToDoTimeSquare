@@ -6,7 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import '../../../i18n/i18n.dart';
 import '../../../widgets/glass/glass_container.dart';
 import '../../../providers/pomodoro_provider.dart';
-import '../../../screens/settings/widgets/duration_setting.dart';
+import '../../../screens/settings/components/duration_setting.dart';
 
 Future<void> showPomodoroSettingsDialog(BuildContext context) {
   final provider = Provider.of<PomodoroProvider>(context, listen: false);

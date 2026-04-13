@@ -60,7 +60,7 @@ class MusicTrack {
       'localPath': localPath,
     };
   }
-  
+
   MusicTrack copyWith({
     String? id,
     String? title,

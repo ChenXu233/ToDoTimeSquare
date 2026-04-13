@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
-import 'background_music_provider.dart';
+import '../services/focus_record_service.dart';
 import '../models/repositories/focus_record_repository.dart';
-import 'statistics_provider.dart';
+import 'background_music_provider.dart';
 
 enum PomodoroStatus { focus, shortBreak }
 
@@ -50,18 +52,6 @@ class PomodoroProvider extends ChangeNotifier {
 
   String? _currentTaskId;
   String? _currentTaskTitle;
-
-  StatisticsProvider? _statisticsProvider;
-
-  BackgroundMusicProvider? _backgroundMusicProvider;
-
-  void setStatisticsProvider(StatisticsProvider provider) {
-    _statisticsProvider = provider;
-  }
-
-  void setBackgroundMusicProvider(BackgroundMusicProvider provider) {
-    _backgroundMusicProvider = provider;
-  }
 
   PomodoroProvider() {
     _loadSettings();
@@ -128,7 +118,8 @@ class PomodoroProvider extends ChangeNotifier {
       if (now.isBefore(target)) {
         _targetTime = target;
         _remainingSeconds = target.difference(now).inSeconds;
-        _startTimerInternal();
+        // Don't start timer here - requires context which isn't available during init.
+        // Timer will be started when user manually calls startTimer().
       } else {
         // App was closed and timer expired while closed.
         // Requirement: "Once the app exits, it is no longer counted."
@@ -140,7 +131,7 @@ class PomodoroProvider extends ChangeNotifier {
             : _shortBreakDuration;
         _saveState();
         // Do NOT start alarm, do NOT record stats.
-        resetTimer();
+        // Don't call resetTimer - it requires context
       }
     } else {
       if (savedRemaining != null) {
@@ -201,7 +192,7 @@ class PomodoroProvider extends ChangeNotifier {
         await NotificationService().requestPermissions();
       }
     }
-    resetTimer();
+    // Note: resetTimer requires context, should be called explicitly from UI
   }
 
   double get progress {
@@ -222,26 +213,26 @@ class PomodoroProvider extends ChangeNotifier {
     return value;
   }
 
-  void startTimer() {
+  void startTimer(BuildContext context) {
     if (_timer != null) return;
     if (_isRinging) {
-      stopAlarm();
+      stopAlarm(context);
       return;
     }
     _isRunning = true;
     _targetTime = DateTime.now().add(Duration(seconds: _remainingSeconds));
     _saveState();
-    _startTimerInternal();
+    _startTimerInternal(context);
     _scheduleNotification();
     // Start/resume background music when timer starts (only if enabled in settings)
     if (_autoPlayBackgroundMusic) {
-      _backgroundMusicProvider?.resumeBackgroundMusic();
+      context.read<BackgroundMusicProvider>().resumeBackgroundMusic();
     }
 
     notifyListeners();
   }
 
-  void _startTimerInternal() {
+  void _startTimerInternal(BuildContext context) {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
@@ -260,8 +251,8 @@ class PomodoroProvider extends ChangeNotifier {
         _saveState();
 
         // Record statistics if it was a focus session
-        if (_status == PomodoroStatus.focus && _statisticsProvider != null) {
-          _statisticsProvider!.addRecord(
+        if (_status == PomodoroStatus.focus) {
+          context.read<FocusRecordService>().addRecord(
             FocusRecordModel(
               id: DateTime.now().toIso8601String(),
               startTime: DateTime.now().subtract(
@@ -288,12 +279,12 @@ class PomodoroProvider extends ChangeNotifier {
             ongoing: true,
           );
         }
-        _startAlarm();
+        _startAlarm(context);
       }
     });
   }
 
-  void pauseTimer() {
+  void pauseTimer(BuildContext context) {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
@@ -301,7 +292,7 @@ class PomodoroProvider extends ChangeNotifier {
     _saveState();
     _cancelNotification();
     // Pause background music when timer pauses
-    _backgroundMusicProvider?.pauseBackgroundMusic();
+    context.read<BackgroundMusicProvider>().pauseBackgroundMusic();
     notifyListeners();
   }
 
@@ -330,7 +321,7 @@ class PomodoroProvider extends ChangeNotifier {
     return true;
   }
 
-  void resetTimer({bool clearTask = false}) {
+  void resetTimer(BuildContext context, {bool clearTask = false}) {
     _timer?.cancel();
     _timer = null;
     _isRunning = false;
@@ -340,7 +331,7 @@ class PomodoroProvider extends ChangeNotifier {
       _isRinging = false;
       _audioPlayer.stop();
     }
-    
+
     _status = PomodoroStatus.focus;
     _remainingSeconds = _focusDuration;
 
@@ -352,23 +343,23 @@ class PomodoroProvider extends ChangeNotifier {
     _saveState();
     _cancelNotification();
     // Ensure background music is paused on reset
-    _backgroundMusicProvider?.pauseBackgroundMusic();
+    context.read<BackgroundMusicProvider>().pauseBackgroundMusic();
     notifyListeners();
   }
 
-  void skipPhase() {
-    pauseTimer();
+  void skipPhase(BuildContext context) {
+    pauseTimer(context);
     if (_isRinging) {
-      stopAlarm();
+      stopAlarm(context);
     } else {
       _switchNextStatus();
-      startTimer();
+      startTimer(context);
     }
   }
 
-  void setStatus(PomodoroStatus status) {
-    pauseTimer();
-    stopAlarm();
+  void setStatus(BuildContext context, PomodoroStatus status) {
+    pauseTimer(context);
+    stopAlarm(context);
     _status = status;
     switch (_status) {
       case PomodoroStatus.focus:
@@ -382,13 +373,11 @@ class PomodoroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _startAlarm() async {
+  Future<void> _startAlarm(BuildContext context) async {
     _isRinging = true;
     notifyListeners();
     // stop background music (if any) when alarm starts
-    if (_backgroundMusicProvider != null) {
-      await _backgroundMusicProvider!.pauseBackgroundMusic();
-    }
+    await context.read<BackgroundMusicProvider>().pauseBackgroundMusic();
     try {
       // Stop any previous playback to avoid races
       await _audioPlayer.stop();
@@ -435,13 +424,13 @@ class PomodoroProvider extends ChangeNotifier {
     }
   }
 
-  void stopAlarm() {
+  void stopAlarm(BuildContext context) {
     if (_isRinging) {
       _isRinging = false;
       _audioPlayer.stop();
       _cancelNotification();
       _switchNextStatus();
-      startTimer(); // Auto start next phase
+      startTimer(context); // Auto start next phase
       // startTimer will resume background music if set
       notifyListeners();
     }

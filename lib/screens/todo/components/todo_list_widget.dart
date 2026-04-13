@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../i18n/i18n.dart';
 import '../../../providers/todo_provider.dart';
 import '../../../models/models.dart';
-import 'modal/add_todo/add_todo_modal.dart';
+import '../components/add_todo/add_todo_modal.dart';
 import 'todo_item.dart';
 import 'todo_drag_target.dart';
 import '../../../widgets/glass/glass_popup_menu.dart';

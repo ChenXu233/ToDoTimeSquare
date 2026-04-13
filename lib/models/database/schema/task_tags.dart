@@ -9,6 +9,8 @@ enum TagType {
 }
 
 /// 标签表定义
+@TableIndex(name: 'task_tags_user_id_idx', columns: {#userId})
+@TableIndex(name: 'task_tags_type_idx', columns: {#type})
 class TaskTags extends Table {
   TextColumn get id => text()();
   TextColumn get userId => text().withDefault(const Constant('local'))();
@@ -23,10 +25,4 @@ class TaskTags extends Table {
 
   @override
   Set<Column> get primaryKey => {id};
-
-  @override
-  List<Set<Column>> get indexes => [
-        {userId},
-        {type},
-      ];
 }

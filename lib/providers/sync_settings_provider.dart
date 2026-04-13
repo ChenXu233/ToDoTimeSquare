@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
-import '../models/sync_record.dart';
+import '../models/dtos/sync_dto.dart';
 import '../services/sync_service.dart';
 import 'auth_provider.dart';
 

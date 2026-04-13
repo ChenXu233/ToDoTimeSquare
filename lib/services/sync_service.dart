@@ -6,10 +6,10 @@ import 'package:drift/drift.dart' as drift;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/sync_record.dart';
+import '../models/dtos/sync_dto.dart';
 import '../models/database/app_database.dart';
+import '../models/dtos/sync_settings.dart';
 import 'auth_service.dart';
-import '../providers/sync_settings_provider.dart';
 
 /// 同步异常
 class SyncException implements Exception {
@@ -84,7 +84,7 @@ class SyncService with ChangeNotifier {
   static const String _resolveEndpoint = '/sync/resolve';
 
   final AuthService authService;
-  final SyncSettingsProvider syncSettings;
+  final SyncSettings syncSettings;
   final Duration timeout;
 
   String get baseUrl => syncSettings.baseUrl;

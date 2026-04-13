@@ -4,11 +4,11 @@ import '../../../../../providers/todo_provider.dart';
 import '../../../../../i18n/i18n.dart';
 import '../../../../../widgets/glass/glass_container.dart';
 import '../../../../../models/models.dart';
-import 'component/importance_segmented_button.dart';
-import 'component/parent_task_dropdown.dart';
-import 'component/duration_picker.dart';
-import 'component/start_time_picker.dart';
-import 'component/tag_selector.dart';
+import 'importance_segmented_button.dart';
+import 'parent_task_dropdown.dart';
+import 'duration_picker.dart';
+import 'start_time_picker.dart';
+import 'tag_selector.dart';
 
 class AddTodoModal extends StatefulWidget {
   final TaskModel? todo;
