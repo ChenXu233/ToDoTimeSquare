@@ -1,4 +1,4 @@
-name: ToDoTimeSquare
+name: todo_time_square
 description: "这是一个全新的现代化UI的待办事项应用，用于管理和组织你的待办事项，采用方格计时管理，帮助你更高效地完成任务。"
 # The following line prevents the package from being accidentally published to
 
@@ -78,6 +78,8 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   drift_dev: ^2.22.0
   build_runner: ^2.4.13
+  mocktail: ^1.0.4
+  mockito: ^5.4.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
