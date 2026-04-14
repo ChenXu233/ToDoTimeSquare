@@ -4,7 +4,8 @@ import '../../../../../providers/todo_provider.dart';
 import '../../../../../i18n/i18n.dart';
 import '../../../../../widgets/glass/glass_container.dart';
 import '../../../../../models/models.dart';
-import 'importance_segmented_button.dart';
+import '../../../../../services/ai_task_analyzer.dart';
+import '../../../../../services/ai_claude_provider.dart';
 import 'parent_task_dropdown.dart';
 import 'duration_picker.dart';
 import 'start_time_picker.dart';
@@ -23,11 +24,13 @@ class _AddTodoModalState extends State<AddTodoModal> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  TodoImportance _importance = TodoImportance.medium;
+  // Fixed to medium importance (no UI selector)
+  static const TodoImportance _defaultImportance = TodoImportance.medium;
   int? _estimatedDuration; // minutes
   DateTime? _plannedStartTime;
   String? _parentId;
   List<String> _selectedTagIds = [];
+  bool _isAiLoading = false;
 
   @override
   void initState() {
@@ -35,8 +38,6 @@ class _AddTodoModalState extends State<AddTodoModal> {
     if (widget.todo != null) {
       _titleController.text = widget.todo!.title;
       _descriptionController.text = widget.todo!.description ?? '';
-      _importance =
-          TodoImportance.values[(widget.todo!.importance - 1).clamp(0, 2)];
       _estimatedDuration = widget.todo!.estimatedDuration;
       _plannedStartTime = widget.todo!.plannedStartTime;
       _parentId = widget.todo!.parentId;
@@ -104,7 +105,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
               ? null
               : _descriptionController.text,
           estimatedDuration: _estimatedDuration,
-          importance: _importance.index + 1,
+          importance: _defaultImportance.index + 1,
           plannedStartTime: _plannedStartTime,
           parentId: _parentId,
         );
@@ -118,7 +119,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
               ? null
               : _descriptionController.text,
           estimatedDuration: _estimatedDuration,
-          importance: _importance,
+          importance: _defaultImportance,
           plannedStartTime: _plannedStartTime,
           parentId: _parentId,
         );
@@ -127,9 +128,8 @@ class _AddTodoModalState extends State<AddTodoModal> {
           await provider.setTagsForTask(newTodoId, _selectedTagIds);
         }
       }
-      if (mounted) {
-        Navigator.pop(context);
-      }
+      if (!mounted) return;
+      Navigator.pop(context);
     }
   }
 
@@ -264,47 +264,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
         ),
         const SizedBox(height: 16),
 
-        // Description
-        TextFormField(
-          controller: _descriptionController,
-          style: TextStyle(color: textColor),
-          decoration: InputDecoration(
-            labelText: i18n.taskDescription,
-            labelStyle: TextStyle(
-              color: textColor.withAlpha(((0.7) * 255).round()),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: textColor.withAlpha(((0.3) * 255).round()),
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: colorScheme.primary),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withAlpha(
-              ((0.3) * 255).round(),
-            ),
-          ),
-          maxLines: 3,
-        ),
-        const SizedBox(height: 16),
-
-        // Importance
-        ImportanceSegmentedButton(
-          importance: _importance,
-          onChanged: (newImportance) {
-            if (!mounted) return;
-            setState(() {
-              _importance = newImportance;
-            });
-          },
-        ),
-        const SizedBox(height: 16),
-
-        // Duration & Start Time
+        // Duration & Start Time Row
         Row(
           children: [
             Expanded(
@@ -316,7 +276,7 @@ class _AddTodoModalState extends State<AddTodoModal> {
                   final TimeOfDay? time = await showTimePicker(
                     context: context,
                     initialTime: const TimeOfDay(hour: 0, minute: 30),
-                    helpText: "Select Duration (Hours : Minutes)",
+                    helpText: i18n.selectDurationHint,
                     builder: (context, child) {
                       return MediaQuery(
                         data: MediaQuery.of(context)
@@ -380,29 +340,224 @@ class _AddTodoModalState extends State<AddTodoModal> {
         ),
         const SizedBox(height: 16),
 
-        // Parent Task
-        Text(
-          i18n.parentTask,
-          style: TextStyle(
-            color: textColor.withAlpha(((0.7) * 255).round()),
-            fontSize: 12,
+        // AI Optimize Button
+        _buildAIOptimizeButton(context, i18n, colorScheme),
+
+        // AI-generated description preview
+        if (_descriptionController.text.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer.withAlpha(
+                ((0.3) * 255).round(),
+              ),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: colorScheme.primary.withAlpha(((0.3) * 255).round()),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      size: 16,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'AI 生成描述',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _descriptionController.text,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: textColor.withAlpha(((0.8) * 255).round()),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        ParentTaskDropdown(
-          parentId: _parentId,
-          onChanged: _onParentChanged,
-          currentTodoId: widget.todo?.id,
-        ),
+        ],
+
         const SizedBox(height: 16),
 
-        // Tags
-        TagSelector(
-          selectedTagIds: _selectedTagIds,
-          onTagsChanged: _onTagsChanged,
-        ),
+        // Advanced Settings
+        _buildAdvancedSettings(context, i18n, colorScheme, textColor),
         const SizedBox(height: 24),
       ],
+    );
+  }
+
+  Widget _buildAIOptimizeButton(
+    BuildContext context,
+    APPi18n i18n,
+    ColorScheme colorScheme,
+  ) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _isAiLoading
+            ? null
+            : () async {
+                final title = _titleController.text.trim();
+                if (title.isEmpty) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('请先输入任务名称'),
+                      backgroundColor: colorScheme.error,
+                    ),
+                  );
+                  return;
+                }
+
+                if (!mounted) return;
+                setState(() => _isAiLoading = true);
+
+                try {
+                  final provider = context.read<TodoProvider>();
+                  final aiProvider = ClaudeProvider();
+                  final analyzer = AITaskAnalyzer(aiProvider);
+
+                  final result = await analyzer.analyzeTask(
+                    title,
+                    provider.todos.where((t) => !t.isCompleted).toList(),
+                  );
+
+                  if (!mounted) return;
+
+                  if (result != null) {
+                    _descriptionController.text = result.description;
+                    if (result.estimatedMinutes != null) {
+                      _onDurationChanged(
+                        Duration(minutes: result.estimatedMinutes!),
+                      );
+                    }
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('AI 优化完成，请确认'),
+                        backgroundColor: colorScheme.primary,
+                      ),
+                    );
+                  } else {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('AI 分析失败，请手动填写'),
+                        backgroundColor: colorScheme.error,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('AI 服务异常: ${e.toString()}'),
+                      backgroundColor: colorScheme.error,
+                    ),
+                  );
+                } finally {
+                  if (mounted) {
+                    setState(() => _isAiLoading = false);
+                  }
+                }
+              },
+        icon: _isAiLoading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colorScheme.primary,
+                ),
+              )
+            : Icon(Icons.auto_awesome, color: colorScheme.primary),
+        label: Text(
+          _isAiLoading ? 'AI 优化中...' : 'AI 优化任务',
+          style: TextStyle(color: colorScheme.primary),
+        ),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          side: BorderSide(
+            color: colorScheme.primary.withAlpha(((0.5) * 255).round()),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdvancedSettings(
+    BuildContext context,
+    APPi18n i18n,
+    ColorScheme colorScheme,
+    Color textColor,
+  ) {
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        tilePadding: EdgeInsets.zero,
+        title: Row(
+          children: [
+            Icon(
+              Icons.tune,
+              size: 18,
+              color: textColor.withAlpha(((0.7) * 255).round()),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '高级设置',
+              style: TextStyle(
+                color: textColor.withAlpha(((0.8) * 255).round()),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        iconColor: textColor.withAlpha(((0.5) * 255).round()),
+        collapsedIconColor: textColor.withAlpha(((0.5) * 255).round()),
+        childrenPadding: const EdgeInsets.only(top: 8, bottom: 8),
+        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Parent Task
+          Text(
+            i18n.parentTask,
+            style: TextStyle(
+              color: textColor.withAlpha(((0.7) * 255).round()),
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ParentTaskDropdown(
+            parentId: _parentId,
+            onChanged: _onParentChanged,
+            currentTodoId: widget.todo?.id,
+          ),
+          const SizedBox(height: 16),
+
+          // Tags
+          TagSelector(
+            selectedTagIds: _selectedTagIds,
+            onTagsChanged: _onTagsChanged,
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:ToDoTimeSquare/providers/tag_provider.dart';
-import 'package:ToDoTimeSquare/models/entities/task_tag_model.dart';
-import 'package:ToDoTimeSquare/models/database/schema/task_tags.dart';
-import 'package:ToDoTimeSquare/i18n/i18n.dart';
-import 'package:ToDoTimeSquare/widgets/glass/glass_container.dart';
+import 'package:todo_time_square/providers/tag_provider.dart';
+import 'package:todo_time_square/models/entities/task_tag_model.dart';
+import 'package:todo_time_square/models/database/schema/task_tags.dart';
+import 'package:todo_time_square/i18n/i18n.dart';
+import 'package:todo_time_square/widgets/glass/glass_container.dart';
 
 /// 标签选择器组件
 /// 支持内联小面板（标签少）和 BottomSheet 弹窗（标签多）

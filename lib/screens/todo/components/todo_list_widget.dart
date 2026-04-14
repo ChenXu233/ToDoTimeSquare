@@ -19,10 +19,11 @@ class TodoListWidget extends StatefulWidget {
 
 class _TodoListWidgetState extends State<TodoListWidget> {
   void _showAddTodoModal(BuildContext context, {TaskModel? todo}) {
+    final i18n = APPi18n.of(context)!;
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      barrierLabel: todo != null ? "Edit Todo" : "Add Todo",
+      barrierLabel: todo != null ? i18n.editTodo : i18n.addTodoTitle,
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
@@ -200,6 +201,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
                         if (candidateData.isNotEmpty) {
                           final data = candidateData.first;
                           if (data != null && data.parentId != null) {
+                            final i18n = APPi18n.of(context)!;
                             return Container(
                               height: 80,
                               margin: const EdgeInsets.all(16),
@@ -211,9 +213,9 @@ class _TodoListWidgetState extends State<TodoListWidget> {
                                 borderRadius: BorderRadius.circular(12),
                                 color: Colors.blue.withValues(alpha: 0.1),
                               ),
-                              child: const Center(
+                              child: Center(
                                 child: Text(
-                                  "松手转为主任务",
+                                  i18n.dropToMainTask,
                                   style: TextStyle(
                                     color: Colors.blue,
                                     fontWeight: FontWeight.bold,

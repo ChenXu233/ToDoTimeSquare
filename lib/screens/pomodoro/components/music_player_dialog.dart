@@ -45,7 +45,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget>
       builder: (context, provider, child) {
         final track = provider.currentTrack;
         final title =
-            track?.title ?? i18n?.noMusicSelected ?? 'No Music Selected';
+            track?.title ?? i18n?.noMusicSelected ?? '';
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),

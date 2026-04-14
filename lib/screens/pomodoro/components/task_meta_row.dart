@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../i18n/i18n.dart';
 import '../../../models/models.dart';
 
 class TaskMetaRow extends StatelessWidget {
@@ -45,7 +46,8 @@ class TaskMetaRow extends StatelessWidget {
       );
     }
     if (chips.isEmpty) {
-      return Text('No Meta', style: TextStyle(color: fgColor.withAlpha(150)));
+      final i18n = APPi18n.of(context)!;
+      return Text(i18n.noMeta, style: TextStyle(color: fgColor.withAlpha(150)));
     }
     return Wrap(spacing: 12, runSpacing: 8, children: chips);
   }

@@ -181,7 +181,7 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                     // Status Text (Small)
                     Text(
                       provider.isRinging
-                          ? "TIME'S UP!"
+                          ? i18n.timesUp
                           : (provider.status == PomodoroStatus.focus
                                     ? i18n.pomodoroStatusFocus
                                     : i18n.pomodoroStatusShortBreak)
@@ -241,9 +241,9 @@ class _PomodoroScreenState extends State<PomodoroScreen> {
                             vertical: 16,
                           ),
                         ),
-                        child: const Text(
-                          "STOP ALARM",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: Text(
+                          i18n.stopAlarm,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )
                     else

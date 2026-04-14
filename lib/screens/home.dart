@@ -123,7 +123,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Focus. Organize. Achieve.",
+                        i18n.homeMessage,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: isDark ? Colors.white70 : Colors.black54,
