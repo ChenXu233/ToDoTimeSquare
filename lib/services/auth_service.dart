@@ -22,15 +22,23 @@ class AuthServiceConfig {
 }
 
 class AuthService {
+  final http.Client? _client;
+
   /// 获取当前配置的 baseUrl
   String get baseUrl => AuthServiceConfig.baseUrl;
 
   /// 获取超时时间
   Duration get timeout => AuthServiceConfig.timeout;
 
+  /// 创建 AuthService，可选注入 http.Client 用于测试
+  AuthService({http.Client? client}) : _client = client;
+
+  /// 内部使用的 http client
+  http.Client get _httpClient => _client ?? http.Client();
+
   /// Login with username and password
   Future<Token> login(String username, String password) async {
-    final response = await http.post(
+    final response = await _httpClient.post(
       Uri.parse('$baseUrl/auth/login'),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -55,7 +63,7 @@ class AuthService {
 
   /// Register a new user
   Future<User> register(String username, String email, String password) async {
-    final response = await http.post(
+    final response = await _httpClient.post(
       Uri.parse('$baseUrl/auth/register'),
       headers: {
         'Content-Type': 'application/json',
@@ -81,7 +89,7 @@ class AuthService {
 
   /// Refresh access token
   Future<Token> refreshToken(String refreshToken) async {
-    final response = await http.post(
+    final response = await _httpClient.post(
       Uri.parse('$baseUrl/auth/refresh'),
       headers: {
         'Content-Type': 'application/json',
@@ -105,7 +113,7 @@ class AuthService {
 
   /// Get current user info
   Future<User> getCurrentUser(String accessToken) async {
-    final response = await http.get(
+    final response = await _httpClient.get(
       Uri.parse('$baseUrl/users/me'),
       headers: {
         'Authorization': 'Bearer $accessToken',

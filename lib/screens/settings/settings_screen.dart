@@ -9,6 +9,7 @@ import '../../providers/pomodoro_provider.dart';
 import '../../providers/background_music_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/sync_settings_provider.dart';
+import '../../providers/ai_settings_provider.dart';
 import '../../services/sync_service.dart';
 import '../../services/auth_service.dart';
 import '../../widgets/sync/conflict_resolve_dialog.dart';
@@ -25,6 +26,55 @@ import 'login_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  static Future<void> _showApiKeyDialog(BuildContext context, AISettingsProvider aiProvider) async {
+    final controller = TextEditingController(text: aiProvider.apiKey);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Claude API Key'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '用于 AI 任务分析和优化功能',
+              style: TextStyle(
+                color: colorScheme.onSurface.withAlpha(((0.6) * 255).round()),
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'sk-ant-api...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              await aiProvider.setApiKey(controller.text.trim());
+              if (context.mounted) Navigator.pop(context);
+            },
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -579,6 +629,57 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  // AI Settings Section
+                  Consumer<AISettingsProvider>(
+                    builder: (context, aiProvider, child) {
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+                      return GlassContainer(
+                        color: isDark ? Colors.black : Colors.white,
+                        opacity: 0.1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: [
+                                  ConsistentIcon(Icons.auto_awesome),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'AI 设置',
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Divider(
+                              color: Theme.of(context).dividerColor.withAlpha(((0.1) * 255).round()),
+                            ),
+                            ListTile(
+                              leading: ConsistentIcon(Icons.key),
+                              title: const Text('Claude API Key'),
+                              subtitle: Text(
+                                aiProvider.hasApiKey
+                                    ? '${aiProvider.apiKey.substring(0, 8)}...'
+                                    : '未配置',
+                              ),
+                              trailing: Icon(
+                                aiProvider.hasApiKey
+                                    ? Icons.check_circle
+                                    : Icons.warning_amber,
+                                color: aiProvider.hasApiKey
+                                    ? Colors.green[400]
+                                    : Colors.orange[400],
+                              ),
+                              onTap: () => _showApiKeyDialog(context, aiProvider),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
                   // Sync Settings Section
                   Consumer<SyncSettingsProvider>(
                     builder: (context, syncProvider, child) {
@@ -747,7 +848,7 @@ class SettingsScreen extends StatelessWidget {
                                     return ListTile(
                                       dense: true,
                                       leading: const Icon(Icons.compare_arrows, size: 20),
-                                      title: Text('${_getEntityTypeName(conflict.entityType)} (${conflict.entityId.substring(0, 8)}...)'),
+                                      title: Text('${_getEntityTypeName(context, conflict.entityType)} (${conflict.entityId.substring(0, 8)}...)'),
                                       subtitle: Text('v${conflict.localVersion} vs v${conflict.serverVersion}'),
                                       trailing: const Icon(Icons.chevron_right, size: 20),
                                       onTap: () async {
@@ -825,18 +926,19 @@ class SettingsScreen extends StatelessWidget {
                                 onPressed: syncProvider.isSyncing
                                     ? null
                                     : () async {
+                                        final i18n = APPi18n.of(context)!;
                                         await syncProvider.resetSyncTimestamp();
                                         if (context.mounted) {
                                           ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('同步时间戳已重置，下次同步将执行全量同步'),
-                                              duration: Duration(seconds: 2),
+                                            SnackBar(
+                                              content: Text(i18n.syncTimestampReset),
+                                              duration: const Duration(seconds: 2),
                                             ),
                                           );
                                         }
                                       },
                                 icon: const Icon(Icons.refresh, size: 18),
-                                label: const Text('全量同步'),
+                                label: Text(i18n.fullSync),
                               ),
                             ),
                           ],
@@ -1012,20 +1114,21 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  String _getEntityTypeName(String entityType) {
+  String _getEntityTypeName(BuildContext context, String entityType) {
+    final i18n = APPi18n.of(context)!;
     switch (entityType) {
       case 'todo':
-        return 'Todo';
+        return i18n.entityTodo;
       case 'focus_record':
-        return 'Focus Record';
+        return i18n.entityFocusRecord;
       case 'habit':
-        return 'Habit';
+        return i18n.entityHabit;
       case 'habit_log':
-        return 'Habit Log';
+        return i18n.entityHabitLog;
       case 'tag':
-        return 'Tag';
+        return i18n.entityTag;
       case 'tag_relation':
-        return 'Tag Relation';
+        return i18n.entityTagRelation;
       default:
         return entityType;
     }
