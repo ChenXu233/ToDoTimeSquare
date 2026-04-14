@@ -278,7 +278,7 @@ class APPi18nEn extends APPi18n {
   String get noRadioStationsAvailable => 'No radio stations available';
 
   @override
-  String get noMusicSelected => 'No music selected';
+  String get noMusicSelected => 'No Music Selected';
 
   @override
   String get noLocalMusicAvailable => 'No local music available';
@@ -762,4 +762,50 @@ class APPi18nEn extends APPi18n {
 
   @override
   String get largeDataWarningConfirm => 'I Understand';
+
+  @override
+  String get timesUp => 'TIME\'S UP!';
+
+  @override
+  String get stopAlarm => 'STOP ALARM';
+
+  @override
+  String get dropToMainTask => 'Release to main task';
+
+  @override
+  String get syncTimestampReset =>
+      'Sync timestamp reset, next sync will be full sync';
+
+  @override
+  String get fullSync => 'Full Sync';
+
+  @override
+  String get editTodo => 'Edit Todo';
+
+  @override
+  String get addTodoTitle => 'Add Todo';
+
+  @override
+  String get selectDurationHint => 'Select Duration (Hours : Minutes)';
+
+  @override
+  String get noMeta => 'No Meta';
+
+  @override
+  String get entityTodo => 'Todo';
+
+  @override
+  String get entityFocusRecord => 'Focus Record';
+
+  @override
+  String get entityHabit => 'Habit';
+
+  @override
+  String get entityHabitLog => 'Habit Log';
+
+  @override
+  String get entityTag => 'Tag';
+
+  @override
+  String get entityTagRelation => 'Tag Relation';
 }

@@ -723,5 +723,69 @@
   "largeDataWarningConfirm": "我知道了",
   "@largeDataWarningConfirm": {
     "description": "关闭大量数据警告的按钮"
+  },
+  "timesUp": "时间到！",
+  "@timesUp": {
+    "description": "番茄钟结束时的文本"
+  },
+  "stopAlarm": "停止闹钟",
+  "@stopAlarm": {
+    "description": "停止闹钟按钮标签"
+  },
+  "dropToMainTask": "松手转为主任务",
+  "@dropToMainTask": {
+    "description": "拖拽任务时显示的文本，用于轉換为主任务"
+  },
+  "syncTimestampReset": "同步时间戳已重置，下次同步将执行全量同步",
+  "@syncTimestampReset": {
+    "description": "同步时间戳重置后显示的消息"
+  },
+  "fullSync": "全量同步",
+  "@fullSync": {
+    "description": "全量同步按钮标签"
+  },
+  "editTodo": "编辑任务",
+  "@editTodo": {
+    "description": "编辑任务对话框标题"
+  },
+  "addTodoTitle": "添加任务",
+  "@addTodoTitle": {
+    "description": "添加任务对话框标题"
+  },
+  "selectDurationHint": "选择时长 (时:分)",
+  "@selectDurationHint": {
+    "description": "时长选择的提示文本"
+  },
+  "noMeta": "无元数据",
+  "@noMeta": {
+    "description": "任务无元数据时显示的文本"
+  },
+  "entityTodo": "任务",
+  "@entityTodo": {
+    "description": "任务实体类型名称"
+  },
+  "entityFocusRecord": "专注记录",
+  "@entityFocusRecord": {
+    "description": "专注记录实体类型名称"
+  },
+  "entityHabit": "习惯",
+  "@entityHabit": {
+    "description": "习惯实体类型名称"
+  },
+  "entityHabitLog": "习惯日志",
+  "@entityHabitLog": {
+    "description": "习惯日志实体类型名称"
+  },
+  "entityTag": "标签",
+  "@entityTag": {
+    "description": "标签实体类型名称"
+  },
+  "entityTagRelation": "标签关系",
+  "@entityTagRelation": {
+    "description": "标签关系实体类型名称"
+  },
+  "noMusicSelected": "暂无音乐选中",
+  "@noMusicSelected": {
+    "description": "没有选中音乐时显示的消息"
   }
 }

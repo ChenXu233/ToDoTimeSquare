@@ -747,4 +747,49 @@ class APPi18nZh extends APPi18n {
 
   @override
   String get largeDataWarningConfirm => '我知道了';
+
+  @override
+  String get timesUp => '时间到！';
+
+  @override
+  String get stopAlarm => '停止闹钟';
+
+  @override
+  String get dropToMainTask => '松手转为主任务';
+
+  @override
+  String get syncTimestampReset => '同步时间戳已重置，下次同步将执行全量同步';
+
+  @override
+  String get fullSync => '全量同步';
+
+  @override
+  String get editTodo => '编辑任务';
+
+  @override
+  String get addTodoTitle => '添加任务';
+
+  @override
+  String get selectDurationHint => '选择时长 (时:分)';
+
+  @override
+  String get noMeta => '无元数据';
+
+  @override
+  String get entityTodo => '任务';
+
+  @override
+  String get entityFocusRecord => '专注记录';
+
+  @override
+  String get entityHabit => '习惯';
+
+  @override
+  String get entityHabitLog => '习惯日志';
+
+  @override
+  String get entityTag => '标签';
+
+  @override
+  String get entityTagRelation => '标签关系';
 }

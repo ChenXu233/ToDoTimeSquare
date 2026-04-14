@@ -939,5 +939,69 @@
   "largeDataWarningConfirm": "I Understand",
   "@largeDataWarningConfirm": {
     "description": "Button to dismiss large data warning"
+  },
+  "timesUp": "TIME'S UP!",
+  "@timesUp": {
+    "description": "Text shown when pomodoro timer ends"
+  },
+  "stopAlarm": "STOP ALARM",
+  "@stopAlarm": {
+    "description": "Button label to stop alarm"
+  },
+  "dropToMainTask": "Release to main task",
+  "@dropToMainTask": {
+    "description": "Text shown when dragging task to make it main task"
+  },
+  "syncTimestampReset": "Sync timestamp reset, next sync will be full sync",
+  "@syncTimestampReset": {
+    "description": "Message shown when sync timestamp is reset"
+  },
+  "fullSync": "Full Sync",
+  "@fullSync": {
+    "description": "Button label for full sync"
+  },
+  "editTodo": "Edit Todo",
+  "@editTodo": {
+    "description": "Title for edit todo dialog"
+  },
+  "addTodoTitle": "Add Todo",
+  "@addTodoTitle": {
+    "description": "Title for add todo dialog"
+  },
+  "selectDurationHint": "Select Duration (Hours : Minutes)",
+  "@selectDurationHint": {
+    "description": "Hint text for duration selection"
+  },
+  "noMeta": "No Meta",
+  "@noMeta": {
+    "description": "Text shown when task has no metadata"
+  },
+  "entityTodo": "Todo",
+  "@entityTodo": {
+    "description": "Entity type name for todo"
+  },
+  "entityFocusRecord": "Focus Record",
+  "@entityFocusRecord": {
+    "description": "Entity type name for focus record"
+  },
+  "entityHabit": "Habit",
+  "@entityHabit": {
+    "description": "Entity type name for habit"
+  },
+  "entityHabitLog": "Habit Log",
+  "@entityHabitLog": {
+    "description": "Entity type name for habit log"
+  },
+  "entityTag": "Tag",
+  "@entityTag": {
+    "description": "Entity type name for tag"
+  },
+  "entityTagRelation": "Tag Relation",
+  "@entityTagRelation": {
+    "description": "Entity type name for tag relation"
+  },
+  "noMusicSelected": "No Music Selected",
+  "@noMusicSelected": {
+    "description": "Message when no music is selected"
   }
 }

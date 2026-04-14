@@ -625,10 +625,10 @@ abstract class APPi18n {
   /// **'No radio stations available'**
   String get noRadioStationsAvailable;
 
-  /// No music selected message
+  /// Message when no music is selected
   ///
   /// In en, this message translates to:
-  /// **'No music selected'**
+  /// **'No Music Selected'**
   String get noMusicSelected;
 
   /// No local music available message
@@ -1542,6 +1542,96 @@ abstract class APPi18n {
   /// In en, this message translates to:
   /// **'I Understand'**
   String get largeDataWarningConfirm;
+
+  /// Text shown when pomodoro timer ends
+  ///
+  /// In en, this message translates to:
+  /// **'TIME\'S UP!'**
+  String get timesUp;
+
+  /// Button label to stop alarm
+  ///
+  /// In en, this message translates to:
+  /// **'STOP ALARM'**
+  String get stopAlarm;
+
+  /// Text shown when dragging task to make it main task
+  ///
+  /// In en, this message translates to:
+  /// **'Release to main task'**
+  String get dropToMainTask;
+
+  /// Message shown when sync timestamp is reset
+  ///
+  /// In en, this message translates to:
+  /// **'Sync timestamp reset, next sync will be full sync'**
+  String get syncTimestampReset;
+
+  /// Button label for full sync
+  ///
+  /// In en, this message translates to:
+  /// **'Full Sync'**
+  String get fullSync;
+
+  /// Title for edit todo dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Todo'**
+  String get editTodo;
+
+  /// Title for add todo dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Add Todo'**
+  String get addTodoTitle;
+
+  /// Hint text for duration selection
+  ///
+  /// In en, this message translates to:
+  /// **'Select Duration (Hours : Minutes)'**
+  String get selectDurationHint;
+
+  /// Text shown when task has no metadata
+  ///
+  /// In en, this message translates to:
+  /// **'No Meta'**
+  String get noMeta;
+
+  /// Entity type name for todo
+  ///
+  /// In en, this message translates to:
+  /// **'Todo'**
+  String get entityTodo;
+
+  /// Entity type name for focus record
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Record'**
+  String get entityFocusRecord;
+
+  /// Entity type name for habit
+  ///
+  /// In en, this message translates to:
+  /// **'Habit'**
+  String get entityHabit;
+
+  /// Entity type name for habit log
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Log'**
+  String get entityHabitLog;
+
+  /// Entity type name for tag
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get entityTag;
+
+  /// Entity type name for tag relation
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Relation'**
+  String get entityTagRelation;
 }
 
 class _APPi18nDelegate extends LocalizationsDelegate<APPi18n> {
