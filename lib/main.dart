@@ -16,6 +16,7 @@ import 'providers/statistics_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/tag_provider.dart';
 import 'providers/sync_settings_provider.dart';
+import 'providers/ai_settings_provider.dart';
 import 'services/sync_service.dart';
 import 'models/dtos/sync_settings.dart';
 import 'services/auth_service.dart';
@@ -98,13 +99,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider(create: (_) => TodoProvider()),
+        Provider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (context) => AuthProvider(
           authService: context.read<AuthService>(),
         )),
         ChangeNotifierProvider(create: (_) => BackgroundMusicProvider()),
         ChangeNotifierProvider(create: (_) => TagProvider()),
         ChangeNotifierProvider(create: (_) => SyncSettingsProvider()),
-        Provider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => AISettingsProvider()),
         Provider(create: (_) => FocusRecordService()),
         ChangeNotifierProvider(create: (context) => SyncService(
           authService: context.read<AuthService>(),

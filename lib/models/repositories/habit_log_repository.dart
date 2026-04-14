@@ -65,12 +65,14 @@ class HabitLogRepository extends DatabaseAccessor<AppDatabase>
     final exists = await isCheckedIn(log.habitId, log.date);
 
     if (exists) {
-      // 更新现有记录
+      // 更新现有记录 - 使用日期比较而非时间比较
       final existingLogs = await getLogsByHabitId(log.habitId);
+      final logDateOnly = DateTime(log.date.year, log.date.month, log.date.day);
       final existing = existingLogs.firstWhere(
-        (l) => l.date.year == log.date.year &&
-               l.date.month == log.date.month &&
-               l.date.day == log.date.day,
+        (l) => l.date.year == logDateOnly.year &&
+               l.date.month == logDateOnly.month &&
+               l.date.day == logDateOnly.day,
+        orElse: () => throw StateError('Record not found for date $logDateOnly'),
       );
       final updated = log.copyWith(id: existing.id);
       await updateLog(updated);
@@ -119,7 +121,7 @@ class HabitLogRepository extends DatabaseAccessor<AppDatabase>
     final tomorrow = today.add(const Duration(days: 1));
 
     final query = select(habitLogs)
-      ..where((l) => l.date.isBiggerThanValue(today) & l.date.isSmallerThanValue(tomorrow))
+      ..where((l) => l.date.isBiggerOrEqualValue(today) & l.date.isSmallerThanValue(tomorrow))
       ..orderBy([
         (l) => OrderingTerm(expression: l.date, mode: OrderingMode.desc),
       ]);
@@ -131,7 +133,7 @@ class HabitLogRepository extends DatabaseAccessor<AppDatabase>
   Future<List<HabitLogEntity>> getLogsInRange(String habitId, DateTime start, DateTime end) async {
     final query = select(habitLogs)
       ..where((l) => l.habitId.equals(habitId))
-      ..where((l) => l.date.isBiggerThanValue(start) & l.date.isSmallerThanValue(end))
+      ..where((l) => l.date.isBiggerOrEqualValue(start) & l.date.isSmallerOrEqualValue(end))
       ..orderBy([
         (l) => OrderingTerm(expression: l.date, mode: OrderingMode.desc),
       ]);
@@ -148,30 +150,41 @@ class HabitLogRepository extends DatabaseAccessor<AppDatabase>
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    // 按日期排序（从新到旧）
+    // 按日期排序（从新到旧），去重
     final sortedDates = logs.map((l) {
       return DateTime(l.date.year, l.date.month, l.date.day);
     }).toSet().toList()..sort((a, b) => b.compareTo(a));
 
-    // 检查今天或昨天是否有记录（ streak 不能断超过 1 天）
+    // 检查今天或昨天是否有记录（streak 不能断超过 1 天）
     final latestDate = sortedDates.first;
-    if (latestDate.difference(today).inDays > 1) {
+    final daysSinceLatest = today.difference(latestDate).inDays;
+
+    // 如果超过1天没打卡，streak 为 0
+    if (daysSinceLatest > 1) {
       return 0;
     }
 
-    // 计算连续天数
-    int streak = 0;
-    DateTime expectedDate = latestDate;
+    // 从最新日期开始计算连续天数
+    int streak = 1;
+    DateTime expectedPreviousDate = latestDate.subtract(const Duration(days: 1));
 
-    for (int i = 0; i < sortedDates.length; i++) {
+    for (int i = 1; i < sortedDates.length; i++) {
       final currentDate = sortedDates[i];
 
-      if (currentDate.difference(expectedDate).inDays == 0 ||
-          currentDate.difference(expectedDate).inDays == 1) {
+      if (currentDate == expectedPreviousDate) {
+        // 连续，streak 加 1
         streak++;
-        expectedDate = currentDate.subtract(const Duration(days: 1));
+        expectedPreviousDate = currentDate.subtract(const Duration(days: 1));
+      } else if (currentDate.isBefore(expectedPreviousDate)) {
+        // 日期更早但不是连续的前一天，streak 保持，但更新期望日期
+        expectedPreviousDate = currentDate.subtract(const Duration(days: 1));
+        // 重新计算：如果当前日期和期望日期之间差距超过1天，则断开
+        if (expectedPreviousDate.difference(currentDate).inDays > 1) {
+          break;
+        }
       } else {
-        break;
+        // 同一日期（重复记录），跳过
+        continue;
       }
     }
 
@@ -198,7 +211,7 @@ class HabitLogRepository extends DatabaseAccessor<AppDatabase>
 
     final logs = await getLogsInRange(habitId, startDate, today);
 
-    // 计算实际打卡天数
+    // 计算实际打卡天数（去重）
     final checkedDates = logs.map((l) {
       return DateTime(l.date.year, l.date.month, l.date.day);
     }).toSet();

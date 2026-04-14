@@ -154,9 +154,20 @@ class TodoRepository extends DatabaseAccessor<AppDatabase> with _$TodoRepository
 
   /// 更新任务
   Future<bool> updateTask(TaskModel task) async {
-    final entity = task.toCompanion();
-    final result = await update(todos).replace(entity);
-    return result;
+    final rowsAffected = await (update(todos)..where((t) => t.id.equals(task.id))).write(
+      TodosCompanion(
+        title: Value(task.title),
+        description: task.description != null ? Value(task.description!) : const Value.absent(),
+        estimatedDuration: task.estimatedDuration != null ? Value(task.estimatedDuration!) : const Value.absent(),
+        importance: Value(task.importance),
+        plannedStartTime: task.plannedStartTime != null ? Value(task.plannedStartTime!) : const Value.absent(),
+        isCompleted: Value(task.isCompleted),
+        parentId: task.parentId != null ? Value(task.parentId!) : const Value.absent(),
+        updatedAt: Value(task.updatedAt),
+        completedAt: task.completedAt != null ? Value(task.completedAt!) : const Value(null),
+      ),
+    );
+    return rowsAffected > 0;
   }
 
   /// 切换任务完成状态
@@ -169,6 +180,7 @@ class TodoRepository extends DatabaseAccessor<AppDatabase> with _$TodoRepository
       isCompleted: !task.isCompleted,
       updatedAt: now,
       completedAt: !task.isCompleted ? now : null,
+      clearCompletedAt: task.isCompleted, // 当取消完成时清除 completedAt
     );
 
     return await updateTask(updatedTask);
@@ -289,6 +301,7 @@ extension TaskModelExtension on TaskModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? completedAt,
+    bool clearCompletedAt = false,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -301,7 +314,7 @@ extension TaskModelExtension on TaskModel {
       parentId: parentId ?? this.parentId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      completedAt: completedAt ?? this.completedAt,
+      completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
     );
   }
 }
